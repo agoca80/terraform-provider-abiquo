@@ -1,0 +1,8 @@
+crash.log
+.terraform
+terraform.tfstate
+terraform.tfstate.backup
+json
+log
+debug.log
+opal
