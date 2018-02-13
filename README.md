@@ -4,7 +4,7 @@ To use the provider, you will need to setup your go environment first. Once the
 environment is set, get the terraform-provider-abiquo code:
 
 ```
-go get https://github.com/abiquo/terraform-provider-abiquo
+go get github.com/abiquo/terraform-provider-abiquo
 ```
 
 Currently, the provider has been tested with terraform v0.11.3, so, you need to
