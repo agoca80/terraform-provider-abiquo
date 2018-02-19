@@ -19,7 +19,7 @@ var scopeResource = &schema.Resource{
 	Importer: &schema.ResourceImporter{State: schema.ImportStatePassthrough},
 	Delete:   resourceDelete,
 	Read:     resourceRead(scopeNew, scopeRead, "scope"),
-	Create:   resourceCreate(scopeNew, scopeEndpoint),
+	Create:   resourceCreate(scopeNew, nil, scopeRead, scopeEndpoint),
 	Exists:   resourceExists("scope"),
 	Update:   resourceUpdate(scopeNew, "scope"),
 }

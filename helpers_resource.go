@@ -7,9 +7,12 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-type factory func(*resourceData) core.Resource
-type endpoint func(*resourceData) *core.Link
-type readResource func(*resourceData, core.Resource) error
+type (
+	factory  func(*resourceData) core.Resource
+	endpoint func(*resourceData) *core.Link
+	create   func(*resourceData, core.Resource) error
+	read     func(*resourceData, core.Resource) error
+)
 
 func resourceDelete(d *schema.ResourceData, m interface{}) (err error) {
 	return core.Remove(newResourceData(d, ""))
@@ -21,7 +24,7 @@ func resourceExists(media string) schema.ExistsFunc {
 	}
 }
 
-func resourceCreate(factory factory, endpoint endpoint) schema.CreateFunc {
+func resourceCreate(factory factory, create create, read read, endpoint endpoint) schema.CreateFunc {
 	return func(rd *schema.ResourceData, m interface{}) (err error) {
 		d := newResourceData(rd, "")
 
@@ -30,9 +33,18 @@ func resourceCreate(factory factory, endpoint endpoint) schema.CreateFunc {
 			return fmt.Errorf("resourceCreate: resource could not be created")
 		}
 
-		if err = core.Create(endpoint(d), resource); err == nil {
-			d.SetId(resource.URL())
+		if err = core.Create(endpoint(d), resource); err != nil {
+			return
 		}
+		d.SetId(resource.URL())
+		if create != nil {
+			err = create(d, resource)
+		}
+
+		if err == nil && read != nil {
+			err = read(d, resource)
+		}
+
 		return
 	}
 }
@@ -45,14 +57,14 @@ func resourceUpdate(factory factory, media string) schema.UpdateFunc {
 	}
 }
 
-func resourceRead(factory factory, readResource readResource, media string) schema.ReadFunc {
+func resourceRead(factory factory, read read, media string) schema.ReadFunc {
 	return func(rd *schema.ResourceData, m interface{}) (err error) {
 		d := newResourceData(rd, media)
 		resource := factory(d)
 		if resource == nil {
 			err = fmt.Errorf("resourceRead: could not create %v resource", media)
 		} else if err = core.Read(d, resource); err == nil {
-			err = readResource(d, resource)
+			err = read(d, resource)
 		}
 		return
 	}

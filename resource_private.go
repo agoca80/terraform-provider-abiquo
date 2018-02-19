@@ -20,7 +20,7 @@ var privateResource = &schema.Resource{
 	},
 	Delete: resourceDelete,
 	Update: resourceUpdate(privateNew, "vlan"),
-	Create: resourceCreate(privateNew, privateEndpoint),
+	Create: resourceCreate(privateNew, nil, privateRead, privateEndpoint),
 	Read:   resourceRead(privateNew, privateRead, "vlan"),
 }
 

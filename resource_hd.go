@@ -18,7 +18,7 @@ var hdResource = &schema.Resource{
 		"virtualdatacenter": Required().Renew().Link(),
 	},
 	Delete: hdDelete,
-	Create: resourceCreate(hdNew, hdEndpoint),
+	Create: resourceCreate(hdNew, nil, hdRead, hdEndpoint),
 	Exists: resourceExists("harddisk"),
 	Update: hdUpdate,
 	Read:   resourceRead(hdNew, hdRead, "harddisk"),

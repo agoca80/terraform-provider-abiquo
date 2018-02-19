@@ -31,7 +31,7 @@ var vdcResource = &schema.Resource{
 		"location":   Required().Renew().Link(),
 	},
 	Delete: resourceDelete,
-	Create: resourceCreate(vdcNew, vdcEndpoint),
+	Create: resourceCreate(vdcNew, nil, vdcRead, vdcEndpoint),
 	Exists: resourceExists("virtualdatacenter"),
 	Update: resourceUpdate(vdcNew, "virtualdatacenter"),
 	Read:   resourceRead(vdcNew, vdcRead, "virtualdatacenter"),

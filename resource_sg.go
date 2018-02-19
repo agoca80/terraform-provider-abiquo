@@ -33,7 +33,7 @@ var sgResource = &schema.Resource{
 	},
 	Delete: sgDelete,
 	Update: resourceUpdate(sgNew, "scalinggroup"),
-	Create: resourceCreate(sgNew, sgEndpoint),
+	Create: resourceCreate(sgNew, nil, sgRead, sgEndpoint),
 	Read:   resourceRead(sgNew, sgRead, "scalinggroup"),
 }
 

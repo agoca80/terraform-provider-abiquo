@@ -32,7 +32,7 @@ var limitResource = &schema.Resource{
 	Exists: resourceExists("limit"),
 	Read:   resourceRead(limitNew, limitRead, "limit"),
 	Update: resourceUpdate(limitNew, "limit"),
-	Create: resourceCreate(limitNew, limitEndpoint),
+	Create: resourceCreate(limitNew, nil, limitRead, limitEndpoint),
 	Delete: resourceDelete,
 }
 

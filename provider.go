@@ -86,6 +86,7 @@ func Provider() *schema.Provider {
 			"abiquo_plan":       actionPlanResource,
 			"abiquo_private":    privateResource,
 			"abiquo_public":     publicResource,
+			"abiquo_rack":       rackResource,
 			"abiquo_role":       roleResource,
 			"abiquo_scope":      scopeResource,
 			"abiquo_sg":         sgResource,

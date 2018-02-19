@@ -23,7 +23,7 @@ var externalResource = &schema.Resource{
 	Delete: resourceDelete,
 	Exists: resourceExists("vlan"),
 	Update: resourceUpdate(externalNew, "vlan"),
-	Create: resourceCreate(externalNew, externalEndpoint),
+	Create: resourceCreate(externalNew, nil, externalRead, externalEndpoint),
 	Read:   resourceRead(externalNew, externalRead, "vlan"),
 }
 

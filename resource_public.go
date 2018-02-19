@@ -21,7 +21,7 @@ var publicResource = &schema.Resource{
 	},
 	Delete: resourceDelete,
 	Update: resourceUpdate(publicNew, "vlan"),
-	Create: resourceCreate(publicNew, publicEndpoint),
+	Create: resourceCreate(publicNew, nil, publicRead, publicEndpoint),
 	Read:   resourceRead(publicNew, publicRead, "vlan"),
 }
 

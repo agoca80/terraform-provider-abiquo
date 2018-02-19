@@ -19,7 +19,7 @@ var volResource = &schema.Resource{
 	},
 	Delete: resourceDelete,
 	Update: resourceUpdate(volNew, "volume"),
-	Create: resourceCreate(volNew, volEndpoint),
+	Create: resourceCreate(volNew, nil, volRead, volEndpoint),
 	Read:   resourceRead(volNew, volRead, "volume"),
 }
 
