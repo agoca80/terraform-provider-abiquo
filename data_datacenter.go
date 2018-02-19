@@ -17,10 +17,10 @@ var datacenterDataSource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
 		"name": Required().String(),
 	},
-	Read: datacenterRead,
+	Read: datacenterDataRead,
 }
 
-func datacenterRead(d *schema.ResourceData, meta interface{}) (err error) {
+func datacenterDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	datacenter := datacenterGet(d.Get("name").(string))
 	if datacenter == nil {
 		return fmt.Errorf("Datacenter %v does not exist", d.Get("name"))
