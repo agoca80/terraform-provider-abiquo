@@ -60,7 +60,7 @@ var datacenterSchema = map[string]*schema.Schema{
 var datacenterResource = &schema.Resource{
 	Schema: datacenterSchema,
 	Delete: resourceDelete,
-	Exists: resourceExists("virtualappliance"),
+	Exists: resourceExists("datacenter"),
 	Create: resourceCreate(datacenterNew, nil, datacenterRead, datacenterEndpoint),
 	Update: resourceUpdate(datacenterNew, "datacenter"),
 	Read:   resourceRead(datacenterNew, datacenterRead, "datacenter"),
