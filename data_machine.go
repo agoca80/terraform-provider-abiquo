@@ -14,6 +14,7 @@ var machineDataSchema = map[string]*schema.Schema{
 	"hypervisor":  Required().String(),
 	"datacenter":  Required().ValidateURL(),
 	"ip":          Required().String(),
+	"port":        Optional().String(),
 	"managerip":   Optional().String(),
 	"manageruser": Optional().String(),
 	"managerpass": Optional().String(),
@@ -30,6 +31,9 @@ func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 
 	var query url.Values
 	hypervisor := d.string("hypervisor")
+	if port := d.string("port"); port != "" {
+		query["port"] = []string{port}
+	}
 	switch hypervisor {
 	case "KVM":
 		query = url.Values{
