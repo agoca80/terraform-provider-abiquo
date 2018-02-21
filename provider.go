@@ -102,9 +102,11 @@ func Provider() *schema.Provider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			"abiquo_datacenter": datacenterDataSource,
+			"abiquo_dstier":     dstierDataSource,
 			"abiquo_enterprise": enterpriseDataSource,
 			"abiquo_hp":         hpDataSource,
 			"abiquo_location":   locationDataSource,
+			"abiquo_nst":        nstDataSource,
 			"abiquo_privilege":  privilegeDataSource,
 			"abiquo_repo":       repoDataSource,
 			"abiquo_scope":      scopeDataSource,
