@@ -31,9 +31,6 @@ func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 
 	var query url.Values
 	hypervisor := d.string("hypervisor")
-	if port := d.string("port"); port != "" {
-		query["port"] = []string{port}
-	}
 	switch hypervisor {
 	case "KVM":
 		query = url.Values{
@@ -57,6 +54,9 @@ func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 	datacenter := resource.(*abiquo.Datacenter)
 
 	query["hypervisor"] = []string{hypervisor}
+	if port := d.string("port"); port != "" {
+		query["port"] = []string{port}
+	}
 	resource = datacenter.Discover(query).First()
 	if resource == nil {
 		return fmt.Errorf("machine not found: %v", query)
