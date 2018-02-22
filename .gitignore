@@ -1,4 +1,5 @@
 crash.log
+graph.png
 .terraform
 terraform.tfstate
 terraform.tfstate.backup
