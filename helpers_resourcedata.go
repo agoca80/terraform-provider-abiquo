@@ -45,6 +45,13 @@ func (d *resourceData) link(name string) (link *core.Link) {
 	return
 }
 
+func (d *resourceData) linkTypeRel(name, media, rel string) (link *core.Link) {
+	if link = d.link(name); link != nil {
+		link.SetType(media).SetRel(rel)
+	}
+	return
+}
+
 func (d *resourceData) string(name string) string {
 	return d.ResourceData.Get(name).(string)
 }
