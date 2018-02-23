@@ -30,7 +30,7 @@ func hpDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	profileName := d.Get("name").(string)
 	query := url.Values{"active": {"true"}, "has": {profileName}}
-	hp := l.(*abiquo.Datacenter).HardwareProfiles(query).First()
+	hp := l.Rel("hardwareprofiles").Collection(query).First()
 	if hp == nil {
 		return fmt.Errorf("hwprofile %q does not exist in %q", profileName, locationName)
 	}

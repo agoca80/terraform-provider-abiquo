@@ -29,7 +29,8 @@ func dataVDCRead(d *schema.ResourceData, meta interface{}) (err error) {
 	finder := func(r core.Resource) bool {
 		return r.(*abiquo.VirtualDatacenter).Name == d.Get("name").(string)
 	}
-	if vdc := enterprise.VirtualDatacenters(query).Find(finder); vdc != nil {
+	vdcs := enterprise.Rel("virtualdatacenters").Collection(query)
+	if vdc := vdcs.Find(finder); vdc != nil {
 		d.SetId(vdc.URL())
 		return
 	}

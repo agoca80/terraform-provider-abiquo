@@ -24,7 +24,7 @@ func dataRepoRead(d *schema.ResourceData, p interface{}) (err error) {
 	finder := func(r core.Resource) bool {
 		return r.Rel("datacenter").Title == d.Get("datacenter").(string)
 	}
-	repo := enterprise.DatacenterRepositories(nil).Find(finder)
+	repo := enterprise.Rel("datacenterrepositories").Collection(nil).Find(finder)
 	if repo == nil {
 		return fmt.Errorf("datacenter repository for datacenter %q was not found", d.Get("datacenter"))
 	}

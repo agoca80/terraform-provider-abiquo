@@ -38,7 +38,8 @@ func roleEndpoint(d *resourceData) *core.Link {
 func roleRead(d *resourceData, resource core.Resource) (err error) {
 	role := resource.(*abiquo.Role)
 	privileges := schema.NewSet(privilegeID, nil)
-	for _, p := range role.Privileges(nil).List() {
+	collection := role.Rel("privileges").Collection(nil)
+	for _, p := range collection.List() {
 		privileges.Add(p.(*abiquo.Privilege).Name)
 	}
 	d.Set("name", role.Name)

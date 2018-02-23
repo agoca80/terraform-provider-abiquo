@@ -57,7 +57,7 @@ func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 	if port := d.string("port"); port != "" {
 		query["port"] = []string{port}
 	}
-	resource = datacenter.Discover(query).First()
+	resource = datacenter.Rel("discover").Collection(query).First()
 	if resource == nil {
 		return fmt.Errorf("machine not found: %v", query)
 	}
