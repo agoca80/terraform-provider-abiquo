@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/abiquo/opal/abiquo"
-	"github.com/abiquo/opal/core"
+	"github.com/abiquo/ojal/abiquo"
+	"github.com/abiquo/ojal/core"
 )
 
 func networkNew(d *resourceData) *abiquo.Network {

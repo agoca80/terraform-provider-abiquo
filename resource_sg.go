@@ -3,8 +3,8 @@ package main
 import (
 	"time"
 
-	"github.com/abiquo/opal/abiquo"
-	"github.com/abiquo/opal/core"
+	"github.com/abiquo/ojal/abiquo"
+	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -102,7 +102,7 @@ func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
 		}
 	}
 
-	// PENDING move to opal/abiquo
+	// PENDING move to ojal/abiquo
 	// Delete the SG
 	if err = core.Remove(d); err == nil {
 		// Delete the SG VMs

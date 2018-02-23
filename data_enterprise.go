@@ -4,7 +4,7 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/abiquo/opal/abiquo"
+	"github.com/abiquo/ojal/abiquo"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
