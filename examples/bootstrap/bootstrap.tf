@@ -35,12 +35,18 @@ resource "abiquo_datacenter" "datacenter" {
 }
 
 resource "abiquo_rack" "kvm" {
-  name       = "kvm"
-  datacenter = "${abiquo_datacenter.datacenter.id}"
+  name        = "kvm"
+  vlanmin     = 1000
+  vlanmax     = 1999
+  description = "kvm"
+  datacenter  = "${abiquo_datacenter.datacenter.id}"
 }
 
 resource "abiquo_rack" "vmx" {
   name       = "vmx"
+  vlanmin     = 2000
+  vlanmax     = 2999
+  description = "vmx"
   datacenter = "${abiquo_datacenter.datacenter.id}"
 }
 

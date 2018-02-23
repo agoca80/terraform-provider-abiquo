@@ -7,15 +7,12 @@ import (
 )
 
 var rackSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"datacenter": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"name":        Required().String(),
+	"number":      Computed().Number(), // ABICLOUDPREMIUM-10197
+	"description": Optional().String(),
+	"vlanmax":     Optional().Number(),
+	"vlanmin":     Optional().Number(),
+	"datacenter":  Required().Link(),
 }
 
 var rackResource = &schema.Resource{
@@ -28,9 +25,24 @@ var rackResource = &schema.Resource{
 }
 
 func rackNew(d *resourceData) core.Resource {
-	return &abiquo.Rack{
+	rack := &abiquo.Rack{
+		ID:   d.int("number"),
 		Name: d.string("name"),
 	}
+
+	if d, ok := d.GetOk("description"); ok {
+		rack.Description = d.(string)
+	}
+
+	if min, ok := d.GetOk("vlanmin"); ok {
+		rack.VlanIDMin = min.(int)
+	}
+
+	if max, ok := d.GetOk("vlanmax"); ok {
+		rack.VlanIDMax = max.(int)
+	}
+
+	return rack
 }
 
 func rackEndpoint(d *resourceData) *core.Link {
@@ -39,6 +51,21 @@ func rackEndpoint(d *resourceData) *core.Link {
 
 func rackRead(d *resourceData, resource core.Resource) (err error) {
 	rack := resource.(*abiquo.Rack)
+
 	d.Set("name", rack.Name)
+	d.Set("number", rack.ID)
+
+	if _, ok := d.GetOk("description"); ok {
+		d.Set("description", rack.Description)
+	}
+
+	if _, ok := d.GetOk("vlanmin"); ok {
+		d.Set("vlanmin", rack.VlanIDMin)
+	}
+
+	if _, ok := d.GetOk("vlanmax"); ok {
+		d.Set("vlanmax", rack.VlanIDMax)
+	}
+
 	return
 }
