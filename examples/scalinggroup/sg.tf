@@ -1,10 +1,12 @@
 # Provider configuration: Get these from the environment
 variable "endpoint" { }
+variable "username" { }
+variable "password" { }
 
 provider "abiquo" {
   endpoint       = "${var.endpoint}"
-  username       = "neutron"
-  password       = "12qwaszx"
+  username       = "${var.username}"
+  password       = "${var.password}"
 }
 
 data "abiquo_location"   "location"   { name = "datacenter 1" }
@@ -13,11 +15,8 @@ data "abiquo_enterprise" "enterprise" { name = "neutron" }
 resource "abiquo_vdc" "vdc" {
   enterprise = "${data.abiquo_enterprise.enterprise.id}"
   location   = "${data.abiquo_location.location.id}"
-
   name       = "tf example sg"
   type       = "KVM"
-  
-  cpusoft = 4 , cpuhard = 8
 }
 
 resource "abiquo_private" "private" {
