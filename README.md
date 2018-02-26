@@ -17,6 +17,13 @@ Also, you will need to configure your OpenSSL setup to validate your deployment
 certificate. Refer to the OpenSSL documentation for the platform where you will
 be running the provider.
 
+Unless explicitely configured, the provider will use the following environment
+variables to configure the provider with Basic Auth:
+
+- ABQ_ENDPOINT
+- ABQ_USERNAME
+- ABQ_PASSWORD
+
 ## Basic Auth
 
 ```
