@@ -34,6 +34,22 @@ resource "abiquo_datacenter" "datacenter" {
   ra       = "guacd://${var.rss}:4822/"
 }
 
+variable "device_endpoint" { }
+variable "device_username" { }
+variable "device_password" { }
+variable "device_name" { }
+
+data "abiquo_devicetype" "devicetype" {
+  name = "${var.device_type}"
+}
+
+resource "abiquo_device" "device" {
+  "endpoint"    = "${var.device_endpoint}"
+  "username"    = "${var.device_username}"
+  "password"    = "${var.device_password}"
+  "name"        = "${var.device_name}"
+}
+
 resource "abiquo_rack" "kvm" {
   name        = "kvm"
   vlanmin     = 1000

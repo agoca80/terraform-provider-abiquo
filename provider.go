@@ -77,6 +77,7 @@ func Provider() *schema.Provider {
 			"abiquo_alert":       alertResource,
 			"abiquo_computeload": computeLoadResource,
 			"abiquo_datacenter":  datacenterResource,
+			"abiquo_device":      deviceResource,
 			"abiquo_enterprise":  enterpriseResource,
 			"abiquo_external":    externalResource,
 			"abiquo_fitpolicy":   fitPolicyResource,
@@ -106,6 +107,7 @@ func Provider() *schema.Provider {
 
 		DataSourcesMap: map[string]*schema.Resource{
 			"abiquo_datacenter": datacenterDataSource,
+			"abiquo_devicetype": deviceTypeDataSource,
 			"abiquo_dstier":     dstierDataSource,
 			"abiquo_enterprise": enterpriseDataSource,
 			"abiquo_hp":         hpDataSource,
@@ -114,6 +116,7 @@ func Provider() *schema.Provider {
 			"abiquo_nst":        nstDataSource,
 			"abiquo_privilege":  privilegeDataSource,
 			"abiquo_repo":       repoDataSource,
+			"abiquo_role":       roleDataSource,
 			"abiquo_scope":      scopeDataSource,
 			"abiquo_vdc":        vdcDataSource,
 			"abiquo_template":   templateDataSource,

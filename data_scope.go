@@ -24,5 +24,5 @@ func scopeDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 		return
 	}
 
-	return fmt.Errorf("vdc %q was not found", d.Get("name"))
+	return fmt.Errorf("scope %q was not found", d.Get("name"))
 }
