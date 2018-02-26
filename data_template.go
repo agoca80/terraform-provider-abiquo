@@ -22,7 +22,7 @@ func templateRead(d *schema.ResourceData, meta interface{}) (err error) {
 		return errors.New("The user enterprise was not found")
 	}
 
-	dcrepos := enterprise.Rel("DatacenterRepositories").Collection(nil)
+	dcrepos := enterprise.Rel("datacenterrepositories").Collection(nil)
 	for _, dcrepo := range dcrepos.List() {
 		repo := dcrepo.(*abiquo.DatacenterRepository)
 		finder := func(r core.Resource) bool {
