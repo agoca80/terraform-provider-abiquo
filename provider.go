@@ -61,11 +61,24 @@ func Provider() *schema.Provider {
 		ConfigureFunc: configureProvider,
 
 		Schema: map[string]*schema.Schema{
-			"endpoint": &schema.Schema{Type: schema.TypeString, Required: true, ValidateFunc: validateURL},
-
-			"username": &schema.Schema{Type: schema.TypeString, Optional: true, ConflictsWith: oAuthOptions},
-			"password": &schema.Schema{Type: schema.TypeString, Optional: true, ConflictsWith: oAuthOptions},
-
+			"endpoint": &schema.Schema{
+				DefaultFunc:  schema.EnvDefaultFunc("ABQ_ENDPOINT", ""),
+				Required:     true,
+				Type:         schema.TypeString,
+				ValidateFunc: validateURL,
+			},
+			"username": &schema.Schema{
+				ConflictsWith: oAuthOptions,
+				DefaultFunc:   schema.EnvDefaultFunc("ABQ_USERNAME", ""),
+				Optional:      true,
+				Type:          schema.TypeString,
+			},
+			"password": &schema.Schema{
+				ConflictsWith: oAuthOptions,
+				DefaultFunc:   schema.EnvDefaultFunc("ABQ_PASSWORD", ""),
+				Optional:      true,
+				Type:          schema.TypeString,
+			},
 			"token":          &schema.Schema{Type: schema.TypeString, Optional: true, ConflictsWith: basicAuthOptions},
 			"tokensecret":    &schema.Schema{Type: schema.TypeString, Optional: true, ConflictsWith: basicAuthOptions},
 			"consumerkey":    &schema.Schema{Type: schema.TypeString, Optional: true, ConflictsWith: basicAuthOptions},
