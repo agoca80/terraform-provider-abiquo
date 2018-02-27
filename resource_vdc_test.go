@@ -17,7 +17,7 @@ data "abiquo_enterprise" "enterprise" { name = "Abiquo" }
 resource "abiquo_vdc" "vdc" {
 	enterprise = "${data.abiquo_enterprise.enterprise.id}"
 	location   = "${data.abiquo_location.location.id}"
-  name       = "terraform acceptance test"
+  name       = "testAccAbiquoVDCBasic"
 	type       = "VMX_04"
 }
 `
