@@ -8,13 +8,15 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+var roleSchema = map[string]*schema.Schema{
+	"blocked":    Optional().Bool(),
+	"name":       Required().String(),
+	"enterprise": Optional().Link(),
+	"privileges": Optional().set(privilegeID, 1, schema.TypeString),
+}
+
 var roleResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"blocked":    Optional().Bool(),
-		"name":       Required().String(),
-		"enterprise": Optional().Link(),
-		"privileges": optional(fieldSet(privilegeID, 1, schema.TypeString)),
-	},
+	Schema:   roleSchema,
 	Importer: &schema.ResourceImporter{State: schema.ImportStatePassthrough},
 	Delete:   resourceDelete,
 	Read:     resourceRead(roleNew, roleRead, "role"),

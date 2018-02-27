@@ -29,6 +29,16 @@ func Conflicts(conflicts []string) *description {
 	}
 }
 
+func (d *description) set(s func(interface{}) int, min int, kind schema.ValueType) *schema.Schema {
+	d.Set = s
+	d.MinItems = min
+	d.Type = schema.TypeSet
+	d.Elem = &schema.Schema{
+		Type: kind,
+	}
+	return d.schema()
+}
+
 func (d *description) Renew() *description {
 	d.ForceNew = true
 	return d
