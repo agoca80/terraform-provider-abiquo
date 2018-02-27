@@ -39,6 +39,14 @@ func (d *description) set(s func(interface{}) int, min int, kind schema.ValueTyp
 	return d.schema()
 }
 
+func (d *description) Map(kind schema.ValueType) *schema.Schema {
+	d.Type = schema.TypeMap
+	d.Elem = &schema.Schema{
+		Type: kind,
+	}
+	return d.schema()
+}
+
 func (d *description) Renew() *description {
 	d.ForceNew = true
 	return d

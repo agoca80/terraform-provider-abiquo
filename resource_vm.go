@@ -1,31 +1,35 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+var vmSchema = map[string]*schema.Schema{
+	"cpu":                    Conflicts([]string{"hardwareprofile"}).Renew().Number(),
+	"ram":                    Conflicts([]string{"hardwareprofile"}).Renew().Number(),
+	"hardwareprofile":        Conflicts([]string{"cpu", "ram"}).Renew().Link(),
+	"bootstrap":              Optional().Renew().String(),
+	"disks":                  Optional().Renew().Links(),
+	"fws":                    Optional().Renew().Links(),
+	"label":                  Optional().Renew().String(),
+	"lbs":                    Optional().Renew().Links(),
+	"monitored":              Optional().Renew().Bool(),
+	"ips":                    Optional().Renew().Links(),
+	"name":                   Computed().Renew().String(),
+	"variables":              Optional().Renew().Map(schema.TypeString),
+	"virtualappliance":       Required().Renew().Link(),
+	"virtualmachinetemplate": Required().Renew().Link(),
+}
+
 var vmResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"cpu":                    Conflicts([]string{"hardwareprofile"}).Renew().Number(),
-		"ram":                    Conflicts([]string{"hardwareprofile"}).Renew().Number(),
-		"hardwareprofile":        Conflicts([]string{"cpu", "ram"}).Renew().Link(),
-		"bootstrap":              Optional().Renew().String(),
-		"disks":                  Optional().Renew().Links(),
-		"fws":                    Optional().Renew().Links(),
-		"label":                  Optional().Renew().String(),
-		"lbs":                    Optional().Renew().Links(),
-		"monitored":              Optional().Renew().Bool(),
-		"ips":                    Optional().Renew().Links(),
-		"name":                   Computed().Renew().String(),
-		"variables":              New(optional(&schema.Schema{Type: schema.TypeMap, Elem: fieldString()})),
-		"virtualappliance":       Required().Renew().Link(),
-		"virtualmachinetemplate": Required().Renew().Link(),
-	},
+	Schema: vmSchema,
 	Read:   resourceRead(vmNew, vmRead, "virtualmachine"),
 	Exists: resourceExists("virtualmachine"),
-	Delete: resourceDelete,
+	Delete: vmDelete,
 	Create: vmCreate,
 }
 
@@ -112,7 +116,6 @@ func vmCreate(rd *schema.ResourceData, m interface{}) (err error) {
 		return
 	}
 	d.SetId(vm.URL())
-
 	if err = vmReconfigure(vm, d); err == nil {
 		err = vm.Deploy()
 	}
@@ -142,4 +145,29 @@ func vmUpdate(rd *schema.ResourceData, m interface{}) (err error) {
 	d := newResourceData(rd, "virtualmachine")
 	vm := vmNew(d).(*abiquo.VirtualMachine)
 	return vm.Reconfigure()
+}
+
+func vmDelete(rd *schema.ResourceData, m interface{}) (err error) {
+	d := newResourceData(rd, "virtualmachine")
+	resource := d.Walk()
+	if resource == nil {
+		return
+	}
+
+	// To prevent the VM undeploy/delete sequence from breaking the vapp/vm
+	// dependency, we have to undeploy the VM first if deployed, and delete it
+	// once the VM is not allocated
+	vm := resource.(*abiquo.VirtualMachine)
+	if vm.State == "ON" || vm.State == "OFF" {
+		if err = vm.Undeploy(); err != nil {
+			return
+		}
+		vm = d.Walk().(*abiquo.VirtualMachine)
+	}
+
+	if vm.State != "NOT_ALLOCATED" {
+		return fmt.Errorf("the VM is %v. it will not be deleted", vm.State)
+	}
+
+	return core.Remove(vm)
 }
