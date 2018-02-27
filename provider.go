@@ -132,6 +132,7 @@ func Provider() *schema.Provider {
 			"abiquo_role":       roleDataSource,
 			"abiquo_scope":      scopeDataSource,
 			"abiquo_vdc":        vdcDataSource,
+			"abiquo_vapp":       vappDataSource,
 			"abiquo_template":   templateDataSource,
 		},
 	}
