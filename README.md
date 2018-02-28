@@ -50,3 +50,10 @@ provider "abiquo" {
 
 Check the examples folder to get an idea of how to use the provider and the
 available resources.
+
+# Testing
+
+```
+cd $GOPATH/github.com/hashicorp/terraform
+make testacc TEST=../../abiquo/terraform-provider-abiquo
+```
