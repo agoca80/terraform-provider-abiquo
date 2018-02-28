@@ -9,30 +9,16 @@ import (
 )
 
 type provider struct {
-	user struct {
-		sync.Once
-		*abiquo.User
-	}
-
-	enterprise struct {
-		sync.Once
-		*abiquo.Enterprise
-	}
+	err        error
+	init       sync.Once
+	user       *abiquo.User
+	enterprise *abiquo.Enterprise
 }
 
-func (p *provider) User() *abiquo.User {
-	p.user.Do(func() {
-		p.user.User = abiquo.Login()
-	})
-	return p.user.User
-}
+var abq provider
 
-func (p *provider) Enterprise() *abiquo.Enterprise {
-	p.enterprise.Do(func() {
-		p.enterprise.Enterprise = p.User().Enterprise()
-	})
-	return p.enterprise.Enterprise
-}
+func (p *provider) User() *abiquo.User             { return p.user }
+func (p *provider) Enterprise() *abiquo.Enterprise { return p.enterprise }
 
 func configureProvider(d *schema.ResourceData) (meta interface{}, err error) {
 	var credentials interface{}
@@ -49,7 +35,19 @@ func configureProvider(d *schema.ResourceData) (meta interface{}, err error) {
 			TokenSecret: d.Get("tokensecret").(string),
 		}
 	}
-	return new(provider), abiquo.Abiquo(d.Get("endpoint").(string), credentials)
+
+	abq.init.Do(func() {
+		endpoint := d.Get("endpoint").(string)
+		if abq.err = core.Init(endpoint, credentials); abq.err != nil {
+			return
+		}
+
+		abq.user = abiquo.Login()
+		resource := abq.user.Rel("enterprise").Walk()
+		abq.enterprise = resource.(*abiquo.Enterprise)
+	})
+
+	return &abq, abq.err
 }
 
 // Provider factory
