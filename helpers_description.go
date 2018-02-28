@@ -39,6 +39,13 @@ func (d *description) set(s func(interface{}) int, min int, kind schema.ValueTyp
 	return d.schema()
 }
 
+func (d *description) list(min int, elem interface{}) *schema.Schema {
+	d.Type = schema.TypeList
+	d.MinItems = min
+	d.Elem = elem
+	return d.schema()
+}
+
 func (d *description) Map(kind schema.ValueType) *schema.Schema {
 	d.Type = schema.TypeMap
 	d.Elem = &schema.Schema{

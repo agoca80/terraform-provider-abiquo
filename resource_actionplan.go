@@ -12,16 +12,18 @@ var actionPlanEntrySchema = map[string]*schema.Schema{
 	"type":          Required().String(),
 }
 
+var actionPlanSchema = map[string]*schema.Schema{
+	"virtualmachine": Required().Renew().Link(),
+	"name":           Required().String(),
+	"description":    Required().String(),
+	"triggers":       Optional().Links(),
+	"entries": Required().list(1, &schema.Resource{
+		Schema: actionPlanEntrySchema,
+	}),
+}
+
 var actionPlanResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"virtualmachine": Required().Renew().Link(),
-		"name":           Required().String(),
-		"description":    Required().String(),
-		"triggers":       Required().Links(),
-		"entries": required(&schema.Schema{Type: schema.TypeList, MinItems: 1, Elem: &schema.Resource{
-			Schema: actionPlanEntrySchema,
-		}}),
-	},
+	Schema: actionPlanSchema,
 	Delete: resourceDelete,
 	Exists: resourceExists("virtualmachineactionplan"),
 	Update: resourceUpdate(actionPlanNew, "virtualmachineactionplan"),
