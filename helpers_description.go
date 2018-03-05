@@ -98,7 +98,6 @@ func (d *description) Timestamp() *schema.Schema {
 
 func (d *description) Links() *schema.Schema {
 	d.Type = schema.TypeList
-	d.MinItems = 1
 	d.Elem = &schema.Schema{
 		Type:         schema.TypeString,
 		ValidateFunc: validateURL,

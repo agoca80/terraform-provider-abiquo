@@ -12,7 +12,9 @@ var vmSchema = map[string]*schema.Schema{
 	"cpu":                    Conflicts([]string{"hardwareprofile"}).Renew().Number(),
 	"ram":                    Conflicts([]string{"hardwareprofile"}).Renew().Number(),
 	"hardwareprofile":        Conflicts([]string{"cpu", "ram"}).Renew().Link(),
+	"backups":                Optional().Renew().Links(),
 	"bootstrap":              Optional().Renew().String(),
+	"deploy":                 Optional().Renew().Bool(),
 	"disks":                  Optional().Renew().Links(),
 	"fws":                    Optional().Renew().Links(),
 	"label":                  Optional().Renew().String(),
@@ -67,11 +69,11 @@ func vmReconfigure(vm *abiquo.VirtualMachine, d *resourceData) (err error) {
 		}
 	}
 
-	// BEGIN reconfigure
 	fwsList := d.slice("fws")
 	lbsList := d.slice("lbs")
 	ipsList := d.slice("ips")
 	hdsList := d.slice("disks")
+	bckList := d.slice("backups")
 	reconfigure := len(hdsList)+len(fwsList)+len(lbsList)+len(ipsList) > 0
 	if reconfigure {
 		// CONFIGURE disks
@@ -104,6 +106,15 @@ func vmReconfigure(vm *abiquo.VirtualMachine, d *resourceData) (err error) {
 			vm.Add(lbLink.SetRel("loadbalancer"))
 		}
 
+		// CONFIGURE backup policies
+		for _, bck := range bckList {
+			vm.Backups = append(vm.Backups, abiquo.BackupPolicy{
+				DTO: core.NewDTO(
+					core.NewLinkType(bck.(string), "backuppolicy").SetRel("policy"),
+				),
+			})
+		}
+
 		err = vm.Reconfigure()
 	}
 	return
@@ -115,10 +126,17 @@ func vmCreate(rd *schema.ResourceData, m interface{}) (err error) {
 	if err = core.Create(vmEndpoint(d), vm); err != nil {
 		return
 	}
+
+	if err = vmReconfigure(vm, d); err != nil {
+		vm.Delete()
+		return
+	}
+
 	d.SetId(vm.URL())
-	if err = vmReconfigure(vm, d); err == nil {
+	if d.bool("deploy") {
 		err = vm.Deploy()
 	}
+
 	return
 }
 

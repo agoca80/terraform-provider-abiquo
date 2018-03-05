@@ -3,6 +3,7 @@ graph.png
 .terraform
 terraform.tfstate
 terraform.tfstate.backup
+provider
 json
 log
 debug.log

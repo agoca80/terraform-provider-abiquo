@@ -27,7 +27,24 @@ var limitResource = &schema.Resource{
 		// Links
 		"location":   Required().Renew().Link(),
 		"enterprise": Required().Renew().Link(),
-		"hwprofiles": Optional().Links(),
+		"hwprofiles": &schema.Schema{
+			Elem: &schema.Schema{
+				Type:         schema.TypeString,
+				ValidateFunc: validateURL,
+			},
+			Optional: true,
+			Set:      schema.HashString,
+			Type:     schema.TypeSet,
+		},
+		"backups": &schema.Schema{
+			Elem: &schema.Schema{
+				Type:         schema.TypeString,
+				ValidateFunc: validateURL,
+			},
+			Optional: true,
+			Set:      schema.HashString,
+			Type:     schema.TypeSet,
+		},
 	},
 	Exists: resourceExists("limit"),
 	Read:   resourceRead(limitNew, limitRead, "limit"),
@@ -37,7 +54,7 @@ var limitResource = &schema.Resource{
 }
 
 func limitNew(d *resourceData) core.Resource {
-	return &abiquo.Limit{
+	limit := &abiquo.Limit{
 		// Soft limits
 		CPUSoft:  d.int("cpusoft"),
 		HDSoft:   d.int("hdsoft"),
@@ -59,6 +76,26 @@ func limitNew(d *resourceData) core.Resource {
 			d.link("location"),
 		),
 	}
+
+	// Backups
+	backups := d.set("backups")
+	if backups != nil && backups.Len() > 0 {
+		for _, entry := range backups.List() {
+			href := entry.(string)
+			limit.Add(core.NewLinkType(href, "backuppolicy").SetRel("backuppolicy"))
+		}
+	}
+
+	// HWprofiles
+	hwprofiles := d.set("hwprofiles")
+	if hwprofiles != nil && hwprofiles.Len() > 0 {
+		for _, entry := range d.set("hwprofiles").List() {
+			href := entry.(string)
+			limit.Add(core.NewLinkType(href, "hardwareprofile").SetRel("hardwareprofile"))
+		}
+	}
+
+	return limit
 }
 
 func limitEndpoint(d *resourceData) *core.Link {
@@ -67,6 +104,17 @@ func limitEndpoint(d *resourceData) *core.Link {
 
 func limitRead(d *resourceData, resource core.Resource) (err error) {
 	limit := resource.(*abiquo.Limit)
+
+	backups := mapHrefs(limit.Links.Filter(func(l *core.Link) bool {
+		return l.IsMedia("backuppolicy")
+	}))
+
+	hwprofiles := mapHrefs(limit.Links.Filter(func(l *core.Link) bool {
+		return l.IsMedia("hwprofile")
+	}))
+
+	d.Set("backups", backups)
+	d.Set("hwprofiles", hwprofiles)
 	// Soft limits
 	d.Set("cpusoft", limit.CPUSoft)
 	d.Set("hdsoft", limit.HDSoft)

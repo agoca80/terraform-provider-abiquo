@@ -20,6 +20,7 @@ data "abiquo_vapp" "vapp" {
 }
 
 resource "abiquo_vm" "vm" {
+	backups                = [ ]
 	cpu                    = 1
 	ram                    = 64
 	label                  = "testAccAbiquoVMBasic"

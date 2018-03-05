@@ -86,6 +86,7 @@ func Provider() *schema.Provider {
 		ResourcesMap: map[string]*schema.Resource{
 			"abiquo_alarm":       alarmResource,
 			"abiquo_alert":       alertResource,
+			"abiquo_backup":      backupResource,
 			"abiquo_computeload": computeLoadResource,
 			"abiquo_datacenter":  datacenterResource,
 			"abiquo_device":      deviceResource,
@@ -117,6 +118,7 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
+			"abiquo_backup":     backupDataSource,
 			"abiquo_datacenter": datacenterDataSource,
 			"abiquo_devicetype": deviceTypeDataSource,
 			"abiquo_dstier":     dstierDataSource,
