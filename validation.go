@@ -15,6 +15,15 @@ var (
 	validateController = validateString([]string{"IDE", "SCSI", "VIRTIO"})
 )
 
+func validatePort(d interface{}, key string) (strs []string, errs []error) {
+	port := d.(int)
+	if 0 < port && port < 65536 {
+		return
+	}
+	errs = append(errs, fmt.Errorf("%v is an invalid value for %v", port, key))
+	return
+}
+
 func validateString(values []string) schema.SchemaValidateFunc {
 	return func(d interface{}, key string) (strs []string, errs []error) {
 		for _, v := range values {

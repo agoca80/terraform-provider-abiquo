@@ -6,24 +6,66 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var fwRuleSchema = map[string]*schema.Schema{
-	"protocol": Required().ValidateString([]string{"ALL", "TCP", "UDP"}),
-	"fromport": Required().Number(),
-	"toport":   Required().Number(),
-	"targets":  optional(&schema.Schema{Type: schema.TypeList, MinItems: 1, Elem: fieldString()}),
-	"sources":  optional(&schema.Schema{Type: schema.TypeList, MinItems: 1, Elem: fieldString()}),
+var firewallSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"description": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"virtualdatacenter": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"rules": &schema.Schema{
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"protocol": &schema.Schema{
+					Required:     true,
+					Type:         schema.TypeString,
+					ValidateFunc: validateString([]string{"ALL", "TCP", "UDP"}),
+				},
+				"fromport": &schema.Schema{
+					Required:     true,
+					Type:         schema.TypeInt,
+					ValidateFunc: validatePort,
+				},
+				"toport": &schema.Schema{
+					Required:     true,
+					Type:         schema.TypeInt,
+					ValidateFunc: validatePort,
+				},
+				"targets": &schema.Schema{
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					MinItems: 1,
+					Optional: true,
+					Type:     schema.TypeList,
+				},
+				"sources": &schema.Schema{
+					Elem: &schema.Schema{
+						Type: schema.TypeString,
+					},
+					MinItems: 1,
+					Optional: true,
+					Type:     schema.TypeList,
+				},
+			},
+		},
+		MinItems: 1,
+		Required: true,
+		Type:     schema.TypeList,
+	},
 }
 
 var firewallResource = &schema.Resource{
 	// Importer: &schema.ResourceImporter{State: schema.ImportStatePassthrough},
-	Schema: map[string]*schema.Schema{
-		"name":              Required().String(),
-		"description":       Required().String(),
-		"virtualdatacenter": Required().Renew().Link(),
-		"rules": required(&schema.Schema{Type: schema.TypeList, MinItems: 1, Elem: &schema.Resource{
-			Schema: fwRuleSchema,
-		}}),
-	},
+	Schema: firewallSchema,
 	Delete: resourceDelete,
 	Exists: resourceExists("firewallpolicy"),
 	Update: fwUpdate,

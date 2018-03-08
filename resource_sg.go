@@ -10,26 +10,80 @@ import (
 
 var sgResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"name":     Required().String(),
-		"cooldown": Required().Number(),
-		"min":      Required().Number(),
-		"max":      Required().Number(),
-		"scale_out": required(&schema.Schema{Type: schema.TypeList, MinItems: 1, Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"starttime":         Optional().Timestamp(),
-				"stoptime":          Optional().Timestamp(),
-				"numberofinstances": Required().Number(),
+		"name": &schema.Schema{
+			Required: true,
+			Type:     schema.TypeString,
+		},
+		"cooldown": &schema.Schema{
+			Required: true,
+			Type:     schema.TypeInt,
+		},
+		"min": &schema.Schema{
+			Required: true,
+			Type:     schema.TypeInt,
+		},
+		"max": &schema.Schema{
+			Required: true,
+			Type:     schema.TypeInt,
+		},
+		"scale_out": &schema.Schema{
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"starttime": &schema.Schema{
+						Optional:     true,
+						Type:         schema.TypeInt,
+						ValidateFunc: validateTS,
+					},
+					"stoptime": &schema.Schema{
+						Optional:     true,
+						Type:         schema.TypeInt,
+						ValidateFunc: validateTS,
+					},
+					"numberofinstances": &schema.Schema{
+						Required: true,
+						Type:     schema.TypeInt,
+					},
+				},
 			},
-		}}),
-		"scale_in": required(&schema.Schema{Type: schema.TypeList, MinItems: 1, Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"starttime":         Optional().Timestamp(),
-				"stoptime":          Optional().Timestamp(),
-				"numberofinstances": Required().Number(),
+			MinItems: 1,
+			Required: true,
+			Type:     schema.TypeList,
+		},
+		"scale_in": &schema.Schema{
+			Elem: &schema.Resource{
+				Schema: map[string]*schema.Schema{
+					"starttime": &schema.Schema{
+						Optional:     true,
+						Type:         schema.TypeInt,
+						ValidateFunc: validateTS,
+					},
+					"stoptime": &schema.Schema{
+						Optional:     true,
+						Type:         schema.TypeInt,
+						ValidateFunc: validateTS,
+					},
+					"numberofinstances": &schema.Schema{
+						Required: true,
+						Type:     schema.TypeInt,
+					},
+				},
 			},
-		}}),
-		"virtualappliance":     Required().Renew().Link(),
-		"mastervirtualmachine": Required().Renew().Link(),
+			MinItems: 1,
+			Required: true,
+			Type:     schema.TypeList,
+		},
+		"virtualappliance": &schema.Schema{
+			ForceNew:     true,
+			Required:     true,
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		"mastervirtualmachine": &schema.Schema{
+			ForceNew:     true,
+			Required:     true,
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
 	},
 	Delete: sgDelete,
 	Update: resourceUpdate(sgNew, "scalinggroup"),

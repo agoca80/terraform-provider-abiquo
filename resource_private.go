@@ -6,18 +6,49 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var privateResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"address":           Required().Renew().String(),
-		"mask":              Required().Renew().Number(),
-		"name":              Required().String(),
-		"gateway":           Required().IP(),
-		"dns1":              Optional().IP(),
-		"dns2":              Optional().IP(),
-		"suffix":            Optional().String(),
-		"ips":               optional(fieldMap(fieldIP())),
-		"virtualdatacenter": Required().Link(),
+var privateSchema = map[string]*schema.Schema{
+	"address": &schema.Schema{
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeString,
 	},
+	"mask": &schema.Schema{
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"gateway": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateIP,
+	},
+	"dns1": &schema.Schema{
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateIP,
+	},
+	"dns2": &schema.Schema{
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateIP,
+	},
+	"suffix": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"virtualdatacenter": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var privateResource = &schema.Resource{
+	Schema: privateSchema,
 	Delete: resourceDelete,
 	Update: resourceUpdate(privateNew, "vlan"),
 	Create: resourceCreate(privateNew, nil, privateRead, privateEndpoint),

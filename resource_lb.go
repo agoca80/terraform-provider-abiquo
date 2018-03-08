@@ -7,29 +7,68 @@ import (
 )
 
 var algorithms = []string{"ROUND_ROBIN", "LEAST_CONNECTIONS", "SOURCE_IP"}
+var protocols = []string{"TCP", "HTTP", "HTTPS"}
+
+var lbSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"algorithm": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateString(algorithms),
+	},
+	"routingrules": &schema.Schema{
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"protocolin": &schema.Schema{
+					Required:     true,
+					Type:         schema.TypeString,
+					ValidateFunc: validateString(protocols),
+				},
+				"protocolout": &schema.Schema{
+					Required:     true,
+					Type:         schema.TypeString,
+					ValidateFunc: validateString(protocols),
+				},
+				"portout": &schema.Schema{
+					Required:     true,
+					Type:         schema.TypeInt,
+					ValidateFunc: validatePort,
+				},
+				"portin": &schema.Schema{
+					Required:     true,
+					Type:         schema.TypeInt,
+					ValidateFunc: validatePort,
+				},
+			},
+		},
+		MinItems: 1,
+		Required: true,
+		Type:     schema.TypeList,
+	},
+	"privatenetwork": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"virtualdatacenter": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
 
 var lbResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name":      Required().String(),
-		"algorithm": Required().ValidateString(algorithms),
-		"routingrules": required(&schema.Schema{Type: schema.TypeList, MinItems: 1, Elem: &schema.Resource{
-			Schema: lbRuleSchema,
-		}}),
-		"privatenetwork":    Required().Renew().Link(),
-		"virtualdatacenter": Required().Renew().Link(),
-	},
+	Schema: lbSchema,
 	Delete: resourceDelete,
 	Exists: resourceExists("loadbalancer"),
 	Create: resourceCreate(lbNew, nil, lbRead, lbEndpoint),
 	Update: resourceUpdate(lbNew, "loadbalancer"),
 	Read:   resourceRead(lbNew, lbRead, "loadbalancer"),
-}
-
-var lbRuleSchema = map[string]*schema.Schema{
-	"protocolin":  required(validate(fieldString(), validateString([]string{"TCP", "HTTP", "HTTPS"}))),
-	"protocolout": required(validate(fieldString(), validateString([]string{"TCP", "HTTP", "HTTPS"}))),
-	"portout":     Required().Number(),
-	"portin":      Required().Number(),
 }
 
 func lbAddresses(d *resourceData) abiquo.LoadBalancerAddresses {
