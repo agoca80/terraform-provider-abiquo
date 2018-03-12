@@ -6,26 +6,73 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var enterpriseResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": Required().String(),
-		// Soft limits
-		"cpusoft":  Optional().Number(),
-		"hdsoft":   Optional().Number(),
-		"ipsoft":   Optional().Number(),
-		"ramsoft":  Optional().Number(),
-		"reposoft": Optional().Number(),
-		"volsoft":  Optional().Number(),
-		"vlansoft": Optional().Number(),
-		// Hard limits
-		"cpuhard":  Optional().Number(),
-		"hdhard":   Optional().Number(),
-		"iphard":   Optional().Number(),
-		"ramhard":  Optional().Number(),
-		"repohard": Optional().Number(),
-		"vlanhard": Optional().Number(),
-		"volhard":  Optional().Number(),
+var enterpriseSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
+	// Soft limits
+	"cpusoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"hdsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"ipsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"ramsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"reposoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"volsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"vlansoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	// Hard limits
+	"cpuhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"hdhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"iphard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"ramhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"repohard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"vlanhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"volhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+}
+
+var enterpriseResource = &schema.Resource{
+	Schema: enterpriseSchema,
 	Delete: resourceDelete,
 	Read:   enterpriseRead,
 	Create: enterpriseCreate,
