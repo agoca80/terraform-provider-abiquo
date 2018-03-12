@@ -21,7 +21,7 @@ var userResource = &schema.Resource{
 	Importer: &schema.ResourceImporter{State: schema.ImportStatePassthrough},
 	Read:     resourceRead(userNew, userRead, "user"),
 	Create:   resourceCreate(userNew, nil, userRead, userEndpoint),
-	Update:   resourceUpdate(userNew, "user"),
+	Update:   resourceUpdate(userNew, nil, "user"),
 	Exists:   resourceExists("user"),
 	Delete:   resourceDelete,
 }

@@ -50,7 +50,7 @@ var privateSchema = map[string]*schema.Schema{
 var privateResource = &schema.Resource{
 	Schema: privateSchema,
 	Delete: resourceDelete,
-	Update: resourceUpdate(privateNew, "vlan"),
+	Update: resourceUpdate(privateNew, nil, "vlan"),
 	Create: resourceCreate(privateNew, nil, privateRead, privateEndpoint),
 	Read:   resourceRead(privateNew, privateRead, "vlan"),
 }

@@ -21,7 +21,7 @@ var scopeResource = &schema.Resource{
 	Read:     resourceRead(scopeNew, scopeRead, "scope"),
 	Create:   resourceCreate(scopeNew, nil, scopeRead, scopeEndpoint),
 	Exists:   resourceExists("scope"),
-	Update:   resourceUpdate(scopeNew, "scope"),
+	Update:   resourceUpdate(scopeNew, nil, "scope"),
 }
 
 func scopeNew(d *resourceData) core.Resource {

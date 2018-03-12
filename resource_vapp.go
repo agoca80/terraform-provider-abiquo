@@ -14,7 +14,7 @@ var vappResource = &schema.Resource{
 	Delete: resourceDelete,
 	Exists: resourceExists("virtualappliance"),
 	Create: resourceCreate(vappNew, nil, vappRead, vappEndpoint),
-	Update: resourceUpdate(vappNew, "virtualappliance"),
+	Update: resourceUpdate(vappNew, nil, "virtualappliance"),
 	Read:   resourceRead(vappNew, vappRead, "virtualappliance"),
 }
 

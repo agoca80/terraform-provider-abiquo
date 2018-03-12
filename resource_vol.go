@@ -18,7 +18,7 @@ var volResource = &schema.Resource{
 		"virtualdatacenter": Required().Link(),
 	},
 	Delete: resourceDelete,
-	Update: resourceUpdate(volNew, "volume"),
+	Update: resourceUpdate(volNew, nil, "volume"),
 	Create: resourceCreate(volNew, nil, volRead, volEndpoint),
 	Read:   resourceRead(volNew, volRead, "volume"),
 }

@@ -18,7 +18,7 @@ var storageLoadResource = &schema.Resource{
 	Delete: resourceDelete,
 	Exists: resourceExists("datastoreloadrule"),
 	Create: resourceCreate(storageLoadDTO, nil, storageLoadRead, storageLoadEndpoint),
-	Update: resourceUpdate(storageLoadDTO, "datastoreloadrule"),
+	Update: resourceUpdate(storageLoadDTO, nil, "datastoreloadrule"),
 	Read:   resourceRead(storageLoadDTO, storageLoadRead, "datastoreloadrule"),
 }
 

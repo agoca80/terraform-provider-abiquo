@@ -20,7 +20,7 @@ var rackResource = &schema.Resource{
 	Delete: resourceDelete,
 	Exists: resourceExists("rack"),
 	Create: resourceCreate(rackNew, nil, rackRead, rackEndpoint),
-	Update: resourceUpdate(rackNew, "rack"),
+	Update: resourceUpdate(rackNew, nil, "rack"),
 	Read:   resourceRead(rackNew, rackRead, "rack"),
 }
 

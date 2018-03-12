@@ -21,7 +21,7 @@ var alarmResource = &schema.Resource{
 	},
 	Delete: resourceDelete,
 	Exists: resourceExists("alarm"),
-	Update: resourceUpdate(alarmNew, "alarm"),
+	Update: resourceUpdate(alarmNew, nil, "alarm"),
 	Create: resourceCreate(alarmNew, nil, alarmRead, alarmEndpoint),
 	Read:   resourceRead(alarmNew, alarmRead, "alarm"),
 }

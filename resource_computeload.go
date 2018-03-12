@@ -20,7 +20,7 @@ var computeLoadResource = &schema.Resource{
 	Delete: resourceDelete,
 	Exists: resourceExists("machineloadrule"),
 	Create: resourceCreate(computeLoadDTO, nil, computeLoadRead, computeLoadEndpoint),
-	Update: resourceUpdate(computeLoadDTO, "machineloadrule"),
+	Update: resourceUpdate(computeLoadDTO, nil, "machineloadrule"),
 	Read:   resourceRead(computeLoadDTO, computeLoadRead, "machineloadrule"),
 }
 

@@ -20,7 +20,7 @@ var publicResource = &schema.Resource{
 		"datacenter":         Required().Renew().Link(),
 	},
 	Delete: resourceDelete,
-	Update: resourceUpdate(publicNew, "vlan"),
+	Update: resourceUpdate(publicNew, nil, "vlan"),
 	Create: resourceCreate(publicNew, nil, publicRead, publicEndpoint),
 	Read:   resourceRead(publicNew, publicRead, "vlan"),
 }

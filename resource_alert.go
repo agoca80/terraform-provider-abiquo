@@ -10,7 +10,7 @@ var alertResource = &schema.Resource{
 	Schema: alertSchema,
 	Delete: resourceDelete,
 	Exists: resourceExists("alert"),
-	Update: resourceUpdate(alertNew, "alert"),
+	Update: resourceUpdate(alertNew, nil, "alert"),
 	Create: resourceCreate(alertNew, nil, alertRead, alertEndpoint),
 	Read:   resourceRead(alertNew, alertRead, "alert"),
 }

@@ -62,7 +62,7 @@ var datacenterResource = &schema.Resource{
 	Delete: resourceDelete,
 	Exists: resourceExists("datacenter"),
 	Create: resourceCreate(datacenterNew, nil, datacenterRead, datacenterEndpoint),
-	Update: resourceUpdate(datacenterNew, "datacenter"),
+	Update: resourceUpdate(datacenterNew, nil, "datacenter"),
 	Read:   resourceRead(datacenterNew, datacenterRead, "datacenter"),
 }
 

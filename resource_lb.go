@@ -67,7 +67,7 @@ var lbResource = &schema.Resource{
 	Delete: resourceDelete,
 	Exists: resourceExists("loadbalancer"),
 	Create: resourceCreate(lbNew, nil, lbRead, lbEndpoint),
-	Update: resourceUpdate(lbNew, "loadbalancer"),
+	Update: resourceUpdate(lbNew, nil, "loadbalancer"),
 	Read:   resourceRead(lbNew, lbRead, "loadbalancer"),
 }
 

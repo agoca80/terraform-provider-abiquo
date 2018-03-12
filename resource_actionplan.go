@@ -26,7 +26,7 @@ var actionPlanResource = &schema.Resource{
 	Schema: actionPlanSchema,
 	Delete: resourceDelete,
 	Exists: resourceExists("virtualmachineactionplan"),
-	Update: resourceUpdate(actionPlanNew, "virtualmachineactionplan"),
+	Update: resourceUpdate(actionPlanNew, nil, "virtualmachineactionplan"),
 	Create: actionPlanCreate,
 	Read:   resourceRead(actionPlanNew, actionPlanRead, "virtualmachineactionplan"),
 }

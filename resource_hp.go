@@ -17,7 +17,7 @@ var hpResource = &schema.Resource{
 	Delete: resourceDelete,
 	Exists: resourceExists("hardwareprofile"),
 	Create: resourceCreate(hpNew, nil, hpRead, hpEndpoint),
-	Update: resourceUpdate(hpNew, "hardwareprofile"),
+	Update: resourceUpdate(hpNew, nil, "hardwareprofile"),
 	Read:   resourceRead(hpNew, hpRead, "hardwareprofile"),
 }
 

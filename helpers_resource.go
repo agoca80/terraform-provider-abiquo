@@ -10,6 +10,7 @@ import (
 type (
 	factory  func(*resourceData) core.Resource
 	endpoint func(*resourceData) *core.Link
+	update   func(*resourceData, core.Resource) error
 	create   func(*resourceData, core.Resource) error
 	read     func(*resourceData, core.Resource) error
 )
@@ -49,11 +50,16 @@ func resourceCreate(factory factory, create create, read read, endpoint endpoint
 	}
 }
 
-func resourceUpdate(factory factory, media string) schema.UpdateFunc {
+func resourceUpdate(factory factory, update update, media string) schema.UpdateFunc {
 	return func(rd *schema.ResourceData, m interface{}) (err error) {
 		d := newResourceData(rd, media)
 		resource := factory(d)
-		return core.Update(d, resource)
+
+		if err = core.Update(d, resource); err == nil && update != nil {
+			err = update(d, resource)
+		}
+
+		return
 	}
 }
 

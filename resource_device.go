@@ -22,7 +22,7 @@ var deviceResource = &schema.Resource{
 	Delete: resourceDelete,
 	Exists: resourceExists("device"),
 	Create: resourceCreate(deviceDTO, nil, deviceRead, deviceEndpoint),
-	Update: resourceUpdate(deviceDTO, "device"),
+	Update: resourceUpdate(deviceDTO, nil, "device"),
 	Read:   resourceRead(deviceDTO, deviceRead, "device"),
 }
 

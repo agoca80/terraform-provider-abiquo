@@ -69,7 +69,7 @@ var backupSchema = map[string]*schema.Schema{
 var backupResource = &schema.Resource{
 	Schema: backupSchema,
 	Read:   resourceRead(backupDTO, backupRead, "backuppolicy"),
-	Update: resourceUpdate(backupDTO, "backuppolicy"),
+	Update: resourceUpdate(backupDTO, nil, "backuppolicy"),
 	Exists: resourceExists("backuppolicy"),
 	Delete: resourceDelete,
 	Create: resourceCreate(backupDTO, nil, backupRead, backupEndpoint),

@@ -33,7 +33,7 @@ var vdcResource = &schema.Resource{
 	Delete: resourceDelete,
 	Create: resourceCreate(vdcNew, nil, vdcRead, vdcEndpoint),
 	Exists: resourceExists("virtualdatacenter"),
-	Update: resourceUpdate(vdcNew, "virtualdatacenter"),
+	Update: resourceUpdate(vdcNew, nil, "virtualdatacenter"),
 	Read:   resourceRead(vdcNew, vdcRead, "virtualdatacenter"),
 }
 
