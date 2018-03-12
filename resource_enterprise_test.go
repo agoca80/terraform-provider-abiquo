@@ -10,9 +10,13 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-var testAccAbiquoEnterpriseBasic = `
+var testAccEnterpriseBasic = `
 resource "abiquo_enterprise" "enterprise" {
-    name = "terraform acceptance test"
+    name       = "testAccEnterpriseBasic"
+		properties = {
+			"property0" = "value0"
+			"property1" = "value1"
+		}
 }
 `
 
@@ -23,7 +27,7 @@ func TestAccEnterprise_update(t *testing.T) {
 		CheckDestroy: testCheckEnterpriseDestroy,
 		Steps: []resource.TestStep{
 			resource.TestStep{
-				Config: testAccAbiquoEnterpriseBasic,
+				Config: testAccEnterpriseBasic,
 				Check: resource.ComposeTestCheckFunc(
 					testCheckEnterpriseExists("abiquo_enterprise.enterprise"),
 				),
@@ -41,7 +45,7 @@ func testCheckEnterpriseDestroy(s *terraform.State) error {
 		href := rs.Primary.Attributes["id"]
 		endpoint := core.NewLinkType(href, "enterprise")
 		if err := core.Read(endpoint, enterprise); err == nil {
-			return fmt.Errorf("enterprise still exists: %q", enterprise.Name)
+			return fmt.Errorf("enterprise %q still exists", enterprise.Name)
 		}
 	}
 	return nil
@@ -51,7 +55,7 @@ func testCheckEnterpriseExists(name string) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		rs, ok := s.RootModule().Resources[name]
 		if !ok {
-			return fmt.Errorf("enterprise not found: %q", name)
+			return fmt.Errorf("enterprise %q not found", name)
 		}
 
 		href := rs.Primary.Attributes["id"]

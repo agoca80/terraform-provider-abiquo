@@ -1,5 +1,10 @@
 resource "abiquo_enterprise" "example" {
-  name = "terraform example"
+  name       = "terraform example"
+  properties = {
+    "property0" = "value0"
+    "property1" = "value1"
+  }
+
   cpusoft  = 256   , cpuhard  = 512
   ramsoft  = 20480 , ramhard  = 40960
   vlansoft = 128   , vlanhard = 256
