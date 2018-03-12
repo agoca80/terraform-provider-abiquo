@@ -11,20 +11,28 @@ import (
 )
 
 var testAccAbiquoVMBasic = `
-data "abiquo_vdc"      "vdc"      { name = "tests" }
-data "abiquo_template" "template" { name = "tests" }
+data "abiquo_enterprise" "enterprise" { name = "Abiquo" }
+data "abiquo_location"   "location"   { name = "datacenter 1" }
+data "abiquo_template"   "template"   { name = "tests" }
 
-data "abiquo_vapp" "vapp" {
-	virtualdatacenter = "${data.abiquo_vdc.vdc.id}"
-	name              = "tests"
+resource "abiquo_vdc" "vdc" {
+	enterprise = "${data.abiquo_enterprise.enterprise.id}"
+	location   = "${data.abiquo_location.location.id}"
+	name       = "testAccVMBasic"
+	type       = "VMX_04"
+}
+
+resource "abiquo_vapp" "vapp" {
+	virtualdatacenter = "${abiquo_vdc.vdc.id}"
+	name              = "testAccVMBasic"
 }
 
 resource "abiquo_vm" "vm" {
 	backups                = [ ]
 	cpu                    = 1
 	ram                    = 64
-	label                  = "testAccAbiquoVMBasic"
-	virtualappliance       = "${data.abiquo_vapp.vapp.id}"
+	label                  = "testAccVMBasic"
+	virtualappliance       = "${abiquo_vapp.vapp.id}"
 	virtualmachinetemplate = "${data.abiquo_template.template.id}"
 }
 `
