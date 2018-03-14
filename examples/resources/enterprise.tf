@@ -10,6 +10,15 @@ resource "abiquo_enterprise" "example" {
   vlansoft = 128   , vlanhard = 256
 }
 
+resource "abiquo_dstier" "dstier" {
+  count = 2
+  datacenter  = "${data.abiquo_datacenter.datacenter.id}"
+  description = "required"
+  enabled     = true
+  name        = "datastoretier ${count.index}"
+  policy      = "PERFORMANCE"
+}
+
 # PENDING: This resource should be inside the enterprise resource
 resource "abiquo_limit" "example" {
   enterprise = "${abiquo_enterprise.example.id}"
@@ -19,8 +28,14 @@ resource "abiquo_limit" "example" {
   ramsoft  = 20000 , ramhard  = 40000
   vlansoft = 120   , vlanhard = 250
   
-  # PENDING: A set of available hwprofiles
-  # hwprofiles = [ ]
+  hwprofiles = [ ]
+  
+  backups    = [ ]
+  
+  dstiers    = [ 
+    "${abiquo_dstier.dstier.0.id}",
+    "${abiquo_dstier.dstier.1.id}"
+  ]
 }
 
 resource "abiquo_role" "example" {
