@@ -10,8 +10,15 @@ import (
 )
 
 var dstierDataSchema = map[string]*schema.Schema{
-	"name":       Required().String(),
-	"datacenter": Required().ValidateURL(),
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"datacenter": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 }
 
 var dstierDataSource = &schema.Resource{

@@ -9,13 +9,36 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var scopeResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name":        Required().String(),
-		"parent":      Optional().Link(),
-		"datacenters": Optional().Links(),
-		"enterprises": Optional().Links(),
+var scopeSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
+	"parent": &schema.Schema{
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"datacenters": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		Optional: true,
+		Type:     schema.TypeList,
+	},
+	"enterprises": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		Optional: true,
+		Type:     schema.TypeList,
+	},
+}
+
+var scopeResource = &schema.Resource{
+	Schema:   scopeSchema,
 	Importer: &schema.ResourceImporter{State: schema.ImportStatePassthrough},
 	Delete:   resourceDelete,
 	Read:     resourceRead(scopeNew, scopeRead, "scope"),

@@ -11,11 +11,16 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var vdcDataSource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": Required().String(),
+var vdcDataSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
-	Read: dataVDCRead,
+}
+
+var vdcDataSource = &schema.Resource{
+	Schema: vdcDataSchema,
+	Read:   dataVDCRead,
 }
 
 func dataVDCRead(d *schema.ResourceData, meta interface{}) (err error) {

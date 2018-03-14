@@ -9,11 +9,16 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var templateDataSource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": Required().String(),
+var templateDataSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
-	Read: templateRead,
+}
+
+var templateDataSource = &schema.Resource{
+	Schema: templateDataSchema,
+	Read:   templateRead,
 }
 
 func templateRead(d *schema.ResourceData, meta interface{}) (err error) {

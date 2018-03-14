@@ -6,17 +6,48 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var volResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"size":              Required().Number(),
-		"name":              Required().String(),
-		"bootable":          Optional().Bool(),
-		"description":       Optional().String(),
-		"ctrl":              Optional().String(),
-		"type":              Required().ValidateString([]string{"IDE", "SCSI", "VIRTIO"}),
-		"tier":              Required().Link(),
-		"virtualdatacenter": Required().Link(),
+var volumeSchema = map[string]*schema.Schema{
+	"size": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
 	},
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"bootable": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeBool,
+	},
+	"description": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"ctrl": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"type": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateString([]string{"IDE", "SCSI", "VIRTIO"}),
+	},
+	"tier": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"virtualdatacenter": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var volResource = &schema.Resource{
+	Schema: volumeSchema,
 	Delete: resourceDelete,
 	Update: resourceUpdate(volNew, nil, "volume"),
 	Create: resourceCreate(volNew, nil, volRead, volEndpoint),

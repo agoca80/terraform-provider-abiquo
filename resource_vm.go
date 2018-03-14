@@ -9,22 +9,115 @@ import (
 )
 
 var vmSchema = map[string]*schema.Schema{
-	"cpu":                    Conflicts([]string{"hardwareprofile"}).Renew().Number(),
-	"ram":                    Conflicts([]string{"hardwareprofile"}).Renew().Number(),
-	"hardwareprofile":        Conflicts([]string{"cpu", "ram"}).Renew().Link(),
-	"backups":                Optional().Renew().Links(),
-	"bootstrap":              Optional().Renew().String(),
-	"deploy":                 Optional().Renew().Bool(),
-	"disks":                  Optional().Renew().Links(),
-	"fws":                    Optional().Renew().Links(),
-	"label":                  Optional().Renew().String(),
-	"lbs":                    Optional().Renew().Links(),
-	"monitored":              Optional().Renew().Bool(),
-	"ips":                    Optional().Renew().Links(),
-	"name":                   Computed().Renew().String(),
-	"variables":              Optional().Renew().Map(schema.TypeString),
-	"virtualappliance":       Required().Renew().Link(),
-	"virtualmachinetemplate": Required().Renew().Link(),
+	"cpu": &schema.Schema{
+		ConflictsWith: []string{"hardwareprofile"},
+		ForceNew:      true,
+		Optional:      true,
+		Type:          schema.TypeInt,
+	},
+	"backups": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		ForceNew: true,
+		Optional: true,
+		Type:     schema.TypeList,
+	},
+	"bootstrap": &schema.Schema{
+		ForceNew: true,
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"deploy": &schema.Schema{
+		ForceNew: true,
+		Optional: true,
+		Type:     schema.TypeBool,
+	},
+	"disks": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		ForceNew: true,
+		Optional: true,
+		Type:     schema.TypeList,
+	},
+	"fws": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		ForceNew: true,
+		Optional: true,
+		Type:     schema.TypeList,
+	},
+	"hardwareprofile": &schema.Schema{
+		ConflictsWith: []string{"cpu", "ram"},
+		ForceNew:      true,
+		Optional:      true,
+		Type:          schema.TypeString,
+		ValidateFunc:  validateURL,
+	},
+	"label": &schema.Schema{
+		ForceNew: true,
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"lbs": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		ForceNew: true,
+		Optional: true,
+		Type:     schema.TypeList,
+	},
+	"monitored": &schema.Schema{
+		ForceNew: true,
+		Optional: true,
+		Type:     schema.TypeBool,
+	},
+	"ips": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		ForceNew: true,
+		Optional: true,
+		Type:     schema.TypeList,
+	},
+	"name": &schema.Schema{
+		Computed: true,
+		ForceNew: true,
+		Type:     schema.TypeString,
+	},
+	"ram": &schema.Schema{
+		ConflictsWith: []string{"hardwareprofile"},
+		ForceNew:      true,
+		Optional:      true,
+		Type:          schema.TypeInt,
+	},
+	"variables": &schema.Schema{
+		Elem: &schema.Schema{
+			Type: schema.TypeString,
+		},
+		ForceNew: true,
+		Optional: true,
+		Type:     schema.TypeMap,
+	},
+	"virtualappliance": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"virtualmachinetemplate": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 }
 
 var vmResource = &schema.Resource{

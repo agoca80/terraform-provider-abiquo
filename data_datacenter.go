@@ -13,11 +13,16 @@ var datacenters = struct {
 	datacenter map[string]*abiquo.Datacenter
 }{}
 
-var datacenterDataSource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": Required().String(),
+var datacenterDataSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
-	Read: datacenterDataRead,
+}
+
+var datacenterDataSource = &schema.Resource{
+	Schema: datacenterDataSchema,
+	Read:   datacenterDataRead,
 }
 
 func datacenterDataRead(d *schema.ResourceData, meta interface{}) (err error) {

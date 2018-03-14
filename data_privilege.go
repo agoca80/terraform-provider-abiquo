@@ -13,11 +13,16 @@ var privileges = struct {
 	privilege map[string]*abiquo.Privilege
 }{}
 
-var privilegeDataSource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": Required().String(),
+var privilegeDataSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
-	Read: privilegeRead,
+}
+
+var privilegeDataSource = &schema.Resource{
+	Schema: privilegeDataSchema,
+	Read:   privilegeRead,
 }
 
 func privilegeRead(d *schema.ResourceData, meta interface{}) (err error) {

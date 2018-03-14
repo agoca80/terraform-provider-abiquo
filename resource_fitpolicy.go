@@ -7,8 +7,18 @@ import (
 )
 
 var fitPolicySchema = map[string]*schema.Schema{
-	"policy": Required().Renew().ValidateString([]string{"PROGRESSIVE", "PERFORMANCE"}),
-	"target": Required().Renew().Link(),
+	"policy": &schema.Schema{
+		Required:     true,
+		ForceNew:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateString([]string{"PROGRESSIVE", "PERFORMANCE"}),
+	},
+	"target": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 }
 
 var fitPolicyResource = &schema.Resource{

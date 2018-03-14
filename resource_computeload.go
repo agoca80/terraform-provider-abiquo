@@ -9,10 +9,23 @@ import (
 )
 
 var computeLoadSchema = map[string]*schema.Schema{
-	"aggregated": Optional().Bool(),
-	"cpuload":    Required().Number(),
-	"ramload":    Required().Number(),
-	"target":     Optional().Link(),
+	"aggregated": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeBool,
+	},
+	"cpuload": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"ramload": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"target": &schema.Schema{
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 }
 
 var computeLoadResource = &schema.Resource{

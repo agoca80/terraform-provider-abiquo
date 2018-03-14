@@ -10,7 +10,10 @@ import (
 )
 
 var deviceTypeDataSchema = map[string]*schema.Schema{
-	"name": Required().String(),
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
 }
 
 var deviceTypeDataSource = &schema.Resource{

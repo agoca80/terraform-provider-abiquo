@@ -6,14 +6,33 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var hpResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"active":     Required().Bool(),
-		"name":       Required().String(),
-		"cpu":        Required().Number(),
-		"ram":        Required().Number(),
-		"datacenter": Required().Renew().Link(),
+var hpSchema = map[string]*schema.Schema{
+	"active": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeBool,
 	},
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"cpu": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"ram": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"datacenter": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var hpResource = &schema.Resource{
+	Schema: hpSchema,
 	Delete: resourceDelete,
 	Exists: resourceExists("hardwareprofile"),
 	Create: resourceCreate(hpNew, nil, hpRead, hpEndpoint),

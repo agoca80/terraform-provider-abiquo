@@ -11,14 +11,39 @@ import (
 
 var machineDataSchema = map[string]*schema.Schema{
 	// Discover parameters
-	"hypervisor":  Required().String(),
-	"datacenter":  Required().ValidateURL(),
-	"ip":          Required().String(),
-	"port":        Optional().String(),
-	"managerip":   Optional().String(),
-	"manageruser": Optional().String(),
-	"managerpass": Optional().String(),
-	"definition":  Computed().String(),
+	"hypervisor": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"datacenter": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"ip": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"port": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"managerip": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"manageruser": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"managerpass": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"definition": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
 }
 
 var machineDataSource = &schema.Resource{

@@ -8,17 +8,46 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var alarmResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"target":      Required().Renew().Link(),
-		"formula":     Required().String(),
-		"name":        Required().String(),
-		"metric":      Required().Renew().String(),
-		"evaluations": Required().Number(),
-		"period":      Required().Number(),
-		"statistic":   Required().String(),
-		"threshold":   Required().Number(),
+var alarmSchema = map[string]*schema.Schema{
+	"target": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
 	},
+	"formula": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"metric": &schema.Schema{
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"evaluations": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"period": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"statistic": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"threshold": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+}
+
+var alarmResource = &schema.Resource{
+	Schema: alarmSchema,
 	Delete: resourceDelete,
 	Exists: resourceExists("alarm"),
 	Update: resourceUpdate(alarmNew, nil, "alarm"),

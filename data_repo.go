@@ -8,11 +8,17 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var repoDataSource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"datacenter": Required().Link(),
+var repoDataSchema = map[string]*schema.Schema{
+	"datacenter": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
 	},
-	Read: dataRepoRead,
+}
+
+var repoDataSource = &schema.Resource{
+	Schema: repoDataSchema,
+	Read:   dataRepoRead,
 }
 
 func dataRepoRead(d *schema.ResourceData, p interface{}) (err error) {

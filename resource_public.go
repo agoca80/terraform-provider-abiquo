@@ -6,19 +6,61 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var publicResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"address":            Required().Renew().String(),
-		"tag":                Required().Renew().Number(),
-		"mask":               Required().Renew().Number(),
-		"name":               Required().String(),
-		"gateway":            Required().IP(),
-		"dns1":               Optional().IP(),
-		"dns2":               Optional().IP(),
-		"suffix":             Optional().String(),
-		"networkservicetype": Required().Renew().Link(),
-		"datacenter":         Required().Renew().Link(),
+var publicSchema = map[string]*schema.Schema{
+	"address": &schema.Schema{
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeString,
 	},
+	"tag": &schema.Schema{
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"mask": &schema.Schema{
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"gateway": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateIP,
+	},
+	"dns1": &schema.Schema{
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateIP,
+	},
+	"dns2": &schema.Schema{
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateIP,
+	},
+	"suffix": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"networkservicetype": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"datacenter": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var publicResource = &schema.Resource{
+	Schema: publicSchema,
 	Delete: resourceDelete,
 	Update: resourceUpdate(publicNew, nil, "vlan"),
 	Create: resourceCreate(publicNew, nil, publicRead, publicEndpoint),

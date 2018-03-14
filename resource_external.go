@@ -6,20 +6,67 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var externalResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"address":            Required().Renew().String(),
-		"tag":                Required().Renew().Number(),
-		"mask":               Required().Renew().Number(),
-		"name":               Required().String(),
-		"gateway":            Required().IP(),
-		"dns1":               Optional().IP(),
-		"dns2":               Optional().IP(),
-		"suffix":             Optional().String(),
-		"enterprise":         Required().Renew().Link(),
-		"networkservicetype": Required().Renew().Link(),
-		"datacenter":         Required().Renew().Link(),
+var externalSchema = map[string]*schema.Schema{
+	"address": &schema.Schema{
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeString,
 	},
+	"tag": &schema.Schema{
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"mask": &schema.Schema{
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"gateway": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateIP,
+	},
+	"dns1": &schema.Schema{
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateIP,
+	},
+	"dns2": &schema.Schema{
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateIP,
+	},
+	"suffix": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"enterprise": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"networkservicetype": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"datacenter": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var externalResource = &schema.Resource{
+	Schema: externalSchema,
 	Delete: resourceDelete,
 	Exists: resourceExists("vlan"),
 	Update: resourceUpdate(externalNew, nil, "vlan"),

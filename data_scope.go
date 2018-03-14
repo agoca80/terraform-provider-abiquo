@@ -8,11 +8,16 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var scopeDataSource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": Required().String(),
+var scopeDataSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
-	Read: scopeDataRead,
+}
+
+var scopeDataSource = &schema.Resource{
+	Schema: scopeDataSchema,
+	Read:   scopeDataRead,
 }
 
 func scopeDataRead(d *schema.ResourceData, meta interface{}) (err error) {

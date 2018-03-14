@@ -8,11 +8,17 @@ import (
 )
 
 type (
-	factory  func(*resourceData) core.Resource
-	endpoint func(*resourceData) *core.Link
-	update   func(*resourceData, core.Resource) error
-	create   func(*resourceData, core.Resource) error
-	read     func(*resourceData, core.Resource) error
+	factory        func(*resourceData) core.Resource
+	endpoint       func(*resourceData) *core.Link
+	resourceMethod func(*resourceData, core.Resource) error
+
+	resourceDescription struct {
+		media   string
+		factory factory
+		update  resourceMethod
+		create  resourceMethod
+		read    resourceMethod
+	}
 )
 
 func resourceDelete(d *schema.ResourceData, m interface{}) (err error) {
@@ -25,7 +31,7 @@ func resourceExists(media string) schema.ExistsFunc {
 	}
 }
 
-func resourceCreate(factory factory, create create, read read, endpoint endpoint) schema.CreateFunc {
+func resourceCreate(factory factory, create resourceMethod, read resourceMethod, endpoint endpoint) schema.CreateFunc {
 	return func(rd *schema.ResourceData, m interface{}) (err error) {
 		d := newResourceData(rd, "")
 
@@ -50,7 +56,7 @@ func resourceCreate(factory factory, create create, read read, endpoint endpoint
 	}
 }
 
-func resourceUpdate(factory factory, update update, media string) schema.UpdateFunc {
+func resourceUpdate(factory factory, update resourceMethod, media string) schema.UpdateFunc {
 	return func(rd *schema.ResourceData, m interface{}) (err error) {
 		d := newResourceData(rd, media)
 		resource := factory(d)
@@ -63,7 +69,7 @@ func resourceUpdate(factory factory, update update, media string) schema.UpdateF
 	}
 }
 
-func resourceRead(factory factory, read read, media string) schema.ReadFunc {
+func resourceRead(factory factory, read resourceMethod, media string) schema.ReadFunc {
 	return func(rd *schema.ResourceData, m interface{}) (err error) {
 		d := newResourceData(rd, media)
 		resource := factory(d)

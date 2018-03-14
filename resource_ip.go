@@ -8,12 +8,29 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var ipResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"ip":      Required().Renew().IP(),
-		"type":    Required().Renew().ValidateString([]string{"privateip", "externalip", "publicip"}),
-		"network": Required().Renew().Link(),
+var ipSchema = map[string]*schema.Schema{
+	"ip": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateIP,
 	},
+	"type": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateString([]string{"privateip", "externalip", "publicip"}),
+	},
+	"network": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var ipResource = &schema.Resource{
+	Schema: ipSchema,
 	Delete: resourceDelete,
 	Exists: ipExists,
 	Create: ipCreate,

@@ -6,30 +6,92 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var vdcResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": Required().String(),
-		"type": Required().Renew().String(),
-		// Soft limits
-		"cpusoft":     Optional().Number(),
-		"disksoft":    Optional().Number(),
-		"publicsoft":  Optional().Number(),
-		"ramsoft":     Optional().Number(),
-		"storagesoft": Optional().Number(),
-		"volsoft":     Optional().Number(),
-		"vlansoft":    Optional().Number(),
-		// Hard limits
-		"cpuhard":     Optional().Number(),
-		"diskhard":    Optional().Number(),
-		"publichard":  Optional().Number(),
-		"ramhard":     Optional().Number(),
-		"storagehard": Optional().Number(),
-		"vlanhard":    Optional().Number(),
-		"volhard":     Optional().Number(),
-		// Links
-		"enterprise": Required().Renew().Link(),
-		"location":   Required().Renew().Link(),
+var vdcSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
+	"type": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateString([]string{"VMX_04", "KVM"}),
+	},
+	// Soft limits
+	"cpusoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"disksoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"publicsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"ramsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"storagesoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"volsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"vlansoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	// Hard limits
+	"cpuhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"diskhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"publichard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"ramhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"storagehard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"vlanhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"volhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	// Links
+	"enterprise": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"location": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var vdcResource = &schema.Resource{
+	Schema: vdcSchema,
 	Delete: resourceDelete,
 	Create: resourceCreate(vdcNew, nil, vdcRead, vdcEndpoint),
 	Exists: resourceExists("virtualdatacenter"),

@@ -9,8 +9,16 @@ import (
 )
 
 var storageLoadSchema = map[string]*schema.Schema{
-	"load":   Required().Number(),
-	"target": Required().Renew().Link(),
+	"load": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"target": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 }
 
 var storageLoadResource = &schema.Resource{

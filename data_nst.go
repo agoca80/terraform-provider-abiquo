@@ -10,8 +10,15 @@ import (
 )
 
 var nstDataSchema = map[string]*schema.Schema{
-	"name":       Required().String(),
-	"datacenter": Required().ValidateURL(),
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"datacenter": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 }
 
 var nstDataSource = &schema.Resource{

@@ -10,7 +10,10 @@ import (
 )
 
 var machineSchema = map[string]*schema.Schema{
-	"definition": Required().String(),
+	"definition": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
 	"datastores": &schema.Schema{
 		Elem:     &schema.Schema{Type: schema.TypeString},
 		Required: true,
@@ -21,10 +24,24 @@ var machineSchema = map[string]*schema.Schema{
 		Required: true,
 		Type:     schema.TypeMap,
 	},
-	"managerip":   Optional().String(),
-	"manageruser": Optional().String(),
-	"managerpass": Optional().String(),
-	"rack":        Required().ValidateURL(),
+	"managerip": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"manageruser": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"managerpass": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"rack": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 }
 
 var machineResource = &schema.Resource{

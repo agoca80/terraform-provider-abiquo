@@ -6,26 +6,28 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var licenseResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"code": &schema.Schema{
-			Required: true,
-			ForceNew: true,
-			Type:     schema.TypeString,
-		},
-		"expiration": &schema.Schema{
-			Computed: true,
-			Type:     schema.TypeString,
-		},
-		"numcores": &schema.Schema{
-			Computed: true,
-			Type:     schema.TypeInt,
-		},
-		"sgenabled": &schema.Schema{
-			Computed: true,
-			Type:     schema.TypeBool,
-		},
+var licenseSchema = map[string]*schema.Schema{
+	"code": &schema.Schema{
+		Required: true,
+		ForceNew: true,
+		Type:     schema.TypeString,
 	},
+	"expiration": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
+	"numcores": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeInt,
+	},
+	"sgenabled": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeBool,
+	},
+}
+
+var licenseResource = &schema.Resource{
+	Schema: licenseSchema,
 	Delete: resourceDelete,
 	Exists: resourceExists("license"),
 	Create: resourceCreate(licenseNew, nil, licenseRead, licenseEndpoint),

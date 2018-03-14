@@ -8,83 +8,85 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var sgResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": &schema.Schema{
-			Required: true,
-			Type:     schema.TypeString,
-		},
-		"cooldown": &schema.Schema{
-			Required: true,
-			Type:     schema.TypeInt,
-		},
-		"min": &schema.Schema{
-			Required: true,
-			Type:     schema.TypeInt,
-		},
-		"max": &schema.Schema{
-			Required: true,
-			Type:     schema.TypeInt,
-		},
-		"scale_out": &schema.Schema{
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"starttime": &schema.Schema{
-						Optional:     true,
-						Type:         schema.TypeInt,
-						ValidateFunc: validateTS,
-					},
-					"stoptime": &schema.Schema{
-						Optional:     true,
-						Type:         schema.TypeInt,
-						ValidateFunc: validateTS,
-					},
-					"numberofinstances": &schema.Schema{
-						Required: true,
-						Type:     schema.TypeInt,
-					},
-				},
-			},
-			MinItems: 1,
-			Required: true,
-			Type:     schema.TypeList,
-		},
-		"scale_in": &schema.Schema{
-			Elem: &schema.Resource{
-				Schema: map[string]*schema.Schema{
-					"starttime": &schema.Schema{
-						Optional:     true,
-						Type:         schema.TypeInt,
-						ValidateFunc: validateTS,
-					},
-					"stoptime": &schema.Schema{
-						Optional:     true,
-						Type:         schema.TypeInt,
-						ValidateFunc: validateTS,
-					},
-					"numberofinstances": &schema.Schema{
-						Required: true,
-						Type:     schema.TypeInt,
-					},
-				},
-			},
-			MinItems: 1,
-			Required: true,
-			Type:     schema.TypeList,
-		},
-		"virtualappliance": &schema.Schema{
-			ForceNew:     true,
-			Required:     true,
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		"mastervirtualmachine": &schema.Schema{
-			ForceNew:     true,
-			Required:     true,
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
+var sgSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
+	"cooldown": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"min": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"max": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"scale_out": &schema.Schema{
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"starttime": &schema.Schema{
+					Optional:     true,
+					Type:         schema.TypeInt,
+					ValidateFunc: validateTS,
+				},
+				"stoptime": &schema.Schema{
+					Optional:     true,
+					Type:         schema.TypeInt,
+					ValidateFunc: validateTS,
+				},
+				"numberofinstances": &schema.Schema{
+					Required: true,
+					Type:     schema.TypeInt,
+				},
+			},
+		},
+		MinItems: 1,
+		Required: true,
+		Type:     schema.TypeList,
+	},
+	"scale_in": &schema.Schema{
+		Elem: &schema.Resource{
+			Schema: map[string]*schema.Schema{
+				"starttime": &schema.Schema{
+					Optional:     true,
+					Type:         schema.TypeInt,
+					ValidateFunc: validateTS,
+				},
+				"stoptime": &schema.Schema{
+					Optional:     true,
+					Type:         schema.TypeInt,
+					ValidateFunc: validateTS,
+				},
+				"numberofinstances": &schema.Schema{
+					Required: true,
+					Type:     schema.TypeInt,
+				},
+			},
+		},
+		MinItems: 1,
+		Required: true,
+		Type:     schema.TypeList,
+	},
+	"virtualappliance": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"mastervirtualmachine": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var sgResource = &schema.Resource{
+	Schema: sgSchema,
 	Delete: sgDelete,
 	Update: resourceUpdate(sgNew, nil, "scalinggroup"),
 	Create: resourceCreate(sgNew, nil, sgRead, sgEndpoint),

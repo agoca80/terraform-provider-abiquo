@@ -7,12 +7,31 @@ import (
 )
 
 var rackSchema = map[string]*schema.Schema{
-	"name":        Required().String(),
-	"number":      Computed().Number(), // ABICLOUDPREMIUM-10197
-	"description": Optional().String(),
-	"vlanmax":     Optional().Number(),
-	"vlanmin":     Optional().Number(),
-	"datacenter":  Required().Link(),
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"number": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeInt,
+	}, // ABICLOUDPREMIUM-10197
+	"description": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"vlanmax": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"vlanmin": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"datacenter": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 }
 
 var rackResource = &schema.Resource{

@@ -16,10 +16,29 @@ var alertResource = &schema.Resource{
 }
 
 var alertSchema = map[string]*schema.Schema{
-	"virtualappliance": Required().Renew().Link(),
-	"name":             Required().String(),
-	"description":      Required().String(),
-	"alarms":           Required().Links(),
+	"virtualappliance": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"description": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"alarms": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		MinItems: 1,
+		Required: true,
+		Type:     schema.TypeList,
+	},
 }
 
 func alertNew(d *resourceData) core.Resource {

@@ -8,11 +8,16 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var enterpriseDataSource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": Required().String(),
+var enterpriseDataSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
-	Read: enterpriseDataRead,
+}
+
+var enterpriseDataSource = &schema.Resource{
+	Schema: enterpriseDataSchema,
+	Read:   enterpriseDataRead,
 }
 
 func enterpriseDataRead(d *schema.ResourceData, p interface{}) (err error) {

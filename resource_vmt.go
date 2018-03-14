@@ -16,13 +16,39 @@ var vmtResource = &schema.Resource{
 }
 
 var vmtSchema = map[string]*schema.Schema{
-	"cpu":         Required().Number(),
-	"name":        Required().String(),
-	"description": Optional().String(),
-	"file":        Required().Renew().String(),
-	"ram":         Required().Number(),
-	"repo":        Required().Renew().String(),
-	"icon":        Optional().ValidateURL(),
+	"cpu": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"description": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"file": &schema.Schema{
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"ram": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
+	},
+	"repo": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"icon": &schema.Schema{
+		ForceNew:     true,
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 }
 
 func vmtNew(d *resourceData) core.Resource {

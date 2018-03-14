@@ -8,11 +8,16 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var locationDataSource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name": Required().String(),
+var locationDataSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
-	Read: locationRead,
+}
+
+var locationDataSource = &schema.Resource{
+	Schema: locationDataSchema,
+	Read:   locationRead,
 }
 
 func locationRead(d *schema.ResourceData, meta interface{}) (err error) {

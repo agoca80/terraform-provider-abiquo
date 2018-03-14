@@ -11,8 +11,15 @@ import (
 )
 
 var vappDataSchema = map[string]*schema.Schema{
-	"name":              Required().String(),
-	"virtualdatacenter": Required().Link(),
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"virtualdatacenter": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 }
 
 var vappDataSource = &schema.Resource{

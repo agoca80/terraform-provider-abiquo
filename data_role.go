@@ -9,7 +9,10 @@ import (
 )
 
 var roleDataSchema = map[string]*schema.Schema{
-	"name": Required().String(),
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
 }
 
 var roleDataSource = &schema.Resource{

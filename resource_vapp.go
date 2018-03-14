@@ -6,11 +6,21 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var vappResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name":              Required().String(),
-		"virtualdatacenter": Required().Renew().Link(),
+var vappSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
+	"virtualdatacenter": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var vappResource = &schema.Resource{
+	Schema: vappSchema,
 	Delete: resourceDelete,
 	Exists: resourceExists("virtualappliance"),
 	Create: resourceCreate(vappNew, nil, vappRead, vappEndpoint),

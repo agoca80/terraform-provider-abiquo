@@ -6,18 +6,51 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var userResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"active":     Required().Bool(),
-		"email":      Required().String(),
-		"name":       Required().String(),
-		"nick":       Required().String(),
-		"surname":    Required().String(),
-		"password":   Computed().String(),
-		"enterprise": Required().Renew().Link(),
-		"scope":      Required().Link(),
-		"role":       Required().Link(),
+var userSchema = map[string]*schema.Schema{
+	"active": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeBool,
 	},
+	"email": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"nick": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"surname": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"password": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
+	"enterprise": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"scope": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"role": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var userResource = &schema.Resource{
+	Schema:   userSchema,
 	Importer: &schema.ResourceImporter{State: schema.ImportStatePassthrough},
 	Read:     resourceRead(userNew, userRead, "user"),
 	Create:   resourceCreate(userNew, nil, userRead, userEndpoint),

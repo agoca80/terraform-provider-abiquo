@@ -8,15 +8,40 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var hdResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"size":              Required().Number(),
-		"label":             Required().String(),
-		"type":              Required().ValidateString([]string{"IDE", "SCSI", "VIRTIO"}),
-		"ctrl":              Optional().String(),
-		"dstier":            Optional().Renew().Link(),
-		"virtualdatacenter": Required().Renew().Link(),
+var hdSchema = map[string]*schema.Schema{
+	"size": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeInt,
 	},
+	"label": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
+	},
+	"type": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateString([]string{"IDE", "SCSI", "VIRTIO"}),
+	},
+	"ctrl": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeString,
+	},
+	"dstier": &schema.Schema{
+		ForceNew:     true,
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"virtualdatacenter": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var hdResource = &schema.Resource{
+	Schema: hdSchema,
 	Delete: hdDelete,
 	Create: resourceCreate(hdNew, nil, hdRead, hdEndpoint),
 	Exists: resourceExists("harddisk"),

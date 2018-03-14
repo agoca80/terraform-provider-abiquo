@@ -10,12 +10,21 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var hpDataSource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"name":     Required().String(),
-		"location": Required().Link(),
+var hpDataSchema = map[string]*schema.Schema{
+	"name": &schema.Schema{
+		Required: true,
+		Type:     schema.TypeString,
 	},
-	Read: hpDataRead,
+	"location": &schema.Schema{
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+}
+
+var hpDataSource = &schema.Resource{
+	Schema: hpDataSchema,
+	Read:   hpDataRead,
 }
 
 func hpDataRead(d *schema.ResourceData, meta interface{}) (err error) {
