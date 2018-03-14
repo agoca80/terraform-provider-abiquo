@@ -18,11 +18,6 @@ var vdcDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var vdcDataSource = &schema.Resource{
-	Schema: vdcDataSchema,
-	Read:   dataVDCRead,
-}
-
 func dataVDCRead(d *schema.ResourceData, meta interface{}) (err error) {
 	enterprise := meta.(*provider).Enterprise()
 	if enterprise == nil {

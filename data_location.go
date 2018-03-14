@@ -15,11 +15,6 @@ var locationDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var locationDataSource = &schema.Resource{
-	Schema: locationDataSchema,
-	Read:   locationRead,
-}
-
 func locationRead(d *schema.ResourceData, meta interface{}) (err error) {
 	finder := func(r core.Resource) bool {
 		return r.(*abiquo.Datacenter).Name == d.Get("name").(string)

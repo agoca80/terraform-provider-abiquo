@@ -15,11 +15,6 @@ var scopeDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var scopeDataSource = &schema.Resource{
-	Schema: scopeDataSchema,
-	Read:   scopeDataRead,
-}
-
 func scopeDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	finder := func(r core.Resource) bool {
 		return r.(*abiquo.Scope).Name == d.Get("name").(string)

@@ -15,11 +15,6 @@ var roleDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var roleDataSource = &schema.Resource{
-	Schema: roleDataSchema,
-	Read:   roleDataRead,
-}
-
 func roleDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	name := d.Get("name").(string)
 	finder := func(r core.Resource) bool {

@@ -22,11 +22,6 @@ var hpDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var hpDataSource = &schema.Resource{
-	Schema: hpDataSchema,
-	Read:   hpDataRead,
-}
-
 func hpDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	locationName := d.Get("location").(string)
 	finder := func(r core.Resource) bool {

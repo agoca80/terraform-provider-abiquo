@@ -22,11 +22,6 @@ var vappDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var vappDataSource = &schema.Resource{
-	Schema: vappDataSchema,
-	Read:   vappDataRead,
-}
-
 func vappDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	href := d.Get("virtualdatacenter").(string)
 	vdc := core.NewLinker(href, "virtualdatacenter").Walk()

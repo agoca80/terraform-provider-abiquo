@@ -20,11 +20,6 @@ var privilegeDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var privilegeDataSource = &schema.Resource{
-	Schema: privilegeDataSchema,
-	Read:   privilegeRead,
-}
-
 func privilegeRead(d *schema.ResourceData, meta interface{}) (err error) {
 	privilege := privilegeGet(d.Get("name").(string))
 	if privilege == nil {

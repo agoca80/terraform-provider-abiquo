@@ -16,11 +16,6 @@ var repoDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var repoDataSource = &schema.Resource{
-	Schema: repoDataSchema,
-	Read:   dataRepoRead,
-}
-
 func dataRepoRead(d *schema.ResourceData, p interface{}) (err error) {
 	enterprise := p.(*provider).Enterprise()
 	if enterprise == nil {

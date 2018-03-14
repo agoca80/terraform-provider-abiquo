@@ -46,11 +46,6 @@ var machineDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var machineDataSource = &schema.Resource{
-	Schema: machineDataSchema,
-	Read:   machineDataRead,
-}
-
 func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 	d := newResourceData(rd, "")
 

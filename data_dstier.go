@@ -21,11 +21,6 @@ var dstierDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var dstierDataSource = &schema.Resource{
-	Schema: dstierDataSchema,
-	Read:   dstierDataRead,
-}
-
 func dstierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	href := d.Get("datacenter").(string)
 	resource := core.NewLinker(href, "datacenter").Walk()

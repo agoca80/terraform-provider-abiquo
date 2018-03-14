@@ -21,11 +21,6 @@ var backupDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var backupDataSource = &schema.Resource{
-	Schema: backupDataSchema,
-	Read:   backupDataRead,
-}
-
 func backupDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	location := d.Get("location").(string)
 	endpoint := core.NewLinkType(location, "datacenter")

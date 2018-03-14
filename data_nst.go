@@ -21,11 +21,6 @@ var nstDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var nstDataSource = &schema.Resource{
-	Schema: nstDataSchema,
-	Read:   nstDataRead,
-}
-
 func nstDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	href := d.Get("datacenter").(string)
 	endpoint := core.NewLinker(href, "datacenter")

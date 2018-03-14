@@ -118,22 +118,70 @@ func Provider() *schema.Provider {
 		},
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"abiquo_backup":     backupDataSource,
-			"abiquo_datacenter": datacenterDataSource,
-			"abiquo_devicetype": deviceTypeDataSource,
-			"abiquo_dstier":     dstierDataSource,
-			"abiquo_enterprise": enterpriseDataSource,
-			"abiquo_hp":         hpDataSource,
-			"abiquo_location":   locationDataSource,
-			"abiquo_machine":    machineDataSource,
-			"abiquo_nst":        nstDataSource,
-			"abiquo_privilege":  privilegeDataSource,
-			"abiquo_repo":       repoDataSource,
-			"abiquo_role":       roleDataSource,
-			"abiquo_scope":      scopeDataSource,
-			"abiquo_vdc":        vdcDataSource,
-			"abiquo_vapp":       vappDataSource,
-			"abiquo_template":   templateDataSource,
+			"abiquo_backup": &schema.Resource{
+				Schema: backupDataSchema,
+				Read:   backupDataRead,
+			},
+			"abiquo_datacenter": &schema.Resource{
+				Schema: datacenterDataSchema,
+				Read:   datacenterDataRead,
+			},
+			"abiquo_devicetype": &schema.Resource{
+				Schema: deviceTypeDataSchema,
+				Read:   deviceTypeDataRead,
+			},
+			"abiquo_dstier": &schema.Resource{
+				Schema: dstierDataSchema,
+				Read:   dstierDataRead,
+			},
+			"abiquo_enterprise": &schema.Resource{
+				Schema: enterpriseDataSchema,
+				Read:   enterpriseDataRead,
+			},
+			"abiquo_hp": &schema.Resource{
+				Schema: hpDataSchema,
+				Read:   hpDataRead,
+			},
+			"abiquo_location": &schema.Resource{
+				Schema: locationDataSchema,
+				Read:   locationRead,
+			},
+			"abiquo_machine": &schema.Resource{
+				Schema: machineDataSchema,
+				Read:   machineDataRead,
+			},
+			"abiquo_nst": &schema.Resource{
+				Schema: nstDataSchema,
+				Read:   nstDataRead,
+			},
+			"abiquo_privilege": &schema.Resource{
+				Schema: privilegeDataSchema,
+				Read:   privilegeRead,
+			},
+			"abiquo_repo": &schema.Resource{
+				Schema: repoDataSchema,
+				Read:   dataRepoRead,
+			},
+			"abiquo_role": &schema.Resource{
+				Schema: roleDataSchema,
+				Read:   roleDataRead,
+			},
+			"abiquo_scope": &schema.Resource{
+				Schema: scopeDataSchema,
+				Read:   scopeDataRead,
+			},
+			"abiquo_vdc": &schema.Resource{
+				Schema: vdcDataSchema,
+				Read:   dataVDCRead,
+			},
+			"abiquo_vapp": &schema.Resource{
+				Schema: vappDataSchema,
+				Read:   vappDataRead,
+			},
+			"abiquo_template": &schema.Resource{
+				Schema: templateDataSchema,
+				Read:   templateRead,
+			},
 		},
 	}
 }

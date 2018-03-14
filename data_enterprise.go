@@ -15,11 +15,6 @@ var enterpriseDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var enterpriseDataSource = &schema.Resource{
-	Schema: enterpriseDataSchema,
-	Read:   enterpriseDataRead,
-}
-
 func enterpriseDataRead(d *schema.ResourceData, p interface{}) (err error) {
 	query := url.Values{"has": {d.Get("name").(string)}}
 	enterprise := abiquo.Enterprises(query).First()

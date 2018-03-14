@@ -16,11 +16,6 @@ var deviceTypeDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var deviceTypeDataSource = &schema.Resource{
-	Schema: deviceTypeDataSchema,
-	Read:   deviceTypeDataRead,
-}
-
 func deviceTypeDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	name := d.Get("name").(string)
 	finder := func(r core.Resource) bool {

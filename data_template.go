@@ -16,11 +16,6 @@ var templateDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var templateDataSource = &schema.Resource{
-	Schema: templateDataSchema,
-	Read:   templateRead,
-}
-
 func templateRead(d *schema.ResourceData, meta interface{}) (err error) {
 	enterprise := meta.(*provider).Enterprise()
 	if enterprise == nil {

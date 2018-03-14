@@ -20,11 +20,6 @@ var datacenterDataSchema = map[string]*schema.Schema{
 	},
 }
 
-var datacenterDataSource = &schema.Resource{
-	Schema: datacenterDataSchema,
-	Read:   datacenterDataRead,
-}
-
 func datacenterDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	datacenter := datacenterGet(d.Get("name").(string))
 	if datacenter == nil {
