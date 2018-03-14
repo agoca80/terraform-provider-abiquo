@@ -81,7 +81,7 @@ func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
 	dstores := d.dict("datastores")
 	for _, dstore := range machine.Datastores.Collection {
 		var dstier *core.Link
-		href, ok := dstores[dstore.DatastoreUUID]
+		href, ok := dstores[dstore.UUID]
 		if !ok {
 			continue
 		}
