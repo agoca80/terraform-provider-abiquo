@@ -6,46 +6,100 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var limitResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		// Soft limits
-		"cpusoft":  Optional().Number(),
-		"hdsoft":   Optional().Number(),
-		"ipsoft":   Optional().Number(),
-		"ramsoft":  Optional().Number(),
-		"reposoft": Optional().Number(),
-		"volsoft":  Optional().Number(),
-		"vlansoft": Optional().Number(),
-		// Hard limits
-		"cpuhard":  Optional().Number(),
-		"hdhard":   Optional().Number(),
-		"iphard":   Optional().Number(),
-		"ramhard":  Optional().Number(),
-		"repohard": Optional().Number(),
-		"vlanhard": Optional().Number(),
-		"volhard":  Optional().Number(),
-		// Links
-		"location":   Required().Renew().Link(),
-		"enterprise": Required().Renew().Link(),
-		"hwprofiles": &schema.Schema{
-			Elem: &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validateURL,
-			},
-			Optional: true,
-			Set:      schema.HashString,
-			Type:     schema.TypeSet,
-		},
-		"backups": &schema.Schema{
-			Elem: &schema.Schema{
-				Type:         schema.TypeString,
-				ValidateFunc: validateURL,
-			},
-			Optional: true,
-			Set:      schema.HashString,
-			Type:     schema.TypeSet,
-		},
+var limitSchema = map[string]*schema.Schema{
+	// Soft limits
+	"cpusoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
 	},
+	"hdsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"ipsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"ramsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"reposoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"volsoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"vlansoft": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	// Hard limits
+	"cpuhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"hdhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"iphard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"ramhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"repohard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"vlanhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	"volhard": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeInt,
+	},
+	// Links
+	"location": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"enterprise": &schema.Schema{
+		ForceNew:     true,
+		Required:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
+	"hwprofiles": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		Optional: true,
+		Set:      schema.HashString,
+		Type:     schema.TypeSet,
+	},
+	"backups": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		Optional: true,
+		Set:      schema.HashString,
+		Type:     schema.TypeSet,
+	},
+}
+
+var limitResource = &schema.Resource{
+	Schema: limitSchema,
 	Exists: resourceExists("limit"),
 	Read:   resourceRead(limitNew, limitRead, "limit"),
 	Update: resourceUpdate(limitNew, nil, "limit"),
