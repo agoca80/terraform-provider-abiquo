@@ -26,14 +26,6 @@ var licenseSchema = map[string]*schema.Schema{
 	},
 }
 
-var licenseResource = &schema.Resource{
-	Schema: licenseSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("license"),
-	Create: resourceCreate(licenseNew, nil, licenseRead, licenseEndpoint),
-	Read:   resourceRead(licenseNew, licenseRead, "license"),
-}
-
 func licenseNew(d *resourceData) core.Resource {
 	return &abiquo.License{
 		Code: d.string("code"),

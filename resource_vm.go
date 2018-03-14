@@ -120,14 +120,6 @@ var vmSchema = map[string]*schema.Schema{
 	},
 }
 
-var vmResource = &schema.Resource{
-	Schema: vmSchema,
-	Read:   resourceRead(vmNew, vmRead, "virtualmachine"),
-	Exists: resourceExists("virtualmachine"),
-	Delete: vmDelete,
-	Create: vmCreate,
-}
-
 func vmNew(d *resourceData) core.Resource {
 	variables := make(map[string]string)
 	for key, value := range d.dict("variables") {

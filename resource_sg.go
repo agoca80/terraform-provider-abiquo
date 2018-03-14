@@ -85,14 +85,6 @@ var sgSchema = map[string]*schema.Schema{
 	},
 }
 
-var sgResource = &schema.Resource{
-	Schema: sgSchema,
-	Delete: sgDelete,
-	Update: resourceUpdate(sgNew, nil, "scalinggroup"),
-	Create: resourceCreate(sgNew, nil, sgRead, sgEndpoint),
-	Read:   resourceRead(sgNew, sgRead, "scalinggroup"),
-}
-
 func sgRules(rules []interface{}) (sgRules []abiquo.ScalingGroupRule) {
 	for _, r := range rules {
 		rule := struct {

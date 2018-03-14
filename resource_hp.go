@@ -31,15 +31,6 @@ var hpSchema = map[string]*schema.Schema{
 	},
 }
 
-var hpResource = &schema.Resource{
-	Schema: hpSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("hardwareprofile"),
-	Create: resourceCreate(hpNew, nil, hpRead, hpEndpoint),
-	Update: resourceUpdate(hpNew, nil, "hardwareprofile"),
-	Read:   resourceRead(hpNew, hpRead, "hardwareprofile"),
-}
-
 func hpNew(d *resourceData) core.Resource {
 	return &abiquo.HardwareProfile{
 		Active:  d.bool("active"),

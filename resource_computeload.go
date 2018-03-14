@@ -28,15 +28,6 @@ var computeLoadSchema = map[string]*schema.Schema{
 	},
 }
 
-var computeLoadResource = &schema.Resource{
-	Schema: computeLoadSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("machineloadrule"),
-	Create: resourceCreate(computeLoadDTO, nil, computeLoadRead, computeLoadEndpoint),
-	Update: resourceUpdate(computeLoadDTO, nil, "machineloadrule"),
-	Read:   resourceRead(computeLoadDTO, computeLoadRead, "machineloadrule"),
-}
-
 func computeLoadDTO(d *resourceData) core.Resource {
 	machineLoadRule := &abiquo.MachineLoadRule{
 		Aggregated:        d.bool("aggregated"),

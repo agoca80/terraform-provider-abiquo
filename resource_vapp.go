@@ -19,15 +19,6 @@ var vappSchema = map[string]*schema.Schema{
 	},
 }
 
-var vappResource = &schema.Resource{
-	Schema: vappSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("virtualappliance"),
-	Create: resourceCreate(vappNew, nil, vappRead, vappEndpoint),
-	Update: resourceUpdate(vappNew, nil, "virtualappliance"),
-	Read:   resourceRead(vappNew, vappRead, "virtualappliance"),
-}
-
 func vappNew(d *resourceData) core.Resource {
 	return &abiquo.VirtualAppliance{
 		Name: d.string("name"),

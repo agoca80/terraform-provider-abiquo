@@ -107,15 +107,6 @@ var limitSchema = map[string]*schema.Schema{
 	},
 }
 
-var limitResource = &schema.Resource{
-	Schema: limitSchema,
-	Exists: resourceExists("limit"),
-	Read:   resourceRead(limitNew, limitRead, "limit"),
-	Update: resourceUpdate(limitNew, nil, "limit"),
-	Create: resourceCreate(limitNew, nil, limitRead, limitEndpoint),
-	Delete: resourceDelete,
-}
-
 func limitNew(d *resourceData) core.Resource {
 	limit := &abiquo.Limit{
 		// Soft limits

@@ -62,15 +62,6 @@ var lbSchema = map[string]*schema.Schema{
 	},
 }
 
-var lbResource = &schema.Resource{
-	Schema: lbSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("loadbalancer"),
-	Create: resourceCreate(lbNew, nil, lbRead, lbEndpoint),
-	Update: resourceUpdate(lbNew, nil, "loadbalancer"),
-	Read:   resourceRead(lbNew, lbRead, "loadbalancer"),
-}
-
 func lbAddresses(d *resourceData) abiquo.LoadBalancerAddresses {
 	return abiquo.LoadBalancerAddresses{
 		Collection: []abiquo.LoadBalancerAddress{

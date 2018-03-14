@@ -34,15 +34,6 @@ var rackSchema = map[string]*schema.Schema{
 	},
 }
 
-var rackResource = &schema.Resource{
-	Schema: rackSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("rack"),
-	Create: resourceCreate(rackNew, nil, rackRead, rackEndpoint),
-	Update: resourceUpdate(rackNew, nil, "rack"),
-	Read:   resourceRead(rackNew, rackRead, "rack"),
-}
-
 func rackNew(d *resourceData) core.Resource {
 	rack := &abiquo.Rack{
 		ID:   d.int("number"),

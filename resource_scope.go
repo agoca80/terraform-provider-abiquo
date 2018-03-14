@@ -37,16 +37,6 @@ var scopeSchema = map[string]*schema.Schema{
 	},
 }
 
-var scopeResource = &schema.Resource{
-	Schema:   scopeSchema,
-	Importer: &schema.ResourceImporter{State: schema.ImportStatePassthrough},
-	Delete:   resourceDelete,
-	Read:     resourceRead(scopeNew, scopeRead, "scope"),
-	Create:   resourceCreate(scopeNew, nil, scopeRead, scopeEndpoint),
-	Exists:   resourceExists("scope"),
-	Update:   resourceUpdate(scopeNew, nil, "scope"),
-}
-
 func scopeNew(d *resourceData) core.Resource {
 	link := core.NewLinkType("admin/scopes/undefined", "scope").SetRel("scope").SetTitle(d.string("name"))
 	entities := []abiquo.ScopeEntity{}

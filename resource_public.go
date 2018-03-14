@@ -59,14 +59,6 @@ var publicSchema = map[string]*schema.Schema{
 	},
 }
 
-var publicResource = &schema.Resource{
-	Schema: publicSchema,
-	Delete: resourceDelete,
-	Update: resourceUpdate(publicNew, nil, "vlan"),
-	Create: resourceCreate(publicNew, nil, publicRead, publicEndpoint),
-	Read:   resourceRead(publicNew, publicRead, "vlan"),
-}
-
 func publicNew(d *resourceData) core.Resource {
 	public := networkNew(d)
 	public.TypeNet = "EXTERNAL"

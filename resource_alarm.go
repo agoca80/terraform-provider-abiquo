@@ -46,15 +46,6 @@ var alarmSchema = map[string]*schema.Schema{
 	},
 }
 
-var alarmResource = &schema.Resource{
-	Schema: alarmSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("alarm"),
-	Update: resourceUpdate(alarmNew, nil, "alarm"),
-	Create: resourceCreate(alarmNew, nil, alarmRead, alarmEndpoint),
-	Read:   resourceRead(alarmNew, alarmRead, "alarm"),
-}
-
 func alarmEndpoint(d *resourceData) *core.Link {
 	target := d.string("target")
 	metric := d.string("metric")

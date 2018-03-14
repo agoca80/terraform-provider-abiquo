@@ -78,15 +78,6 @@ var enterpriseSchema = map[string]*schema.Schema{
 	},
 }
 
-var enterpriseResource = &schema.Resource{
-	Schema: enterpriseSchema,
-	Delete: resourceDelete,
-	Read:   resourceRead(enterpriseDTO, enterpriseRead, "enterprise"),
-	Create: resourceCreate(enterpriseDTO, enterpriseCreate, enterpriseRead, enterpriseEndpoint),
-	Exists: resourceExists("enterprise"),
-	Update: resourceUpdate(enterpriseDTO, enterpriseUpdate, "enterprise"),
-}
-
 func enterpriseDTO(d *resourceData) core.Resource {
 	return &abiquo.Enterprise{
 		Name:     d.string("name"),

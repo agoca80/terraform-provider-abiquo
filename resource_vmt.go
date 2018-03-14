@@ -6,15 +6,6 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var vmtResource = &schema.Resource{
-	Schema: vmtSchema,
-	Create: vmtCreate,
-	Delete: resourceDelete,
-	Update: vmtUpdate,
-	Read:   resourceRead(vmtNew, vmtRead, "virtualmachinetemplate"),
-	Exists: resourceExists("virtualmachinetemplate"),
-}
-
 var vmtSchema = map[string]*schema.Schema{
 	"cpu": &schema.Schema{
 		Required: true,

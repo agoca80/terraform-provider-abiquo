@@ -49,16 +49,6 @@ var userSchema = map[string]*schema.Schema{
 	},
 }
 
-var userResource = &schema.Resource{
-	Schema:   userSchema,
-	Importer: &schema.ResourceImporter{State: schema.ImportStatePassthrough},
-	Read:     resourceRead(userNew, userRead, "user"),
-	Create:   resourceCreate(userNew, nil, userRead, userEndpoint),
-	Update:   resourceUpdate(userNew, nil, "user"),
-	Exists:   resourceExists("user"),
-	Delete:   resourceDelete,
-}
-
 func userNew(d *resourceData) core.Resource {
 	return &abiquo.User{
 		Active:   d.bool("active"),

@@ -44,15 +44,6 @@ var machineSchema = map[string]*schema.Schema{
 	},
 }
 
-var machineResource = &schema.Resource{
-	Schema: machineSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("machine"),
-	Create: machineCreate,
-	Update: machineUpdate,
-	Read:   machineRead,
-}
-
 func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
 	d := newResourceData(rd, "machine")
 	definition := d.string("definition")

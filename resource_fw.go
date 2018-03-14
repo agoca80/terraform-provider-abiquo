@@ -63,16 +63,6 @@ var firewallSchema = map[string]*schema.Schema{
 	},
 }
 
-var firewallResource = &schema.Resource{
-	// Importer: &schema.ResourceImporter{State: schema.ImportStatePassthrough},
-	Schema: firewallSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("firewallpolicy"),
-	Update: fwUpdate,
-	Create: fwCreate,
-	Read:   resourceRead(fwNew, fwRead, "firewallpolicy"),
-}
-
 func fwNew(d *resourceData) core.Resource {
 	return &abiquo.Firewall{
 		Name:        d.string("name"),

@@ -57,15 +57,6 @@ var datacenterSchema = map[string]*schema.Schema{
 	},
 }
 
-var datacenterResource = &schema.Resource{
-	Schema: datacenterSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("datacenter"),
-	Create: resourceCreate(datacenterNew, nil, datacenterRead, datacenterEndpoint),
-	Update: resourceUpdate(datacenterNew, nil, "datacenter"),
-	Read:   resourceRead(datacenterNew, datacenterRead, "datacenter"),
-}
-
 func datacenterNew(d *resourceData) core.Resource {
 	rss := make([]abiquo.RemoteService, 10)
 	rss[0] = abiquo.RemoteService{Type: "VIRTUAL_FACTORY", URI: d.string("vf")}

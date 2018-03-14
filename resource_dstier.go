@@ -32,15 +32,6 @@ var dstierSchema = map[string]*schema.Schema{
 	},
 }
 
-var dstierResource = &schema.Resource{
-	Schema: dstierSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("datastoretier"),
-	Create: resourceCreate(dstierDTO, nil, dstierRead, dstierEndpoint),
-	Update: resourceUpdate(dstierDTO, nil, "datastoretier"),
-	Read:   resourceRead(dstierDTO, dstierRead, "datastoretier"),
-}
-
 func dstierDTO(d *resourceData) core.Resource {
 	return &abiquo.DatastoreTier{
 		Description: d.string("description"),

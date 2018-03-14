@@ -11,14 +11,6 @@ type (
 	factory        func(*resourceData) core.Resource
 	endpoint       func(*resourceData) *core.Link
 	resourceMethod func(*resourceData, core.Resource) error
-
-	resourceDescription struct {
-		media   string
-		factory factory
-		update  resourceMethod
-		create  resourceMethod
-		read    resourceMethod
-	}
 )
 
 func resourceDelete(d *schema.ResourceData, m interface{}) (err error) {

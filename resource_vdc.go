@@ -90,15 +90,6 @@ var vdcSchema = map[string]*schema.Schema{
 	},
 }
 
-var vdcResource = &schema.Resource{
-	Schema: vdcSchema,
-	Delete: resourceDelete,
-	Create: resourceCreate(vdcNew, nil, vdcRead, vdcEndpoint),
-	Exists: resourceExists("virtualdatacenter"),
-	Update: resourceUpdate(vdcNew, nil, "virtualdatacenter"),
-	Read:   resourceRead(vdcNew, vdcRead, "virtualdatacenter"),
-}
-
 func vdcNew(d *resourceData) core.Resource {
 	return &abiquo.VirtualDatacenter{
 		Name:   d.string("name"),

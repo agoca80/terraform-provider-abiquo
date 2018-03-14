@@ -32,16 +32,6 @@ var roleSchema = map[string]*schema.Schema{
 	},
 }
 
-var roleResource = &schema.Resource{
-	Schema:   roleSchema,
-	Importer: &schema.ResourceImporter{State: schema.ImportStatePassthrough},
-	Delete:   resourceDelete,
-	Read:     resourceRead(roleNew, roleRead, "role"),
-	Create:   roleCreate,
-	Exists:   resourceExists("role"),
-	Update:   roleUpdate,
-}
-
 func roleNew(d *resourceData) core.Resource {
 	return &abiquo.Role{
 		Name:    d.string("name"),

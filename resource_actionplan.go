@@ -52,15 +52,6 @@ var actionPlanSchema = map[string]*schema.Schema{
 	},
 }
 
-var actionPlanResource = &schema.Resource{
-	Schema: actionPlanSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("virtualmachineactionplan"),
-	Update: resourceUpdate(actionPlanNew, nil, "virtualmachineactionplan"),
-	Create: actionPlanCreate,
-	Read:   resourceRead(actionPlanNew, actionPlanRead, "virtualmachineactionplan"),
-}
-
 func actionPlanNew(d *resourceData) core.Resource {
 	slice := d.slice("entries")
 	entries := make([]abiquo.ActionPlanEntry, len(slice))

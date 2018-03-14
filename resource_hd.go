@@ -40,15 +40,6 @@ var hdSchema = map[string]*schema.Schema{
 	},
 }
 
-var hdResource = &schema.Resource{
-	Schema: hdSchema,
-	Delete: hdDelete,
-	Create: resourceCreate(hdNew, nil, hdRead, hdEndpoint),
-	Exists: resourceExists("harddisk"),
-	Update: hdUpdate,
-	Read:   resourceRead(hdNew, hdRead, "harddisk"),
-}
-
 func hdLink(href string) *core.Link {
 	if strings.Contains(href, "/disks/") {
 		return core.NewLinkType(href, "harddisk")

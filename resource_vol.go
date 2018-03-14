@@ -46,14 +46,6 @@ var volumeSchema = map[string]*schema.Schema{
 	},
 }
 
-var volResource = &schema.Resource{
-	Schema: volumeSchema,
-	Delete: resourceDelete,
-	Update: resourceUpdate(volNew, nil, "volume"),
-	Create: resourceCreate(volNew, nil, volRead, volEndpoint),
-	Read:   resourceRead(volNew, volRead, "volume"),
-}
-
 func volNew(d *resourceData) core.Resource {
 	return &abiquo.Volume{
 		Name:               d.string("name"),

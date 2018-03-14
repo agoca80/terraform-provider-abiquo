@@ -6,15 +6,6 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var alertResource = &schema.Resource{
-	Schema: alertSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("alert"),
-	Update: resourceUpdate(alertNew, nil, "alert"),
-	Create: resourceCreate(alertNew, nil, alertRead, alertEndpoint),
-	Read:   resourceRead(alertNew, alertRead, "alert"),
-}
-
 var alertSchema = map[string]*schema.Schema{
 	"virtualappliance": &schema.Schema{
 		ForceNew:     true,

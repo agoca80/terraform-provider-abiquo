@@ -29,14 +29,6 @@ var ipSchema = map[string]*schema.Schema{
 	},
 }
 
-var ipResource = &schema.Resource{
-	Schema: ipSchema,
-	Delete: resourceDelete,
-	Exists: ipExists,
-	Create: ipCreate,
-	Read:   ipRead,
-}
-
 func ipLink(href string) *core.Link {
 	switch {
 	case strings.Contains(href, "/privatenetworks/"):

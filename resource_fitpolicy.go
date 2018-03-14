@@ -21,14 +21,6 @@ var fitPolicySchema = map[string]*schema.Schema{
 	},
 }
 
-var fitPolicyResource = &schema.Resource{
-	Schema: fitPolicySchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("fitpolicyrule"),
-	Create: resourceCreate(fitPolicyDTO, nil, fitPolicyRead, fitPolicyEndpoint),
-	Read:   resourceRead(fitPolicyDTO, fitPolicyRead, "fitpolicyrule"),
-}
-
 func fitPolicyDTO(d *resourceData) core.Resource {
 	return &abiquo.FitPolicy{
 		FitPolicy: d.string("policy"),

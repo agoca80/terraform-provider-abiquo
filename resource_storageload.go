@@ -21,15 +21,6 @@ var storageLoadSchema = map[string]*schema.Schema{
 	},
 }
 
-var storageLoadResource = &schema.Resource{
-	Schema: storageLoadSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("datastoreloadrule"),
-	Create: resourceCreate(storageLoadDTO, nil, storageLoadRead, storageLoadEndpoint),
-	Update: resourceUpdate(storageLoadDTO, nil, "datastoreloadrule"),
-	Read:   resourceRead(storageLoadDTO, storageLoadRead, "datastoreloadrule"),
-}
-
 func storageLoadDTO(d *resourceData) core.Resource {
 	storageLoadRule := &abiquo.DatastoreLoadRule{
 		StorageLoadPercentage: d.int("load"),
