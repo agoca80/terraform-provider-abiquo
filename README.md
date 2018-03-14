@@ -53,6 +53,13 @@ available resources.
 
 # Testing
 
+You will need to export the following environment variables to run the
+acceptance tests first:
+
+- ABQ_ENDPOINT: i.e https://testing.test.com/api
+- ABQ_USERNAME
+- ABQ_PASSWORD
+
 ```
 cd $GOPATH/github.com/hashicorp/terraform
 make testacc TEST=../../abiquo/terraform-provider-abiquo
