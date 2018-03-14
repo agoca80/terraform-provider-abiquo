@@ -96,6 +96,15 @@ var limitSchema = map[string]*schema.Schema{
 		Set:      schema.HashString,
 		Type:     schema.TypeSet,
 	},
+	"dstiers": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateURL,
+		},
+		Optional: true,
+		Set:      schema.HashString,
+		Type:     schema.TypeSet,
+	},
 }
 
 var limitResource = &schema.Resource{
@@ -143,9 +152,18 @@ func limitNew(d *resourceData) core.Resource {
 	// HWprofiles
 	hwprofiles := d.set("hwprofiles")
 	if hwprofiles != nil && hwprofiles.Len() > 0 {
-		for _, entry := range d.set("hwprofiles").List() {
+		for _, entry := range hwprofiles.List() {
 			href := entry.(string)
 			limit.Add(core.NewLinkType(href, "hardwareprofile").SetRel("hardwareprofile"))
+		}
+	}
+
+	// DSTiers
+	dstiers := d.set("dstiers")
+	if dstiers != nil && dstiers.Len() > 0 {
+		for _, entry := range dstiers.List() {
+			href := entry.(string)
+			limit.Add(core.NewLinkType(href, "datastoretier").SetRel("datastoretier"))
 		}
 	}
 
@@ -167,8 +185,13 @@ func limitRead(d *resourceData, resource core.Resource) (err error) {
 		return l.IsMedia("hwprofile")
 	}))
 
+	dstiers := mapHrefs(limit.Links.Filter(func(l *core.Link) bool {
+		return l.IsMedia("datastoretier")
+	}))
+
 	d.Set("backups", backups)
 	d.Set("hwprofiles", hwprofiles)
+	d.Set("dstiers", dstiers)
 	// Soft limits
 	d.Set("cpusoft", limit.CPUSoft)
 	d.Set("hdsoft", limit.HDSoft)

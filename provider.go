@@ -90,6 +90,7 @@ func Provider() *schema.Provider {
 			"abiquo_computeload": computeLoadResource,
 			"abiquo_datacenter":  datacenterResource,
 			"abiquo_device":      deviceResource,
+			"abiquo_dstier":      dstierResource,
 			"abiquo_enterprise":  enterpriseResource,
 			"abiquo_external":    externalResource,
 			"abiquo_fitpolicy":   fitPolicyResource,
