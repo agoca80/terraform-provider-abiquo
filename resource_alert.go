@@ -28,7 +28,8 @@ var alertSchema = map[string]*schema.Schema{
 		},
 		MinItems: 1,
 		Required: true,
-		Type:     schema.TypeList,
+		Set:      schema.HashString,
+		Type:     schema.TypeSet,
 	},
 }
 

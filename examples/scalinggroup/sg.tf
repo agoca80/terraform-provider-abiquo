@@ -103,9 +103,6 @@ resource "abiquo_alert" "alert" {
   name        = "terraform"
   description = "terraform"
   
-  # XXX workaround entries order changes
-  lifecycle = { ignore_changes = [ "alarms" ] }
-
   alarms = [
     "${abiquo_alarm.alarm0.id}",
     "${abiquo_alarm.alarm1.id}"
