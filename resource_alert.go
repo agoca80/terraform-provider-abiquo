@@ -34,10 +34,9 @@ var alertSchema = map[string]*schema.Schema{
 }
 
 func alertNew(d *resourceData) core.Resource {
-	slice := d.slice("alarms")
-	alarms := make([]*core.Link, len(slice))
-	for i, a := range slice {
-		alarms[i] = core.NewLinkType(a.(string), "alarm")
+	alarms := make([]*core.Link, 0)
+	for _, a := range d.set("alarms").List() {
+		alarms = append(alarms, core.NewLinkType(a.(string), "alarm"))
 	}
 
 	return &abiquo.Alert{
@@ -53,9 +52,11 @@ func alertEndpoint(d *resourceData) *core.Link {
 
 func alertRead(d *resourceData, resource core.Resource) (err error) {
 	alert := resource.(*abiquo.Alert)
-	// PENDING alarms are unordered, so, set comparation must be performed
-	// to detect changed
-	// d.Set("alarms", ...)
+	alarms := schema.NewSet(schema.HashString, nil)
+	for _, a := range alert.Alarms {
+		alarms.Add(a.URL())
+	}
+	d.Set("alarms", alarms)
 	d.Set("name", alert.Name)
 	d.Set("description", alert.Description)
 	return
