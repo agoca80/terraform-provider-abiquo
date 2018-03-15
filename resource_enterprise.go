@@ -4,6 +4,7 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var enterpriseSchema = map[string]*schema.Schema{
@@ -20,61 +21,75 @@ var enterpriseSchema = map[string]*schema.Schema{
 	},
 	// Soft limits
 	"cpusoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"hdsoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"ipsoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"ramsoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"reposoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"volsoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"vlansoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	// Hard limits
 	"cpuhard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"hdhard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"iphard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"ramhard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"repohard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"vlanhard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 	"volhard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
+		Optional:     true,
+		Type:         schema.TypeInt,
+		ValidateFunc: validation.IntAtLeast(0),
 	},
 }
 
