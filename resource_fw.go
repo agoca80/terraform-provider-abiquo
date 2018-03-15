@@ -4,6 +4,7 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var firewallSchema = map[string]*schema.Schema{
@@ -27,7 +28,7 @@ var firewallSchema = map[string]*schema.Schema{
 				"protocol": &schema.Schema{
 					Required:     true,
 					Type:         schema.TypeString,
-					ValidateFunc: validateString([]string{"ALL", "TCP", "UDP"}),
+					ValidateFunc: validation.StringInSlice([]string{"ALL", "TCP", "UDP"}, false),
 				},
 				"fromport": &schema.Schema{
 					Required:     true,

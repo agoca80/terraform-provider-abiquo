@@ -4,6 +4,7 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var fitPolicySchema = map[string]*schema.Schema{
@@ -11,7 +12,7 @@ var fitPolicySchema = map[string]*schema.Schema{
 		Required:     true,
 		ForceNew:     true,
 		Type:         schema.TypeString,
-		ValidateFunc: validateString([]string{"PROGRESSIVE", "PERFORMANCE"}),
+		ValidateFunc: validation.StringInSlice([]string{"PROGRESSIVE", "PERFORMANCE"}, false),
 	},
 	"target": &schema.Schema{
 		ForceNew:     true,

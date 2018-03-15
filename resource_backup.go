@@ -4,6 +4,7 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var backupSchema = map[string]*schema.Schema{
@@ -27,7 +28,7 @@ var backupSchema = map[string]*schema.Schema{
 				"subtype": &schema.Schema{
 					Required:     true,
 					Type:         schema.TypeString,
-					ValidateFunc: validateString([]string{"DEFINED_HOUR", "HOURLY", "DAILY", "MONTHLY", "WEEKLY_PLANNED"}),
+					ValidateFunc: validation.StringInSlice([]string{"DEFINED_HOUR", "HOURLY", "DAILY", "MONTHLY", "WEEKLY_PLANNED"}, false),
 				},
 				// XXX If date is not properly set in the DTO it generates a GEN-13
 				"time": &schema.Schema{
@@ -38,12 +39,12 @@ var backupSchema = map[string]*schema.Schema{
 				"type": &schema.Schema{
 					Required:     true,
 					Type:         schema.TypeString,
-					ValidateFunc: validateString([]string{"COMPLETE", "SNAPSHOT", "FILESYSTEM"}),
+					ValidateFunc: validation.StringInSlice([]string{"COMPLETE", "SNAPSHOT", "FILESYSTEM"}, false),
 				},
 				"days": &schema.Schema{
 					Elem: &schema.Schema{
 						Type:         schema.TypeString,
-						ValidateFunc: validateString([]string{"wednesday", "monday", "tuesday", "thursday", "friday", "saturday", "sunday"}),
+						ValidateFunc: validation.StringInSlice([]string{"wednesday", "monday", "tuesday", "thursday", "friday", "saturday", "sunday"}, false),
 					},
 					MinItems: 1,
 					Optional: true,

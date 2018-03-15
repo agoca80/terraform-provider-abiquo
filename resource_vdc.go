@@ -4,6 +4,7 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var vdcSchema = map[string]*schema.Schema{
@@ -15,7 +16,7 @@ var vdcSchema = map[string]*schema.Schema{
 		ForceNew:     true,
 		Required:     true,
 		Type:         schema.TypeString,
-		ValidateFunc: validateString([]string{"VMX_04", "KVM"}),
+		ValidateFunc: validation.StringInSlice([]string{"VMX_04", "KVM"}, false),
 	},
 	// Soft limits
 	"cpusoft": &schema.Schema{

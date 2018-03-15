@@ -5,14 +5,6 @@ import (
 	"net"
 	"net/url"
 	"time"
-
-	"github.com/hashicorp/terraform/helper/schema"
-)
-
-var (
-	validateProtocol   = validateString([]string{"ALL", "TCP", "UDP"})
-	validateAlgorithm  = validateString([]string{"ROUND_ROBIN", "LEAST_CONNECTIONS", "SOURCE_IP"})
-	validateController = validateString([]string{"IDE", "SCSI", "VIRTIO"})
 )
 
 func validatePort(d interface{}, key string) (strs []string, errs []error) {
@@ -22,18 +14,6 @@ func validatePort(d interface{}, key string) (strs []string, errs []error) {
 	}
 	errs = append(errs, fmt.Errorf("%v is an invalid value for %v", port, key))
 	return
-}
-
-func validateString(values []string) schema.SchemaValidateFunc {
-	return func(d interface{}, key string) (strs []string, errs []error) {
-		for _, v := range values {
-			if v == d {
-				return
-			}
-		}
-		errs = append(errs, fmt.Errorf("%s is an invalid value for %s", d.(string), key))
-		return
-	}
 }
 
 func validateIP(d interface{}, key string) (strs []string, errs []error) {

@@ -4,6 +4,7 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var algorithms = []string{"ROUND_ROBIN", "LEAST_CONNECTIONS", "SOURCE_IP"}
@@ -17,7 +18,7 @@ var lbSchema = map[string]*schema.Schema{
 	"algorithm": &schema.Schema{
 		Required:     true,
 		Type:         schema.TypeString,
-		ValidateFunc: validateString(algorithms),
+		ValidateFunc: validation.StringInSlice(algorithms, false),
 	},
 	"routingrules": &schema.Schema{
 		Elem: &schema.Resource{
@@ -25,12 +26,12 @@ var lbSchema = map[string]*schema.Schema{
 				"protocolin": &schema.Schema{
 					Required:     true,
 					Type:         schema.TypeString,
-					ValidateFunc: validateString(protocols),
+					ValidateFunc: validation.StringInSlice(protocols, false),
 				},
 				"protocolout": &schema.Schema{
 					Required:     true,
 					Type:         schema.TypeString,
-					ValidateFunc: validateString(protocols),
+					ValidateFunc: validation.StringInSlice(protocols, false),
 				},
 				"portout": &schema.Schema{
 					Required:     true,

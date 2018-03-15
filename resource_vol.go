@@ -4,6 +4,7 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var volumeSchema = map[string]*schema.Schema{
@@ -30,7 +31,7 @@ var volumeSchema = map[string]*schema.Schema{
 	"type": &schema.Schema{
 		Required:     true,
 		Type:         schema.TypeString,
-		ValidateFunc: validateString([]string{"IDE", "SCSI", "VIRTIO"}),
+		ValidateFunc: validation.StringInSlice([]string{"IDE", "SCSI", "VIRTIO"}, false),
 	},
 	"tier": &schema.Schema{
 		ForceNew:     true,

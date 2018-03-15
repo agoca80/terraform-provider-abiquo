@@ -4,6 +4,7 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
+	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var dstierSchema = map[string]*schema.Schema{
@@ -28,7 +29,7 @@ var dstierSchema = map[string]*schema.Schema{
 	"policy": &schema.Schema{
 		Required:     true,
 		Type:         schema.TypeString,
-		ValidateFunc: validateString([]string{"PERFORMANCE", "PROGRESSIVE"}),
+		ValidateFunc: validation.StringInSlice([]string{"PERFORMANCE", "PROGRESSIVE"}, false),
 	},
 }
 
