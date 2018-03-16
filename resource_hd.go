@@ -69,14 +69,6 @@ func hdRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-func hdDelete(d *schema.ResourceData, m interface{}) (err error) {
-	return
-}
-
-func hdUpdate(d *schema.ResourceData, m interface{}) (err error) {
-	return
-}
-
 func hdEndpoint(d *resourceData) *core.Link {
 	return core.NewLinkType(d.string("virtualdatacenter")+"/disks", "harddisk")
 }

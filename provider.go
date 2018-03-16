@@ -173,10 +173,10 @@ func Provider() *schema.Provider {
 			},
 			"abiquo_hd": &schema.Resource{
 				Schema: hdSchema,
-				Delete: hdDelete,
+				Update: schema.Noop,
+				Delete: schema.Noop,
 				Create: resourceCreate(hdNew, nil, hdRead, hdEndpoint),
 				Exists: resourceExists("harddisk"),
-				Update: hdUpdate,
 				Read:   resourceRead(hdNew, hdRead, "harddisk"),
 			},
 			"abiquo_hp": &schema.Resource{

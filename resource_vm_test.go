@@ -1,82 +1,94 @@
 package main
 
 import (
-	"fmt"
 	"testing"
 
-	"github.com/abiquo/ojal/abiquo"
-	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/resource"
-	"github.com/hashicorp/terraform/terraform"
 )
 
-var testAccAbiquoVMBasic = `
-data "abiquo_enterprise" "enterprise" { name = "Abiquo" }
-data "abiquo_location"   "location"   { name = "datacenter 1" }
-data "abiquo_template"   "template"   { name = "tests" }
+var vmTestHelper = &testHelper{
+	kind:  "abiquo_vm",
+	media: "virtualmachine",
+	config: `
+	data "abiquo_enterprise" "test" { name = "Abiquo" }
+	data "abiquo_location"   "test"   { name = "datacenter 1" }
+	data "abiquo_template"   "test"   { name = "tests" }
 
-resource "abiquo_vdc" "vdc" {
-	enterprise = "${data.abiquo_enterprise.enterprise.id}"
-	location   = "${data.abiquo_location.location.id}"
-	name       = "testAccVMBasic"
-	type       = "VMX_04"
-}
+	resource "abiquo_vdc" "test" {
+		enterprise = "${data.abiquo_enterprise.test.id}"
+		location   = "${data.abiquo_location.test.id}"
+		name       = "testAccVMBasic"
+		type       = "KVM"
+	}
 
-resource "abiquo_vapp" "vapp" {
-	virtualdatacenter = "${abiquo_vdc.vdc.id}"
-	name              = "testAccVMBasic"
-}
+	resource "abiquo_fw" "test" {
+		virtualdatacenter = "${abiquo_vdc.test.id}"
 
-resource "abiquo_vm" "vm" {
-	backups                = [ ]
-	cpu                    = 1
-	ram                    = 64
-	label                  = "testAccVMBasic"
-	virtualappliance       = "${abiquo_vapp.vapp.id}"
-	virtualmachinetemplate = "${data.abiquo_template.template.id}"
+		description = "testAccVMBasic"
+		name        = "testAccVMBasic"
+
+		# XXX workaround ABICLOUDPREMIUM-9668
+		rules = [
+			{ protocol = "TCP", fromport = 22, toport = 22, sources = ["0.0.0.0/0"] }
+		]
+	}
+
+	resource "abiquo_private" "test" {
+		virtualdatacenter = "${abiquo_vdc.test.id}"
+
+		# XXX workaround ABICLOUDPREMIUM-9660
+		lifecycle = { ignore_changes = [ "dns1", "dns2" ] }
+
+		mask    = 24
+		address = "172.16.27.0"
+		gateway = "172.16.27.1"
+		name    = "testAccLB"
+		dns1    = "8.8.8.8"
+		dns2    = "4.4.4.4"
+		suffix  = "test.abiquo.com"
+	}
+
+	resource "abiquo_lb" "test" {
+		virtualdatacenter = "${abiquo_vdc.test.id}"
+		privatenetwork    = "${abiquo_private.test.id}"
+
+		name         = "testAccVMBasic"
+		algorithm    = "ROUND_ROBIN"
+		routingrules = [
+			{ protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
+		]
+	}
+
+	resource "abiquo_vapp" "test" {
+		virtualdatacenter = "${abiquo_vdc.test.id}"
+		name              = "testAccVMBasic"
+	}
+
+	resource "abiquo_vm" "test" {
+		deploy                 = false
+		backups                = [ ]
+		cpu                    = 1
+		ram                    = 64
+		label                  = "testAccVMBasic"
+		virtualappliance       = "${abiquo_vapp.test.id}"
+		virtualmachinetemplate = "${data.abiquo_template.test.id}"
+
+		lbs = [ "${abiquo_lb.test.id}" ]
+		fws = [ "${abiquo_fw.test.id}" ]
+
+		variables = {
+			name1 = "value1"
+			name2 = "value2"
+		}
+
+		bootstrap = <<EOF
+	#!/bin/sh
+	exit 0
+	EOF
+	}
+	`,
 }
-`
 
 func TestAccVM_update(t *testing.T) {
-	resource.Test(t, resource.TestCase{
-		PreCheck:     func() { testAccPreCheck(t) },
-		Providers:    testAccProviders,
-		CheckDestroy: testCheckVMDestroy,
-		Steps: []resource.TestStep{
-			resource.TestStep{
-				Config: testAccAbiquoVMBasic,
-				Check: resource.ComposeTestCheckFunc(
-					testCheckVMExists("abiquo_vm.vm"),
-				),
-			},
-		},
-	})
-}
-
-func testCheckVMDestroy(s *terraform.State) error {
-	for _, rs := range s.RootModule().Resources {
-		if rs.Type != "abiquo_vm" {
-			continue
-		}
-		vm := new(abiquo.VirtualMachine)
-		href := rs.Primary.Attributes["id"]
-		endpoint := core.NewLinkType(href, "virtualmachine")
-		if err := core.Read(endpoint, vm); err == nil {
-			return fmt.Errorf("VM %q still exists", vm.Label)
-		}
-	}
-	return nil
-}
-
-func testCheckVMExists(name string) resource.TestCheckFunc {
-	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[name]
-		if !ok {
-			return fmt.Errorf("VM %q not found", name)
-		}
-
-		href := rs.Primary.Attributes["id"]
-		endpoint := core.NewLinkType(href, "virtualmachine")
-		return core.Read(endpoint, nil)
-	}
+	resource.Test(t, vmTestHelper.updateCase(t))
 }

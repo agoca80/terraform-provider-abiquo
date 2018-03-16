@@ -18,7 +18,7 @@ resource "abiquo_vdc" "vdc" {
 	enterprise = "${data.abiquo_enterprise.enterprise.id}"
 	location   = "${data.abiquo_location.location.id}"
 	name       = "testAccPlanBasic"
-	type       = "VMX_04"
+	type       = "KVM"
 }
 
 resource "abiquo_vapp" "vapp" {

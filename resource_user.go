@@ -38,7 +38,7 @@ var userSchema = map[string]*schema.Schema{
 		ValidateFunc: validateURL,
 	},
 	"scope": &schema.Schema{
-		Required:     true,
+		Optional:     true,
 		Type:         schema.TypeString,
 		ValidateFunc: validateURL,
 	},
