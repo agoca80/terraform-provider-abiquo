@@ -9,7 +9,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var dstierDataSchema = map[string]*schema.Schema{
+var tierDataSchema = map[string]*schema.Schema{
 	"name": &schema.Schema{
 		Required: true,
 		Type:     schema.TypeString,
@@ -21,7 +21,7 @@ var dstierDataSchema = map[string]*schema.Schema{
 	},
 }
 
-func dstierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
+func tierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	href := d.Get("datacenter").(string)
 	datacenter := core.NewLinker(href, "datacenter").Walk()
 	if datacenter == nil {
@@ -29,13 +29,13 @@ func dstierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	}
 
 	name := d.Get("name").(string)
-	dstier := datacenter.Rel("datastoretiers").Collection(nil).Find(func(r core.Resource) bool {
-		return r.(*abiquo.DatastoreTier).Name == name
+	tier := datacenter.Rel("tiers").Collection(nil).Find(func(r core.Resource) bool {
+		return r.(*abiquo.Tier).Name == name
 	})
-	if dstier == nil {
+	if tier == nil {
 		return fmt.Errorf("datastore tier not found: %q", name)
 	}
 
-	d.SetId(dstier.URL())
+	d.SetId(tier.URL())
 	return
 }

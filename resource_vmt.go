@@ -54,21 +54,26 @@ func vmtNew(d *resourceData) core.Resource {
 
 func vmtCreate(rd *schema.ResourceData, m interface{}) (err error) {
 	d := newResourceData(rd, "virtualmachinetemplate")
-	var vmt *abiquo.VirtualMachineTemplate
 	file := d.string("file")
 	endpoint := d.link("repo").SetType("datacenterrepository")
 	repository := new(abiquo.DatacenterRepository)
-	if err = core.Read(endpoint, repository); err == nil {
-		if vmt, err = repository.Upload(file); err == nil {
-			d.SetId(vmt.URL())
-			vmt.Name = d.string("name")
-			vmt.IconURL = d.string("icon")
-			vmt.Description = d.string("description")
-			vmt.CPURequired = d.int("cpu")
-			vmt.RAMRequired = d.int("ram")
-			err = core.Update(vmt, vmt)
-		}
+	if err = core.Read(endpoint, repository); err != nil {
+		return
 	}
+
+	var vmt *abiquo.VirtualMachineTemplate
+	if vmt, err = repository.Upload(file); err != nil {
+		return
+	}
+
+	d.SetId(vmt.URL())
+	vmt.Name = d.string("name")
+	vmt.IconURL = d.string("icon")
+	vmt.Description = d.string("description")
+	vmt.CPURequired = d.int("cpu")
+	vmt.RAMRequired = d.int("ram")
+	err = core.Update(vmt, vmt)
+
 	return
 }
 

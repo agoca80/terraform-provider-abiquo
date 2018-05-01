@@ -146,3 +146,10 @@ func vdcRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("vlanhard", vdc.VLANSoft)
 	return
 }
+
+func vdcDevice(link *core.Link) (device core.Resource) {
+	if vdc := link.Walk(); vdc != nil {
+		device = vdc.Walk("device")
+	}
+	return
+}

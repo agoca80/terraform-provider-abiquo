@@ -205,13 +205,8 @@ func vmReconfigure(vm *abiquo.VirtualMachine, d *resourceData) (err error) {
 	return
 }
 
-func vmCreate(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "")
-	vm := vmNew(d).(*abiquo.VirtualMachine)
-	if err = core.Create(vmEndpoint(d), vm); err != nil {
-		return
-	}
-
+func vmCreate(d *resourceData, resource core.Resource) (err error) {
+	vm := resource.(*abiquo.VirtualMachine)
 	if err = vmReconfigure(vm, d); err != nil {
 		vm.Delete()
 		return

@@ -112,17 +112,8 @@ func lbUpdate(rd *schema.ResourceData, m interface{}) (err error) {
 }
 
 func lbEndpoint(d *resourceData) (link *core.Link) {
-	vdc := new(abiquo.VirtualDatacenter)
-	if core.Read(d.link("virtualdatacenter"), vdc) == nil {
-		endpoint := vdc.Rel("device")
-		if endpoint == nil {
-			return nil
-		}
-
-		device := new(abiquo.Device)
-		if core.Read(endpoint, device) == nil {
-			link = device.Rel("loadbalancers").SetType("loadbalancer")
-		}
+	if device := vdcDevice(d.link("virtualdatacenter")); device != nil {
+		link = device.Rel("loadbalancers").SetType("loadbalancer")
 	}
 	return
 }

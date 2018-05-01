@@ -85,38 +85,24 @@ func fwRules(d *resourceData) *abiquo.FirewallRules {
 	}
 }
 
-func fwEndpoint(d *resourceData) *core.Link {
-	vdc := new(abiquo.VirtualDatacenter)
-	if core.Read(d.link("virtualdatacenter"), vdc) != nil {
-		return nil
+func fwEndpoint(d *resourceData) (link *core.Link) {
+	if device := vdcDevice(d.link("virtualdatacenter")); device != nil {
+		link = device.Rel("firewalls").SetType("firewallpolicy")
 	}
-	endpoint := vdc.Rel("device")
-	if endpoint == nil {
-		return nil
-	}
-	device := new(abiquo.Device)
-	if core.Read(endpoint, device) != nil {
-		return nil
-	}
-	return device.Rel("firewalls").SetType("firewallpolicy")
+	return
 }
 
-func fwCreate(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "")
-	fw := fwNew(d).(*abiquo.Firewall)
-	if err = core.Create(fwEndpoint(d), fw); err == nil {
-		d.SetId(fw.URL())
+func fwCreate(d *resourceData, resource core.Resource) (err error) {
+	fw := resource.(*abiquo.Firewall)
+	if rules := fwRules(d); len(rules.Collection) > 0 {
 		err = fw.SetRules(fwRules(d))
 	}
 	return
 }
 
-func fwUpdate(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "firewallpolicy")
-	fw := fwNew(d).(*abiquo.Firewall)
-	if err = core.Update(d, fw); err == nil {
-		err = fw.SetRules(fwRules(d))
-	}
+func fwUpdate(d *resourceData, resource core.Resource) (err error) {
+	fw := resource.(*abiquo.Firewall)
+	err = fw.SetRules(fwRules(d))
 	return
 }
 

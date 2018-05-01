@@ -59,32 +59,18 @@ func roleRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-func roleCreate(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "role")
-	role := roleNew(d).(*abiquo.Role)
-	if err = core.Create(roleEndpoint(nil), role); err != nil {
+func rolePrivileges(d *resourceData, resource core.Resource) (err error) {
+	if !d.HasChange("privileges") {
 		return
 	}
-	d.SetId(role.URL())
-	return rolePrivilegesUpdate(role, d)
-}
 
-func roleUpdate(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "role")
-	role := roleNew(d).(*abiquo.Role)
-	if err = core.Update(d, role); err == nil {
-		err = rolePrivilegesUpdate(role, d)
-	}
-	return
-}
-
-func rolePrivilegesUpdate(r *abiquo.Role, d *resourceData) error {
+	role := resource.(*abiquo.Role)
 	for _, name := range d.set("privileges").List() {
 		privilege := privilegeGet(name.(string))
 		if privilege == nil {
 			return fmt.Errorf("roleCreate: privilege %v does not exist", name)
 		}
-		r.AddPrivilege(privilege)
+		role.AddPrivilege(privilege)
 	}
-	return core.Update(r, r)
+	return core.Update(role, role)
 }

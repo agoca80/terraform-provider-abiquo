@@ -95,15 +95,10 @@ func actionPlanTriggers(d *resourceData) (triggers core.DTO) {
 	return
 }
 
-func actionPlanCreate(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "")
-	plan := actionPlanNew(d).(*abiquo.ActionPlan)
-
-	if err = core.Create(actionPlanEndpoint(d), plan); err == nil {
-		d.SetId(plan.URL())
-		if triggers := actionPlanTriggers(d); len(triggers.Links) > 0 {
-			err = plan.SetTriggers(&triggers)
-		}
+func actionPlanCreate(d *resourceData, resource core.Resource) (err error) {
+	a := resource.(*abiquo.ActionPlan)
+	if triggers := actionPlanTriggers(d); len(triggers.Links) > 0 {
+		err = a.SetTriggers(&triggers)
 	}
 	return
 }

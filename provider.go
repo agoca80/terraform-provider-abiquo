@@ -116,6 +116,22 @@ func Provider() *schema.Provider {
 				Update: resourceUpdate(computeLoadDTO, nil, "machineloadrule"),
 				Read:   resourceRead(computeLoadDTO, computeLoadRead, "machineloadrule"),
 			},
+			"abiquo_costcode": &schema.Resource{
+				Schema: costCodeSchema,
+				Read:   resourceRead(costCodeNew, costCodeRead, "costcode"),
+				Update: resourceUpdate(costCodeNew, nil, "costcode"),
+				Exists: resourceExists("costcode"),
+				Delete: resourceDelete,
+				Create: resourceCreate(costCodeNew, nil, costCodeRead, costCodeEndpoint),
+			},
+			"abiquo_currency": &schema.Resource{
+				Schema: currencySchema,
+				Read:   resourceRead(currencyNew, currencyRead, "currency"),
+				Update: resourceUpdate(currencyNew, nil, "currency"),
+				Exists: resourceExists("currency"),
+				Delete: resourceDelete,
+				Create: resourceCreate(currencyNew, nil, currencyRead, currencyEndpoint),
+			},
 			"abiquo_datacenter": &schema.Resource{
 				Schema: datacenterSchema,
 				Delete: resourceDelete,
@@ -167,8 +183,8 @@ func Provider() *schema.Provider {
 				Schema: firewallSchema,
 				Delete: resourceDelete,
 				Exists: resourceExists("firewallpolicy"),
-				Update: fwUpdate,
-				Create: fwCreate,
+				Update: resourceUpdate(fwNew, fwUpdate, "firewallpolicy"),
+				Create: resourceCreate(fwNew, fwCreate, fwRead, fwEndpoint),
 				Read:   resourceRead(fwNew, fwRead, "firewallpolicy"),
 			},
 			"abiquo_hd": &schema.Resource{
@@ -230,8 +246,16 @@ func Provider() *schema.Provider {
 				Delete: resourceDelete,
 				Exists: resourceExists("virtualmachineactionplan"),
 				Update: resourceUpdate(actionPlanNew, nil, "virtualmachineactionplan"),
-				Create: actionPlanCreate,
+				Create: resourceCreate(actionPlanNew, actionPlanCreate, actionPlanRead, actionPlanEndpoint),
 				Read:   resourceRead(actionPlanNew, actionPlanRead, "virtualmachineactionplan"),
+			},
+			"abiquo_pricing": &schema.Resource{
+				Schema: pricingSchema,
+				Delete: resourceDelete,
+				Exists: resourceExists("pricingtemplate"),
+				Update: resourceUpdate(pricingNew, nil, "pricingtemplate"),
+				Create: resourceCreate(pricingNew, nil, pricingRead, pricingEndpoint),
+				Read:   resourceRead(pricingNew, pricingRead, "pricingtemplate"),
 			},
 			"abiquo_private": &schema.Resource{
 				Schema: privateSchema,
@@ -259,9 +283,9 @@ func Provider() *schema.Provider {
 				Schema: roleSchema,
 				Delete: resourceDelete,
 				Read:   resourceRead(roleNew, roleRead, "role"),
-				Create: roleCreate,
+				Create: resourceCreate(roleNew, rolePrivileges, roleRead, roleEndpoint),
 				Exists: resourceExists("role"),
-				Update: roleUpdate,
+				Update: resourceUpdate(roleNew, rolePrivileges, "role"),
 			},
 			"abiquo_scope": &schema.Resource{
 				Schema: scopeSchema,
@@ -315,7 +339,7 @@ func Provider() *schema.Provider {
 				Read:   resourceRead(vmNew, vmRead, "virtualmachine"),
 				Exists: resourceExists("virtualmachine"),
 				Delete: vmDelete,
-				Create: vmCreate,
+				Create: resourceCreate(vmNew, vmCreate, vmRead, vmEndpoint),
 			},
 			"abiquo_vmt": &schema.Resource{
 				Schema: vmtSchema,
@@ -386,6 +410,10 @@ func Provider() *schema.Provider {
 			"abiquo_scope": &schema.Resource{
 				Schema: scopeDataSchema,
 				Read:   scopeDataRead,
+			},
+			"abiquo_tier": &schema.Resource{
+				Schema: tierDataSchema,
+				Read:   tierDataRead,
 			},
 			"abiquo_vdc": &schema.Resource{
 				Schema: vdcDataSchema,
