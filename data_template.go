@@ -26,7 +26,8 @@ func templateRead(d *schema.ResourceData, meta interface{}) (err error) {
 	for _, dcrepo := range dcrepos.List() {
 		repo := dcrepo.(*abiquo.DatacenterRepository)
 		finder := func(r core.Resource) bool {
-			return r.(*abiquo.VirtualMachineTemplate).Name == d.Get("name").(string)
+			t := r.(*abiquo.VirtualMachineTemplate)
+			return t.Name == d.Get("name").(string) && t.State != "UNAVAILABLE"
 		}
 		vmtemplates := repo.Rel("virtualmachinetemplates").Collection(nil)
 		if template := vmtemplates.Find(finder); template != nil {

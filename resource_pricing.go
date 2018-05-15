@@ -9,12 +9,12 @@ import (
 
 var pricingDatacenterSchema = map[string]*schema.Schema{
 	"href": &schema.Schema{
-		ForceNew:     true,
 		Required:     true,
 		Type:         schema.TypeString,
 		ValidateFunc: validateURL,
 	},
 	"datastore_tier": &schema.Schema{
+		Computed: true,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"href": &schema.Schema{
@@ -23,7 +23,8 @@ var pricingDatacenterSchema = map[string]*schema.Schema{
 					ValidateFunc: validateURL,
 				},
 				"price": &schema.Schema{
-					Required:     true,
+					Default:      0.0,
+					Optional:     true,
 					Type:         schema.TypeFloat,
 					ValidateFunc: validatePrice,
 				},
@@ -34,14 +35,17 @@ var pricingDatacenterSchema = map[string]*schema.Schema{
 		Type:     schema.TypeSet,
 	},
 	"firewall": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"hd_gb": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"hardware_profile": &schema.Schema{
+		Computed: true,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"href": &schema.Schema{
@@ -50,7 +54,8 @@ var pricingDatacenterSchema = map[string]*schema.Schema{
 					ValidateFunc: validateURL,
 				},
 				"price": &schema.Schema{
-					Required:     true,
+					Default:      0.0,
+					Optional:     true,
 					Type:         schema.TypeFloat,
 					ValidateFunc: validatePrice,
 				},
@@ -61,38 +66,47 @@ var pricingDatacenterSchema = map[string]*schema.Schema{
 		Type:     schema.TypeSet,
 	},
 	"layer": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"loadbalancer": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"memory": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"memory_on": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"memory_off": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"nat_ip": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"public_ip": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"repository": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"tier": &schema.Schema{
+		Computed: true,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"href": &schema.Schema{
@@ -101,7 +115,8 @@ var pricingDatacenterSchema = map[string]*schema.Schema{
 					ValidateFunc: validateURL,
 				},
 				"price": &schema.Schema{
-					Required:     true,
+					Default:      0.0,
+					Optional:     true,
 					Type:         schema.TypeFloat,
 					ValidateFunc: validatePrice,
 				},
@@ -112,18 +127,22 @@ var pricingDatacenterSchema = map[string]*schema.Schema{
 		Type:     schema.TypeSet,
 	},
 	"vcpu": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"vcpu_on": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"vcpu_off": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
 	"vlan": &schema.Schema{
+		Default:  0.0,
 		Optional: true,
 		Type:     schema.TypeFloat,
 	},
@@ -136,6 +155,7 @@ var pricingSchema = map[string]*schema.Schema{
 		ValidateFunc: validation.StringInSlice([]string{"DAY", "WEEK", "MONTH", "QUARTER", "YEAR"}, false),
 	},
 	"costcode": &schema.Schema{
+		Computed: true,
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
 				"href": &schema.Schema{
@@ -144,7 +164,8 @@ var pricingSchema = map[string]*schema.Schema{
 					ValidateFunc: validateURL,
 				},
 				"price": &schema.Schema{
-					Required:     true,
+					Default:      0.0,
+					Optional:     true,
 					Type:         schema.TypeFloat,
 					ValidateFunc: validatePrice,
 				},
@@ -161,6 +182,7 @@ var pricingSchema = map[string]*schema.Schema{
 		ValidateFunc: validateURL,
 	},
 	"datacenter": &schema.Schema{
+		Computed: true,
 		Elem: &schema.Resource{
 			Schema: pricingDatacenterSchema,
 		},
@@ -214,68 +236,65 @@ var pricingPeriod = map[string]int{
 }
 
 func resourcePrices(r interface{}, media string) (rp []abiquo.ResourcePrice) {
+	if r == nil {
+		return
+	}
 	resources := r.(*schema.Set)
 	for _, r := range resources.List() {
 		resource := r.(map[string]interface{})
 		href := resource["href"].(string)
-		link := core.NewLinkType(href, media).SetRel(media)
 		rp = append(rp, abiquo.ResourcePrice{
 			Price: resource["price"].(float64),
-			DTO:   core.NewDTO(link),
+			DTO:   core.NewDTO(core.NewLinkType(href, media).SetRel(media)),
 		})
 	}
 	return
 }
 
-func pricingNew(d *resourceData) core.Resource {
-	currency := d.linkTypeRel("currency", "currency", "currency")
-	datacenters := []abiquo.AbstractDCPrice{}
-	for _, dc := range d.set("datacenter").List() {
-		datacenter := dc.(map[string]interface{})
-		href := datacenter["href"].(string)
-		link := core.NewLinkType(href, "datacenter").SetRel("datacenter")
-		datacenters = append(datacenters, abiquo.AbstractDCPrice{
-			Firewall:       datacenter["firewall"].(float64),
-			HardDiskGB:     datacenter["hd_gb"].(float64),
-			HPAbstractDC:   resourcePrices(datacenter["hardware_profile"], "hardwareprofile"),
-			DatastoreTiers: resourcePrices(datacenter["datastore_tier"], "datastoretier"),
-			Layer:          datacenter["layer"].(float64),
-			LoadBalancer:   datacenter["loadbalancer"].(float64),
-			MemoryGB:       datacenter["memory"].(float64),
-			MemoryOnGB:     datacenter["memory_on"].(float64),
-			MemoryOffGB:    datacenter["memory_off"].(float64),
-			NatIP:          datacenter["nat_ip"].(float64),
-			PublicIP:       datacenter["public_ip"].(float64),
-			RepositoryGB:   datacenter["repository"].(float64),
-			Tiers:          resourcePrices(datacenter["tier"], "tier"),
-			VCPU:           datacenter["vcpu"].(float64),
-			VCPUOn:         datacenter["vcpu_on"].(float64),
-			VCPUOff:        datacenter["vcpu_off"].(float64),
-			VLAN:           datacenter["vlan"].(float64),
-			DTO:            core.NewDTO(link),
-		})
+func datacenterPrices(dc interface{}) abiquo.AbstractDCPrice {
+	datacenter := dc.(map[string]interface{})
+	href := datacenter["href"].(string)
+	return abiquo.AbstractDCPrice{
+		HPAbstractDC:   resourcePrices(datacenter["hardware_profile"], "hardwareprofile"),
+		DatastoreTiers: resourcePrices(datacenter["datastore_tier"], "datastoretier"),
+		Tiers:          resourcePrices(datacenter["tier"], "tier"),
+		Firewall:       datacenter["firewall"].(float64),
+		HardDiskGB:     datacenter["hd_gb"].(float64),
+		Layer:          datacenter["layer"].(float64),
+		LoadBalancer:   datacenter["loadbalancer"].(float64),
+		MemoryGB:       datacenter["memory"].(float64),
+		MemoryOnGB:     datacenter["memory_on"].(float64),
+		MemoryOffGB:    datacenter["memory_off"].(float64),
+		NatIP:          datacenter["nat_ip"].(float64),
+		PublicIP:       datacenter["public_ip"].(float64),
+		RepositoryGB:   datacenter["repository"].(float64),
+		VCPU:           datacenter["vcpu"].(float64),
+		VCPUOn:         datacenter["vcpu_on"].(float64),
+		VCPUOff:        datacenter["vcpu_off"].(float64),
+		VLAN:           datacenter["vlan"].(float64),
+		DTO:            core.NewDTO(core.NewLinkType(href, "datacenter").SetRel("datacenter")),
 	}
+}
 
-	costCodes := []abiquo.ResourcePrice{}
-	for _, c := range d.set("costcode").List() {
-		costCode := c.(map[string]interface{})
-		href := costCode["href"].(string)
-		link := core.NewLinkType(href, "costcode").SetRel("costcode")
-		costCodes = append(costCodes, abiquo.ResourcePrice{
-			Price: costCode["price"].(float64),
-			DTO:   core.NewDTO(link, currency),
-		})
+func pricingNew(d *resourceData) core.Resource {
+	datacentersPrices := []abiquo.AbstractDCPrice{}
+	if dcSet := d.set("datacenter"); dcSet != nil {
+		for _, dc := range dcSet.List() {
+			datacentersPrices = append(datacentersPrices, datacenterPrices(dc))
+		}
 	}
 
 	return &abiquo.PricingTemplate{
-		AbstractDCPrices:    datacenters,
+		AbstractDCPrices:    datacentersPrices,
 		ChargingPeriod:      pricingPeriod[d.string("charging_period")],
-		CostCodes:           costCodes,
+		CostCodes:           resourcePrices(d.Get("costcode"), "costcode"),
 		Name:                d.string("name"),
 		Description:         d.string("description"),
 		MinimumCharge:       d.int("minimum_charge"),
 		MinimumChargePeriod: pricingPeriod[d.string("minimum_charge_period")],
-		DTO:                 core.NewDTO(currency),
+		DTO: core.NewDTO(
+			d.linkTypeRel("currency", "currency", "currency"),
+		),
 	}
 }
 
@@ -283,10 +302,11 @@ func pricingEndpoint(d *resourceData) *core.Link {
 	return core.NewLinkType("config/pricingtemplates", "pricingtemplate")
 }
 
-func resourcePricesRead(resources []abiquo.ResourcePrice) (prices []interface{}) {
+func resourcePricesRead(resources []abiquo.ResourcePrice, rel string) (set *schema.Set) {
+	set = schema.NewSet(resourceSet, nil)
 	for _, resource := range resources {
-		prices = append(prices, map[string]interface{}{
-			"href":  resource.URL(),
+		set.Add(map[string]interface{}{
+			"href":  resource.Rel(rel).URL(),
 			"price": resource.Price,
 		})
 	}
@@ -295,31 +315,32 @@ func resourcePricesRead(resources []abiquo.ResourcePrice) (prices []interface{})
 
 func pricingRead(d *resourceData, resource core.Resource) (err error) {
 	pricing := resource.(*abiquo.PricingTemplate)
-	datacenters := []interface{}{}
-	for _, d := range pricing.AbstractDCPrices {
-		datacenters = append(datacenters, map[string]interface{}{
-			"datastore_tier":   resourcePricesRead(d.DatastoreTiers),
-			"firewall":         d.Firewall,
-			"hardware_profile": resourcePricesRead(d.HPAbstractDC),
-			"hdgb":             d.HardDiskGB,
-			"layer":            d.Layer,
-			"loadbalancer":     d.LoadBalancer,
-			"memory":           d.MemoryGB,
-			"memoryOn":         d.MemoryOnGB,
-			"memoryOff":        d.MemoryOffGB,
-			"natip":            d.NatIP,
-			"publicip":         d.PublicIP,
-			"repository":       d.RepositoryGB,
-			"tier":             resourcePricesRead(d.Tiers),
-			"vcpu":             d.VCPU,
-			"vcpuon":           d.VCPUOn,
-			"vcpuoff":          d.VCPUOff,
-			"vlan":             d.VLAN,
-			"datacenter":       d.URL(),
+	datacenters := schema.NewSet(resourceSet, nil)
+	for _, dc := range pricing.AbstractDCPrices {
+		datacenters.Add(map[string]interface{}{
+			"tier":             resourcePricesRead(dc.Tiers, "tier"),
+			"datastore_tier":   resourcePricesRead(dc.DatastoreTiers, "datastoretier"),
+			"hardware_profile": resourcePricesRead(dc.HPAbstractDC, "hardwareprofile"),
+			"firewall":         dc.Firewall,
+			"hdgb":             dc.HardDiskGB,
+			"layer":            dc.Layer,
+			"loadbalancer":     dc.LoadBalancer,
+			"memory":           dc.MemoryGB,
+			"memoryOn":         dc.MemoryOnGB,
+			"memoryOff":        dc.MemoryOffGB,
+			"natip":            dc.NatIP,
+			"publicip":         dc.PublicIP,
+			"repository":       dc.RepositoryGB,
+			"vcpu":             dc.VCPU,
+			"vcpuon":           dc.VCPUOn,
+			"vcpuoff":          dc.VCPUOff,
+			"vlan":             dc.VLAN,
+			"href":             dc.Rel("datacenter").URL(),
 		})
 	}
+	d.Set("datacenter", datacenters)
 	d.Set("description", pricing.Description)
-	d.Set("costcode", resourcePricesRead(pricing.CostCodes))
+	d.Set("costcode", resourcePricesRead(pricing.CostCodes, "costcode"))
 	d.Set("name", pricing.Name)
 	return
 }

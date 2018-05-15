@@ -33,8 +33,9 @@ var machineSchema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 	},
 	"managerpass": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
+		Optional:  true,
+		Sensitive: true,
+		Type:      schema.TypeString,
 	},
 	"rack": &schema.Schema{
 		ForceNew:     true,
