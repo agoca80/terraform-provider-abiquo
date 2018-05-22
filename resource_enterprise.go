@@ -19,6 +19,11 @@ var enterpriseSchema = map[string]*schema.Schema{
 		Optional: true,
 		Type:     schema.TypeMap,
 	},
+	"pricingtemplate": &schema.Schema{
+		Optional:     true,
+		Type:         schema.TypeString,
+		ValidateFunc: validateURL,
+	},
 	// Soft limits
 	"cpusoft": &schema.Schema{
 		Optional:     true,
@@ -110,6 +115,9 @@ func enterpriseDTO(d *resourceData) core.Resource {
 		VolSoft:  d.int("VolSoft"),
 		VLANHard: d.int("vlanhard"),
 		VLANSoft: d.int("vlansoft"),
+		DTO: core.NewDTO(
+			d.linkTypeRel("pricingtemplate", "pricingtemplate", "pricingtemplate"),
+		),
 	}
 }
 
@@ -144,6 +152,7 @@ func enterpriseRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("volsoft", e.VolSoft)
 	d.Set("vlanhard", e.VLANHard)
 	d.Set("vlansoft", e.VLANSoft)
+	d.Set("pricingtemplate", e.Rel("pricingtemplate").URL())
 	return
 }
 
