@@ -71,7 +71,7 @@ var rssMap = map[string]string{
 }
 
 func datacenterNew(d *resourceData) core.Resource {
-	rss := make([]abiquo.RemoteService, len(rssMap))
+	rss := []abiquo.RemoteService{}
 	for k, v := range rssMap {
 		rss = append(rss, abiquo.RemoteService{Type: k, URI: d.string(v)})
 	}
