@@ -223,6 +223,7 @@ func vmCreate(d *resourceData, resource core.Resource) (err error) {
 func vmRead(d *resourceData, resource core.Resource) (err error) {
 	vm := resource.(*abiquo.VirtualMachine)
 	d.Set("label", vm.Label)
+	d.Set("name", vm.Name)
 	d.Set("variables", vm.Variables)
 	d.Set("virtualappliance", vm.Rel("virtualappliance").URL())
 	d.Set("virtualmachinetemplate", vm.Rel("virtualmachinetemplate").URL())
