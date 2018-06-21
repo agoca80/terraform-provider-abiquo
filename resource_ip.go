@@ -48,7 +48,13 @@ func ipNew(d *resourceData) core.Resource {
 }
 
 func ipEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("network")+"/ips", d.string("type"))
+	var media string
+	if d.string("type") != "privateip" {
+		media = "publicip"
+	} else {
+		media = "privateip"
+	}
+	return core.NewLinkType(d.string("network")+"/ips", media)
 }
 
 func ipCreate(rd *schema.ResourceData, meta interface{}) (err error) {
