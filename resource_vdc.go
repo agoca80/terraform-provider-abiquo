@@ -100,7 +100,7 @@ func vdcNew(d *resourceData) core.Resource {
 			Address: "192.168.0.0",
 			Gateway: "192.168.0.1",
 			Name:    "tf default network",
-			TypeNet: "INTERNAL",
+			Type:    "INTERNAL",
 		},
 		// Soft limits
 		CPUSoft:     d.int("cpusoft"),

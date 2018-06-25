@@ -53,7 +53,7 @@ func privateEndpoint(d *resourceData) *core.Link {
 
 func privateNew(d *resourceData) core.Resource {
 	private := networkNew(d)
-	private.TypeNet = "INTERNAL"
+	private.Type = "INTERNAL"
 	private.DTO = core.NewDTO(
 		d.link("virtualdatacenter"),
 	)

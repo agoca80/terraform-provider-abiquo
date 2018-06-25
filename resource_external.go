@@ -67,7 +67,7 @@ var externalSchema = map[string]*schema.Schema{
 
 func externalNew(d *resourceData) core.Resource {
 	network := networkNew(d)
-	network.TypeNet = "EXTERNAL"
+	network.Type = "EXTERNAL"
 	network.Tag = d.int("tag")
 	network.DTO = core.NewDTO(
 		d.link("enterprise"),

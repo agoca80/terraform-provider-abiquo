@@ -61,7 +61,7 @@ var publicSchema = map[string]*schema.Schema{
 
 func publicNew(d *resourceData) core.Resource {
 	public := networkNew(d)
-	public.TypeNet = "EXTERNAL"
+	public.Type = "EXTERNAL"
 	public.Tag = d.int("tag")
 	public.DTO = core.NewDTO(
 		d.link("networkservicetype"),
