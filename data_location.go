@@ -13,10 +13,6 @@ var locationDataSchema = map[string]*schema.Schema{
 		Required: true,
 		Type:     schema.TypeString,
 	},
-	"hardwareprofiles": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
 }
 
 func locationFind(name string) (location core.Resource) {
@@ -38,7 +34,6 @@ func locationFind(name string) (location core.Resource) {
 func locationRead(d *schema.ResourceData, meta interface{}) (err error) {
 	if location := locationFind(d.Get("name").(string)); location != nil {
 		d.SetId(location.Rel("location").Href)
-		d.Set("hardwareprofiles", location.Rel("hardwareprofiles").Href)
 		return
 	}
 	return fmt.Errorf("Location %q does not exist", d.Get("name"))

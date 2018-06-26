@@ -13,7 +13,7 @@ var hpDataSchema = map[string]*schema.Schema{
 		Required: true,
 		Type:     schema.TypeString,
 	},
-	"hardwareprofiles": &schema.Schema{
+	"location": &schema.Schema{
 		Required:     true,
 		Type:         schema.TypeString,
 		ValidateFunc: validateURL,
@@ -22,7 +22,7 @@ var hpDataSchema = map[string]*schema.Schema{
 
 func hpDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	name := d.Get("name").(string)
-	href := d.Get("hardwareprofiles").(string)
+	href := d.Get("location").(string) + "/hardwareprofiles"
 	hardwareprofiles := core.NewLinker(href, "hardwareprofiles").Collection(nil)
 	hardwareprofile := hardwareprofiles.Find(func(r core.Resource) bool {
 		return r.(*abiquo.HardwareProfile).Name == name
