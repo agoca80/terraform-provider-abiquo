@@ -13,17 +13,33 @@ var locationDataSchema = map[string]*schema.Schema{
 		Required: true,
 		Type:     schema.TypeString,
 	},
+	"hardwareprofiles": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
+}
+
+func locationFind(name string) (location core.Resource) {
+	datacenters := abiquo.PrivateLocations(nil)
+	if location = datacenters.Find(func(r core.Resource) bool {
+		return r.(*abiquo.Datacenter).Name == name
+	}); location != nil {
+		return
+	}
+
+	regions := abiquo.PublicLocations(nil)
+	location = regions.Find(func(r core.Resource) bool {
+		return r.(*abiquo.Location).Name == name
+	})
+
+	return
 }
 
 func locationRead(d *schema.ResourceData, meta interface{}) (err error) {
-	finder := func(r core.Resource) bool {
-		return r.(*abiquo.Datacenter).Name == d.Get("name").(string)
+	if location := locationFind(d.Get("name").(string)); location != nil {
+		d.SetId(location.Rel("location").Href)
+		d.Set("hardwareprofiles", location.Rel("hardwareprofiles").Href)
+		return
 	}
-	location := abiquo.PrivateLocations(nil).Find(finder)
-	if location == nil {
-		return fmt.Errorf("Location %q does not exist", d.Get("name"))
-	}
-
-	d.SetId(location.Rel("location").Href)
-	return
+	return fmt.Errorf("Location %q does not exist", d.Get("name"))
 }
