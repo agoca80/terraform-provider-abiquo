@@ -7,7 +7,7 @@ import (
 	"github.com/hashicorp/terraform/helper/validation"
 )
 
-var algorithms = []string{"ROUND_ROBIN", "LEAST_CONNECTIONS", "SOURCE_IP"}
+var algorithms = []string{"Default", "ROUND_ROBIN", "LEAST_CONNECTIONS", "SOURCE_IP"}
 var protocols = []string{"TCP", "HTTP", "HTTPS"}
 
 var lbSchema = map[string]*schema.Schema{
@@ -51,7 +51,7 @@ var lbSchema = map[string]*schema.Schema{
 	},
 	"privatenetwork": &schema.Schema{
 		ForceNew:     true,
-		Required:     true,
+		Optional:     true,
 		Type:         schema.TypeString,
 		ValidateFunc: validateURL,
 	},
@@ -60,6 +60,11 @@ var lbSchema = map[string]*schema.Schema{
 		Required:     true,
 		Type:         schema.TypeString,
 		ValidateFunc: validateURL,
+	},
+	// Computed attibutes
+	"loadbalanceraddress": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
 	},
 }
 
@@ -99,6 +104,8 @@ func lbRead(d *resourceData, resource core.Resource) (err error) {
 	lb := resource.(*abiquo.LoadBalancer)
 	d.Set("name", lb.Name)
 	d.Set("algorithm", lb.Algorithm)
+	// Computed attributes
+	d.Set("loadbalanceraddress", lb.Rel("loadbalanceraddress").Title)
 	return
 }
 
