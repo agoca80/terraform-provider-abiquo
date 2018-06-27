@@ -60,10 +60,17 @@ func ipCreate(rd *schema.ResourceData, meta interface{}) (err error) {
 
 // IPResource does not change
 func ipRead(rd *schema.ResourceData, meta interface{}) (err error) {
-	return core.Read(newResourceData(rd, rd.Get("type").(string)), nil)
+	href := rd.Id()
+	media := rd.Get("type").(string)
+	endpoint := core.NewLinkType(href, media)
+	err = core.Read(endpoint, nil)
+	return
 }
 
 func ipExists(rd *schema.ResourceData, meta interface{}) (ok bool, err error) {
-	err = core.Read(newResourceData(rd, rd.Get("type").(string)), nil)
+	href := rd.Id()
+	media := rd.Get("type").(string)
+	endpoint := core.NewLinkType(href, media)
+	err = core.Read(endpoint, nil)
 	return err == nil, err
 }
