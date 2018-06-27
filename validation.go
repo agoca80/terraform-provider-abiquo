@@ -4,7 +4,10 @@ import (
 	"fmt"
 	"net"
 	"net/url"
+	"regexp"
 	"time"
+
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func validatePort(d interface{}, key string) (strs []string, errs []error) {
@@ -43,4 +46,24 @@ func validatePrice(d interface{}, key string) (strs []string, errs []error) {
 		errs = append(errs, fmt.Errorf("prize should be 0 or greater"))
 	}
 	return
+}
+
+func validateHref(regexps []string) schema.SchemaValidateFunc {
+	return func(d interface{}, key string) (strs []string, errs []error) {
+		for _, re := range regexps {
+			if regexp.MustCompile(re).MatchString(d.(string)) {
+				return
+			}
+		}
+		errs = append(errs, fmt.Errorf("invalid %v value : %v", key, d.(string)))
+		return
+	}
+}
+
+var href map[string]string = map[string]string{
+	"enterprise":       "/admin/enterprises/[0-9]+$",
+	"externalip":       "/admin/enterprises/[0-9]+/limits/[0-9]+/externalnetworks/[0-9]+/ips/[0-9]+",
+	"privateip":        "/cloud/virtualdatacenters/[0-9]+/privatenetworks/[0-9]+/ips/[0-9]+$",
+	"publicip":         "/cloud/virtualdatacenters/[0-9]+/publicips/purchased/[0-9]+",
+	"virtualappliance": "/cloud/virtualdatacenters/[0-9]+/virtualappliances/[0-9]+$",
 }

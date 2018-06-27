@@ -46,10 +46,12 @@ var externalSchema = map[string]*schema.Schema{
 		Type:     schema.TypeString,
 	},
 	"enterprise": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeString,
+		ValidateFunc: validateHref([]string{
+			href["enterprise"],
+		}),
 	},
 	"networkservicetype": &schema.Schema{
 		ForceNew:     true,

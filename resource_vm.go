@@ -80,8 +80,12 @@ var vmSchema = map[string]*schema.Schema{
 	},
 	"ips": &schema.Schema{
 		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
+			Type: schema.TypeString,
+			ValidateFunc: validateHref([]string{
+				href["privateip"],
+				href["externalip"],
+				href["publicip"],
+			}),
 		},
 		ForceNew: true,
 		Optional: true,
@@ -107,10 +111,12 @@ var vmSchema = map[string]*schema.Schema{
 		Type:     schema.TypeMap,
 	},
 	"virtualappliance": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
+		ForceNew: true,
+		Required: true,
+		Type:     schema.TypeString,
+		ValidateFunc: validateHref([]string{
+			href["virtualappliance"],
+		}),
 	},
 	"virtualmachinetemplate": &schema.Schema{
 		ForceNew:     true,
