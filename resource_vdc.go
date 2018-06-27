@@ -1,6 +1,8 @@
 package main
 
 import (
+	"fmt"
+
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -89,6 +91,37 @@ var vdcSchema = map[string]*schema.Schema{
 		Type:         schema.TypeString,
 		ValidateFunc: validateURL,
 	},
+	// Public ips
+	"publicips": &schema.Schema{
+		Elem: &schema.Schema{
+			Type:         schema.TypeString,
+			ValidateFunc: validateIP,
+		},
+		Optional: true,
+		Set:      schema.HashString,
+		Type:     schema.TypeSet,
+	},
+	// Computed links
+	"externalips": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
+	"externalnetworks": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
+	"privatenetworks": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
+	"topurchase": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
+	"purchased": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
 }
 
 func vdcNew(d *resourceData) core.Resource {
@@ -99,7 +132,7 @@ func vdcNew(d *resourceData) core.Resource {
 			Mask:    24,
 			Address: "192.168.0.0",
 			Gateway: "192.168.0.1",
-			Name:    "tf default network",
+			Name:    "default",
 			Type:    "INTERNAL",
 		},
 		// Soft limits
@@ -125,6 +158,53 @@ func vdcNew(d *resourceData) core.Resource {
 
 func vdcEndpoint(d *resourceData) *core.Link {
 	return core.NewLinkType("cloud/virtualdatacenters", "virtualdatacenter")
+}
+
+func purchaseIP(available core.Resources, address string) (err error) {
+	if ip := available.Find(func(r core.Resource) (found bool) {
+		return r.(*abiquo.IP).IP == address
+	}); ip != nil {
+		return core.Update(ip.Rel("purchase"), nil)
+	}
+	return fmt.Errorf("ip %q was not found", address)
+}
+
+func vdcCreate(d *resourceData, resource core.Resource) (err error) {
+	// Computed links
+	d.Set("externalips", resource.Rel("externalips").Href)
+	d.Set("externalnetworks", resource.Rel("externalnetworks").Href)
+	d.Set("privatenetworks", resource.Rel("privatenetworks").Href)
+	d.Set("topurchase", resource.Rel("topurchase").Href)
+	d.Set("purchased", resource.Rel("purchased").Href)
+
+	// Buy public IPs
+	ipsSet := d.set("publicips")
+	if ipsSet == nil || ipsSet.Len() == 0 {
+		return
+	}
+
+	addresses := ipsSet.List()
+	available := resource.Rel("topurchase").Collection(nil).List()
+	for _, address := range addresses {
+		if err = purchaseIP(available, address.(string)); err != nil {
+			break
+		}
+	}
+
+	return
+}
+
+func vdcUpdate(d *resourceData, resource core.Resource) (err error) {
+	// vdc := resource.(*abiquo.VirtualDatacenter)
+	if !d.HasChange("publicips") {
+		return
+	}
+
+	// release IPs
+
+	// buy missing IPs
+
+	return
 }
 
 func vdcRead(d *resourceData, resource core.Resource) (err error) {

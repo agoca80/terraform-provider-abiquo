@@ -329,9 +329,9 @@ func Provider() *schema.Provider {
 			"abiquo_vdc": &schema.Resource{
 				Schema: vdcSchema,
 				Delete: resourceDelete,
-				Create: resourceCreate(vdcNew, nil, vdcRead, vdcEndpoint),
+				Create: resourceCreate(vdcNew, vdcCreate, vdcRead, vdcEndpoint),
 				Exists: resourceExists("virtualdatacenter"),
-				Update: resourceUpdate(vdcNew, nil, "virtualdatacenter"),
+				Update: resourceUpdate(vdcNew, vdcUpdate, "virtualdatacenter"),
 				Read:   resourceRead(vdcNew, vdcRead, "virtualdatacenter"),
 			},
 			"abiquo_vm": &schema.Resource{
