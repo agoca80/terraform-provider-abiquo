@@ -6,7 +6,6 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var ipSchema = map[string]*schema.Schema{
@@ -15,12 +14,6 @@ var ipSchema = map[string]*schema.Schema{
 		Required:     true,
 		Type:         schema.TypeString,
 		ValidateFunc: validateIP,
-	},
-	"type": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"privateip", "externalip", "publicip"}, false),
 	},
 	"network": &schema.Schema{
 		ForceNew:     true,
