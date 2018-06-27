@@ -383,6 +383,10 @@ func Provider() *schema.Provider {
 				Schema: hpDataSchema,
 				Read:   hpDataRead,
 			},
+			"abiquo_ip": &schema.Resource{
+				Schema: ipDataSchema,
+				Read:   ipDataRead,
+			},
 			"abiquo_location": &schema.Resource{
 				Schema: locationDataSchema,
 				Read:   locationRead,
@@ -390,6 +394,10 @@ func Provider() *schema.Provider {
 			"abiquo_machine": &schema.Resource{
 				Schema: machineDataSchema,
 				Read:   machineDataRead,
+			},
+			"abiquo_network": &schema.Resource{
+				Schema: networkDataSchema,
+				Read:   networkDataRead,
 			},
 			"abiquo_nst": &schema.Resource{
 				Schema: nstDataSchema,
