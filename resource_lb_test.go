@@ -44,7 +44,7 @@ var lbTestHelper = &testHelper{
 	  routingrules = [
 	    { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
 	  ]
-	} 
+	}
 	`,
 }
 

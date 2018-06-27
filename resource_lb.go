@@ -20,6 +20,10 @@ var lbSchema = map[string]*schema.Schema{
 		Type:         schema.TypeString,
 		ValidateFunc: validation.StringInSlice(algorithms, false),
 	},
+	"internal": &schema.Schema{
+		Optional: true,
+		Type:     schema.TypeBool,
+	},
 	"routingrules": &schema.Schema{
 		Elem: &schema.Resource{
 			Schema: map[string]*schema.Schema{
@@ -71,7 +75,7 @@ var lbSchema = map[string]*schema.Schema{
 func lbAddresses(d *resourceData) abiquo.LoadBalancerAddresses {
 	return abiquo.LoadBalancerAddresses{
 		Collection: []abiquo.LoadBalancerAddress{
-			abiquo.LoadBalancerAddress{Internal: false},
+			abiquo.LoadBalancerAddress{Internal: d.bool("internal")},
 		},
 	}
 }
