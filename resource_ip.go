@@ -15,6 +15,10 @@ var ipSchema = map[string]*schema.Schema{
 		Type:         schema.TypeString,
 		ValidateFunc: validateIP,
 	},
+	"type": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
 	"network": &schema.Schema{
 		ForceNew:     true,
 		Required:     true,
@@ -35,26 +39,26 @@ func ipLink(href string) *core.Link {
 	return core.NewLinkType(href, media)
 }
 
-func ipNew(d *resourceData) core.Resource {
-	return &abiquo.IP{IP: d.string("ip")}
-}
-
-func ipEndpoint(d *resourceData) *core.Link {
-	var media string
-	if d.string("type") != "privateip" {
-		media = "publicip"
-	} else {
-		media = "privateip"
-	}
-	return core.NewLinkType(d.string("network")+"/ips", media)
-}
-
 func ipCreate(rd *schema.ResourceData, meta interface{}) (err error) {
-	d := newResourceData(rd, "")
-	ip := ipNew(d)
-	if err = core.Create(ipEndpoint(d), ip); err == nil {
-		d.SetId(ip.URL())
+	href := rd.Get("network").(string) + "/ips"
+
+	var media string
+	if private := strings.Contains(href, "/privatenetworks/"); private {
+		media = "privateip"
+	} else {
+		media = "publicip"
 	}
+
+	ip := &abiquo.IP{
+		IP:        rd.Get("ip").(string),
+		Available: true,
+	}
+
+	if err = core.Create(core.NewLinkType(href, media), ip); err == nil {
+		rd.SetId(ip.URL())
+		rd.Set("type", ip.Media())
+	}
+
 	return
 }
 
