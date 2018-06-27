@@ -40,6 +40,7 @@ var lbTestHelper = &testHelper{
 	  privatenetwork    = "${abiquo_private.test.id}"
 
 	  name         = "testAccLB"
+		internal     = false
 	  algorithm    = "ROUND_ROBIN"
 	  routingrules = [
 	    { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
