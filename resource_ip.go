@@ -31,16 +31,15 @@ var ipSchema = map[string]*schema.Schema{
 }
 
 func ipLink(href string) *core.Link {
-	switch {
-	case strings.Contains(href, "/privatenetworks/"):
-		return core.NewLinkType(href, "privateip")
-	case strings.Contains(href, "/externalnetworks/"):
-		return core.NewLinkType(href, "externalip")
-	case strings.Contains(href, "/publicips/"):
-		return core.NewLinkType(href, "publicip")
-	default:
-		return nil
+	var media string
+	if private := strings.Contains(href, "/privatenetworks/"); private {
+		media = "privateip"
+	} else if public := strings.Contains(href, "/publicips/"); public {
+		media = "publicip"
+	} else {
+		media = "externalip"
 	}
+	return core.NewLinkType(href, media)
 }
 
 func ipNew(d *resourceData) core.Resource {
