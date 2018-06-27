@@ -11,14 +11,65 @@ var vmTestHelper = &testHelper{
 	media: "virtualmachine",
 	config: `
 	data "abiquo_enterprise" "test" { name = "Abiquo" }
-	data "abiquo_location"   "test"   { name = "datacenter 1" }
-	data "abiquo_template"   "test"   { name = "tests" }
+	data "abiquo_location"   "test" { name = "datacenter 1" }
+	data "abiquo_datacenter" "test" { name = "datacenter 1" }
+	data "abiquo_template"   "test" { name = "tests" }
+	data "abiquo_nst"        "test"        {
+	  datacenter = "${data.abiquo_datacenter.test.id}"
+	  name       = "Service Network"
+	}
+
+	resource "abiquo_backup" "test" {
+		datacenter     = "${data.abiquo_datacenter.test.id}"
+		code           = "testAccVMBasic"
+	  name           = "testAccVMBasic"
+		description    = "testAccVMBasic"
+		configurations = [
+			{ type = "COMPLETE", subtype = "HOURLY", time = "2" }
+		]
+	}
+
+	resource "abiquo_public" "public" {
+	  datacenter         = "${data.abiquo_datacenter.test.id}"
+	  networkservicetype = "${data.abiquo_nst.test.id}"
+
+	  tag     = 1221
+	  mask    = 24
+	  address = "12.12.12.0"
+	  gateway = "12.12.12.1"
+	  name    = "testAccVMBasic-public"
+	}
+
+	resource "abiquo_external" "external" {
+	  enterprise         = "${data.abiquo_enterprise.test.id}"
+	  datacenter         = "${data.abiquo_datacenter.test.id}"
+	  networkservicetype = "${data.abiquo_nst.test.id}"
+
+	  tag     = 1331
+	  mask    = 24
+	  address = "172.16.4.0"
+	  gateway = "172.16.4.1"
+	  name    = "testAccVMBasic-external"
+	}
+
+	resource "abiquo_ip" "external" {
+	  network = "${abiquo_external.external.id}"
+	  ip      = "172.16.4.10"
+	}
+
+	resource "abiquo_ip" "public" {
+	  network   = "${abiquo_public.public.id}"
+	  ip        = "12.12.12.2"
+	}
 
 	resource "abiquo_vdc" "test" {
 		enterprise = "${data.abiquo_enterprise.test.id}"
 		location   = "${data.abiquo_location.test.id}"
 		name       = "testAccVMBasic"
 		type       = "KVM"
+		publicips  = [
+			"${abiquo_ip.public.ip}"
+		]
 	}
 
 	resource "abiquo_fw" "test" {
@@ -35,17 +86,15 @@ var vmTestHelper = &testHelper{
 
 	resource "abiquo_private" "test" {
 		virtualdatacenter = "${abiquo_vdc.test.id}"
-
-		# XXX workaround ABICLOUDPREMIUM-9660
-		lifecycle = { ignore_changes = [ "dns1", "dns2" ] }
-
 		mask    = 24
 		address = "172.16.27.0"
 		gateway = "172.16.27.1"
-		name    = "testAccLB"
-		dns1    = "8.8.8.8"
-		dns2    = "4.4.4.4"
-		suffix  = "test.abiquo.com"
+		name    = "testAccVMBasic-private"
+	}
+
+	resource "abiquo_ip" "private" {
+	  network = "${abiquo_private.test.id}"
+	  ip      = "172.16.27.2"
 	}
 
 	resource "abiquo_lb" "test" {
@@ -64,9 +113,29 @@ var vmTestHelper = &testHelper{
 		name              = "testAccVMBasic"
 	}
 
+	data "abiquo_backup" "test" {
+		code     = "${abiquo_backup.test.code}"
+		location = "${data.abiquo_location.test.id}"
+	}
+
+	data "abiquo_ip" "public" {
+	  pool = "${abiquo_vdc.test.purchased}"
+	  ip   = "${abiquo_ip.public.ip}"
+	}
+
+	data "abiquo_network" "external" {
+	  location = "${abiquo_vdc.test.externalnetworks}"
+	  name     = "${abiquo_external.external.name}"
+	}
+
+	data "abiquo_ip" "external" {
+	  pool = "${abiquo_vdc.test.externalips}"
+	  ip   = "${abiquo_ip.external.ip}"
+	}
+
 	resource "abiquo_vm" "test" {
 		deploy                 = false
-		backups                = [ ]
+		backups                = [ "${data.abiquo_backup.test.id}" ]
 		cpu                    = 1
 		ram                    = 64
 		label                  = "testAccVMBasic"
@@ -80,6 +149,12 @@ var vmTestHelper = &testHelper{
 			name1 = "value1"
 			name2 = "value2"
 		}
+
+		ips = [
+	    "${abiquo_ip.private.id}",
+	    "${data.abiquo_ip.external.id}",
+	    "${data.abiquo_ip.public.id}"
+	  ]
 
 		bootstrap = <<EOF
 	#!/bin/sh
