@@ -33,10 +33,10 @@ var vmTestHelper = &testHelper{
 	  datacenter         = "${data.abiquo_datacenter.test.id}"
 	  networkservicetype = "${data.abiquo_nst.test.id}"
 
-	  tag     = 1221
+	  tag     = 2553
 	  mask    = 24
-	  address = "12.12.12.0"
-	  gateway = "12.12.12.1"
+	  address = "17.12.17.0"
+	  gateway = "17.12.17.1"
 	  name    = "testAccVMBasic-public"
 	}
 
@@ -45,21 +45,21 @@ var vmTestHelper = &testHelper{
 	  datacenter         = "${data.abiquo_datacenter.test.id}"
 	  networkservicetype = "${data.abiquo_nst.test.id}"
 
-	  tag     = 1331
+	  tag     = 2443
 	  mask    = 24
-	  address = "172.16.4.0"
-	  gateway = "172.16.4.1"
+	  address = "172.16.6.0"
+	  gateway = "172.16.6.1"
 	  name    = "testAccVMBasic-external"
 	}
 
 	resource "abiquo_ip" "external" {
 	  network = "${abiquo_external.external.id}"
-	  ip      = "172.16.4.10"
+	  ip      = "172.16.6.30"
 	}
 
 	resource "abiquo_ip" "public" {
 	  network   = "${abiquo_public.public.id}"
-	  ip        = "12.12.12.2"
+	  ip        = "17.12.17.30"
 	}
 
 	resource "abiquo_vdc" "test" {
@@ -87,14 +87,14 @@ var vmTestHelper = &testHelper{
 	resource "abiquo_private" "test" {
 		virtualdatacenter = "${abiquo_vdc.test.id}"
 		mask    = 24
-		address = "172.16.27.0"
-		gateway = "172.16.27.1"
+		address = "172.16.37.0"
+		gateway = "172.16.37.1"
 		name    = "testAccVMBasic-private"
 	}
 
 	resource "abiquo_ip" "private" {
 	  network = "${abiquo_private.test.id}"
-	  ip      = "172.16.27.2"
+	  ip      = "172.16.37.30"
 	}
 
 	resource "abiquo_lb" "test" {
@@ -121,11 +121,6 @@ var vmTestHelper = &testHelper{
 	data "abiquo_ip" "public" {
 	  pool = "${abiquo_vdc.test.purchased}"
 	  ip   = "${abiquo_ip.public.ip}"
-	}
-
-	data "abiquo_network" "external" {
-	  location = "${abiquo_vdc.test.externalnetworks}"
-	  name     = "${abiquo_external.external.name}"
 	}
 
 	data "abiquo_ip" "external" {
