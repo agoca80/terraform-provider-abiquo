@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -114,14 +112,30 @@ var vdcSchema = map[string]*schema.Schema{
 		Computed: true,
 		Type:     schema.TypeString,
 	},
-	"topurchase": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
-	"purchased": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
+}
+
+func purchaseIPs(vdc core.Resource, ips *schema.Set) (err error) {
+	available := vdc.Rel("topurchase").Collection(nil).List()
+	for _, a := range available {
+		if ips.Contains(a.(*abiquo.IP).IP) {
+			if err = core.Update(a.Rel("purchase"), nil); err != nil {
+				break
+			}
+		}
+	}
+	return
+}
+
+func releaseIPs(resource core.Resource, ips *schema.Set) (err error) {
+	purchased := resource.Rel("purchased").Collection(nil).List()
+	for _, p := range purchased {
+		if !ips.Contains(p.(*abiquo.IP).IP) {
+			if err = core.Update(p.Rel("release"), nil); err != nil {
+				break
+			}
+		}
+	}
+	return
 }
 
 func vdcNew(d *resourceData) core.Resource {
@@ -160,50 +174,19 @@ func vdcEndpoint(d *resourceData) *core.Link {
 	return core.NewLinkType("cloud/virtualdatacenters", "virtualdatacenter")
 }
 
-func purchaseIP(available core.Resources, address string) (err error) {
-	if ip := available.Find(func(r core.Resource) (found bool) {
-		return r.(*abiquo.IP).IP == address
-	}); ip != nil {
-		return core.Update(ip.Rel("purchase"), nil)
-	}
-	return fmt.Errorf("ip %q was not found", address)
-}
-
 func vdcCreate(d *resourceData, resource core.Resource) (err error) {
 	// Computed links
 	d.Set("externalips", resource.Rel("externalips").Href)
 	d.Set("externalnetworks", resource.Rel("externalnetworks").Href)
 	d.Set("privatenetworks", resource.Rel("privatenetworks").Href)
-	d.Set("topurchase", resource.Rel("topurchase").Href)
-	d.Set("purchased", resource.Rel("purchased").Href)
-
-	// Buy public IPs
-	ipsSet := d.set("publicips")
-	if ipsSet == nil || ipsSet.Len() == 0 {
-		return
-	}
-
-	addresses := ipsSet.List()
-	available := resource.Rel("topurchase").Collection(nil).List()
-	for _, address := range addresses {
-		if err = purchaseIP(available, address.(string)); err != nil {
-			break
-		}
-	}
-
+	purchaseIPs(resource, d.set("publicips"))
 	return
 }
 
 func vdcUpdate(d *resourceData, resource core.Resource) (err error) {
-	// vdc := resource.(*abiquo.VirtualDatacenter)
-	if !d.HasChange("publicips") {
-		return
+	if err = purchaseIPs(resource, d.set("publicips")); err == nil {
+		err = releaseIPs(resource, d.set("publicips"))
 	}
-
-	// release IPs
-
-	// buy missing IPs
-
 	return
 }
 
@@ -224,6 +207,15 @@ func vdcRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("ramhard", vdc.RAMSoft)
 	d.Set("storagehard", vdc.StorageHard)
 	d.Set("vlanhard", vdc.VLANSoft)
+	// publicips
+	publicips := schema.NewSet(schema.HashString, nil)
+	purchased := vdc.Rel("purchased").Collection(nil).List()
+	for _, resource := range purchased {
+		debug.Println("vdcRead: purchased ", resource.(*abiquo.IP).IP)
+		publicips.Add(resource.(*abiquo.IP).IP)
+	}
+	d.Set("publicips", publicips)
+
 	return
 }
 
