@@ -112,9 +112,21 @@ var vdcSchema = map[string]*schema.Schema{
 		Computed: true,
 		Type:     schema.TypeString,
 	},
+	"topurchase": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
+	"purchased": &schema.Schema{
+		Computed: true,
+		Type:     schema.TypeString,
+	},
 }
 
 func purchaseIPs(vdc core.Resource, ips *schema.Set) (err error) {
+	if ips == nil {
+		return
+	}
+
 	available := vdc.Rel("topurchase").Collection(nil).List()
 	for _, a := range available {
 		if ips.Contains(a.(*abiquo.IP).IP) {
@@ -129,7 +141,7 @@ func purchaseIPs(vdc core.Resource, ips *schema.Set) (err error) {
 func releaseIPs(resource core.Resource, ips *schema.Set) (err error) {
 	purchased := resource.Rel("purchased").Collection(nil).List()
 	for _, p := range purchased {
-		if !ips.Contains(p.(*abiquo.IP).IP) {
+		if ips == nil || !ips.Contains(p.(*abiquo.IP).IP) {
 			if err = core.Update(p.Rel("release"), nil); err != nil {
 				break
 			}
@@ -179,6 +191,8 @@ func vdcCreate(d *resourceData, resource core.Resource) (err error) {
 	d.Set("externalips", resource.Rel("externalips").Href)
 	d.Set("externalnetworks", resource.Rel("externalnetworks").Href)
 	d.Set("privatenetworks", resource.Rel("privatenetworks").Href)
+	d.Set("topurchase", resource.Rel("topurchase").Href)
+	d.Set("purchased", resource.Rel("purchased").Href)
 	purchaseIPs(resource, d.set("publicips"))
 	return
 }
