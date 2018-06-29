@@ -11,7 +11,7 @@ var deviceSchema = map[string]*schema.Schema{
 	"endpoint":    attribute(required, href, forceNew),
 	"description": attribute(optional, text),
 	"name":        attribute(required, text),
-	"password":    attribute(required, text),
+	"password":    attribute(required, text, sensitive),
 	"username":    attribute(required, text),
 	"enterprise":  attribute(optional, enterprise, forceNew),
 	"datacenter":  attribute(optional, datacenter, forceNew),

@@ -88,6 +88,10 @@ func TestDatastoreTier_update(t *testing.T) {
 	resource.Test(t, updateCase(t, "abiquo_dstier", "datastoretier"))
 }
 
+func TestDevice_update(t *testing.T) {
+	resource.Test(t, updateCase(t, "abiquo_device", "device"))
+}
+
 func TestEnterprise_update(t *testing.T) {
 	resource.Test(t, updateCase(t, "abiquo_enterprise", "enterprise"))
 }
