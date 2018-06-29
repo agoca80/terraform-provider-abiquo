@@ -11,15 +11,8 @@ import (
 )
 
 var ipDataSchema = map[string]*schema.Schema{
-	"ip": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"pool": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"ip":   attribute(required, ip),
+	"pool": attribute(required, href),
 }
 
 func ipsMedia(pool string) (media string) {

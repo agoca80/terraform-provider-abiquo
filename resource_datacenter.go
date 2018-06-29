@@ -7,54 +7,18 @@ import (
 )
 
 var datacenterSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"location": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"vf": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"vsm": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"am": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"nc": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"ssm": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"bpm": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"cpp": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"dhcp": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"dhcpv6": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"ra": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
+	"name":     attribute(required, text),
+	"location": attribute(required, text),
+	"vf":       attribute(required, text),
+	"vsm":      attribute(required, text),
+	"am":       attribute(required, text),
+	"nc":       attribute(required, text),
+	"ssm":      attribute(required, text),
+	"bpm":      attribute(required, text),
+	"cpp":      attribute(required, text),
+	"dhcp":     attribute(required, text),
+	"dhcpv6":   attribute(required, text),
+	"ra":       attribute(required, text),
 }
 
 var rssMap = map[string]string{

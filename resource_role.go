@@ -9,23 +9,11 @@ import (
 )
 
 var roleSchema = map[string]*schema.Schema{
-	"blocked": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeBool,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"enterprise": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"blocked":    attribute(boolean, optional),
+	"name":       attribute(required, text),
+	"enterprise": attribute(optional, enterprise),
 	"privileges": &schema.Schema{
-		Elem: &schema.Schema{
-			Type: schema.TypeString,
-		},
+		Elem:     attribute(text),
 		Required: true,
 		Set:      privilegeID,
 		Type:     schema.TypeSet,

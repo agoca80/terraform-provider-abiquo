@@ -4,33 +4,14 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var dstierSchema = map[string]*schema.Schema{
-	"datacenter": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"description": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"enabled": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeBool,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"policy": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"PERFORMANCE", "PROGRESSIVE"}, false),
-	},
+	"datacenter":  attribute(required, datacenter, forceNew),
+	"description": attribute(required, text),
+	"enabled":     attribute(required, boolean),
+	"name":        attribute(required, text),
+	"policy":      attribute(required, label([]string{"PERFORMANCE", "PROGRESSIVE"})),
 }
 
 func dstierDTO(d *resourceData) core.Resource {

@@ -4,64 +4,23 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
+var fwRulesResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"protocol": attribute(required, protocol),
+		"fromport": attribute(required, port),
+		"toport":   attribute(required, port),
+		"targets":  attribute(optional, list(attribute(text)), min(1)),
+		"sources":  attribute(optional, list(attribute(text)), min(1)),
+	},
+}
+
 var firewallSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"description": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"virtualdatacenter": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"rules": &schema.Schema{
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"protocol": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{"ALL", "TCP", "UDP"}, false),
-				},
-				"fromport": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeInt,
-					ValidateFunc: validatePort,
-				},
-				"toport": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeInt,
-					ValidateFunc: validatePort,
-				},
-				"targets": &schema.Schema{
-					Elem: &schema.Schema{
-						Type: schema.TypeString,
-					},
-					MinItems: 1,
-					Optional: true,
-					Type:     schema.TypeList,
-				},
-				"sources": &schema.Schema{
-					Elem: &schema.Schema{
-						Type: schema.TypeString,
-					},
-					MinItems: 1,
-					Optional: true,
-					Type:     schema.TypeList,
-				},
-			},
-		},
-		MinItems: 1,
-		Required: true,
-		Type:     schema.TypeList,
-	},
+	"name":              attribute(required, text),
+	"description":       attribute(required, text),
+	"virtualdatacenter": attribute(required, vdc, forceNew),
+	"rules":             attribute(required, list(fwRulesResource), min(1)),
 }
 
 func fwNew(d *resourceData) core.Resource {

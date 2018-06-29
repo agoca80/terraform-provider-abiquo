@@ -7,23 +7,10 @@ import (
 )
 
 var licenseSchema = map[string]*schema.Schema{
-	"code": &schema.Schema{
-		Required: true,
-		ForceNew: true,
-		Type:     schema.TypeString,
-	},
-	"expiration": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
-	"numcores": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeInt,
-	},
-	"sgenabled": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeBool,
-	},
+	"code":       attribute(required, text, forceNew),
+	"expiration": attribute(computed, text),
+	"numcores":   attribute(computed, integer),
+	"sgenabled":  attribute(computed, boolean),
 }
 
 func licenseNew(d *resourceData) core.Resource {

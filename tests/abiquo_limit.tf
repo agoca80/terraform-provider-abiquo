@@ -5,7 +5,7 @@ data "abiquo_dstier"     "test" {
 }
 
 resource "abiquo_enterprise" "test" {
-   name = "testAccLimit"
+   name = "test limit"
    cpusoft  = 6    , cpuhard  = 8
    ramsoft  = 8192 , ramhard  = 16384
    vlansoft = 2    , vlanhard = 4

@@ -7,46 +7,15 @@ import (
 )
 
 var userSchema = map[string]*schema.Schema{
-	"active": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeBool,
-	},
-	"email": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"nick": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"surname": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"password": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
-	"enterprise": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"scope": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"role": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"active":     attribute(required, boolean),
+	"email":      attribute(required, text),
+	"name":       attribute(required, text),
+	"nick":       attribute(required, text),
+	"surname":    attribute(required, text),
+	"password":   attribute(computed, text),
+	"enterprise": attribute(required, enterprise, forceNew),
+	"scope":      attribute(optional, href),
+	"role":       attribute(required, href),
 }
 
 func userNew(d *resourceData) core.Resource {

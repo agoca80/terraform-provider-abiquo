@@ -4,122 +4,47 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
+func vdc(s *schema.Schema) {
+	link(s, []string{"/cloud/virtualdatacenters/[0-9]+$"})
+}
+
+func vdcIP(s *schema.Schema) {
+	link(s, []string{
+		"/admin/enterprises/[0-9]+/limits/[0-9]+/externalnetworks/[0-9]+/ips/[0-9]+",
+		"/cloud/virtualdatacenters/[0-9]+/privatenetworks/[0-9]+/ips/[0-9]+$",
+		"/cloud/virtualdatacenters/[0-9]+/publicips/purchased/[0-9]+",
+	})
+}
+
 var vdcSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"type": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"VMX_04", "KVM"}, false),
-	},
-	// Soft limits
-	"cpusoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"disksoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"publicsoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"ramsoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"storagesoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"volsoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"vlansoft": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	// Hard limits
-	"cpuhard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"diskhard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"publichard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"ramhard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"storagehard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"vlanhard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
-	"volhard": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
+	"cpuhard":     attribute(optional, natural),
+	"cpusoft":     attribute(optional, natural),
+	"diskhard":    attribute(optional, natural),
+	"disksoft":    attribute(optional, natural),
+	"name":        attribute(required, text),
+	"publichard":  attribute(optional, natural),
+	"publicsoft":  attribute(optional, natural),
+	"ramhard":     attribute(optional, natural),
+	"ramsoft":     attribute(optional, natural),
+	"storagehard": attribute(optional, natural),
+	"storagesoft": attribute(optional, natural),
+	"vlanhard":    attribute(optional, natural),
+	"vlansoft":    attribute(optional, natural),
+	"volsoft":     attribute(optional, natural),
+	"volhard":     attribute(optional, natural),
+	"type":        attribute(required, label([]string{"VMX_04", "KVM"}), forceNew),
 	// Links
-	"enterprise": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"location": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	// Public ips
-	"publicips": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateIP,
-		},
-		Optional: true,
-		Set:      schema.HashString,
-		Type:     schema.TypeSet,
-	},
+	"enterprise": attribute(required, enterprise, forceNew),
+	"location":   attribute(required, location, forceNew),
+	"publicips":  attribute(optional, set(attribute(ip), schema.HashString)),
 	// Computed links
-	"externalips": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
-	"externalnetworks": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
-	"privatenetworks": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
-	"topurchase": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
-	"purchased": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
+	"externalips":      attribute(computed, text),
+	"externalnetworks": attribute(computed, text),
+	"privatenetworks":  attribute(computed, text),
+	"topurchase":       attribute(computed, text),
+	"purchased":        attribute(computed, text),
 }
 
 func purchaseIPs(vdc core.Resource, ips *schema.Set) (err error) {

@@ -4,72 +4,27 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var algorithms = []string{"Default", "ROUND_ROBIN", "LEAST_CONNECTIONS", "SOURCE_IP"}
-var protocols = []string{"TCP", "HTTP", "HTTPS"}
+
+var lbRuleResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"protocolin":  attribute(required, protocol),
+		"protocolout": attribute(required, protocol),
+		"portout":     attribute(required, port),
+		"portin":      attribute(required, port),
+	},
+}
 
 var lbSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"algorithm": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice(algorithms, false),
-	},
-	"internal": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeBool,
-	},
-	"routingrules": &schema.Schema{
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"protocolin": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeString,
-					ValidateFunc: validation.StringInSlice(protocols, false),
-				},
-				"protocolout": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeString,
-					ValidateFunc: validation.StringInSlice(protocols, false),
-				},
-				"portout": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeInt,
-					ValidateFunc: validatePort,
-				},
-				"portin": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeInt,
-					ValidateFunc: validatePort,
-				},
-			},
-		},
-		MinItems: 1,
-		Required: true,
-		Type:     schema.TypeList,
-	},
-	"privatenetwork": &schema.Schema{
-		ForceNew:     true,
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"virtualdatacenter": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	// Computed attibutes
-	"loadbalanceraddress": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
+	"name":                attribute(required, text),
+	"algorithm":           attribute(required, label(algorithms)),
+	"internal":            attribute(optional, boolean),
+	"routingrules":        attribute(required, list(lbRuleResource), min(1)),
+	"privatenetwork":      attribute(required, href, forceNew),
+	"virtualdatacenter":   attribute(required, vdc, forceNew),
+	"loadbalanceraddress": attribute(computed, text),
 }
 
 func lbAddresses(d *resourceData) abiquo.LoadBalancerAddresses {

@@ -9,22 +9,9 @@ import (
 )
 
 var ipSchema = map[string]*schema.Schema{
-	"ip": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateIP,
-	},
-	"type": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
-	"network": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"ip":      attribute(required, ip, forceNew),
+	"type":    attribute(computed, text),
+	"network": attribute(required, href, forceNew),
 }
 
 func ipLink(href string) *core.Link {

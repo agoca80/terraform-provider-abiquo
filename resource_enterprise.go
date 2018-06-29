@@ -4,98 +4,30 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
+func enterprise(s *schema.Schema) {
+	link(s, []string{"/admin/enterprises/[0-9]+$"})
+}
+
 var enterpriseSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"properties": &schema.Schema{
-		Elem: &schema.Schema{
-			Type: schema.TypeString,
-		},
-		Optional: true,
-		Type:     schema.TypeMap,
-	},
-	"pricingtemplate": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	// Soft limits
-	"cpusoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"hdsoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"ipsoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"ramsoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"reposoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"volsoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"vlansoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	// Hard limits
-	"cpuhard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"hdhard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"iphard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"ramhard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"repohard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"vlanhard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"volhard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
+	"name":            attribute(required, text),
+	"properties":      attribute(optional, hash(attribute(text))),
+	"pricingtemplate": attribute(optional, href),
+	"cpuhard":         attribute(optional, natural),
+	"cpusoft":         attribute(optional, natural),
+	"hdhard":          attribute(optional, natural),
+	"hdsoft":          attribute(optional, natural),
+	"iphard":          attribute(optional, natural),
+	"ipsoft":          attribute(optional, natural),
+	"ramhard":         attribute(optional, natural),
+	"ramsoft":         attribute(optional, natural),
+	"repohard":        attribute(optional, natural),
+	"reposoft":        attribute(optional, natural),
+	"vlanhard":        attribute(optional, natural),
+	"volsoft":         attribute(optional, natural),
+	"volhard":         attribute(optional, natural),
+	"vlansoft":        attribute(optional, natural),
 }
 
 func enterpriseDTO(d *resourceData) core.Resource {

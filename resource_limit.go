@@ -4,122 +4,31 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var limitSchema = map[string]*schema.Schema{
 	// Soft limits
-	"cpusoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"hdsoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"ipsoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"ramsoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"reposoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"volsoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"vlansoft": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
+	"cpusoft":  attribute(optional, natural),
+	"hdsoft":   attribute(optional, natural),
+	"ipsoft":   attribute(optional, natural),
+	"ramsoft":  attribute(optional, natural),
+	"reposoft": attribute(optional, natural),
+	"volsoft":  attribute(optional, natural),
+	"vlansoft": attribute(optional, natural),
 	// Hard limits
-	"cpuhard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"hdhard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"iphard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"ramhard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"repohard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"vlanhard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
-	"volhard": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeInt,
-		ValidateFunc: validation.IntAtLeast(0),
-	},
+	"cpuhard":  attribute(optional, natural),
+	"hdhard":   attribute(optional, natural),
+	"iphard":   attribute(optional, natural),
+	"ramhard":  attribute(optional, natural),
+	"repohard": attribute(optional, natural),
+	"vlanhard": attribute(optional, natural),
+	"volhard":  attribute(optional, natural),
 	// Links
-	"location": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"enterprise": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"hwprofiles": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		Optional: true,
-		Set:      schema.HashString,
-		Type:     schema.TypeSet,
-	},
-	"backups": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		Optional: true,
-		Set:      schema.HashString,
-		Type:     schema.TypeSet,
-	},
-	"dstiers": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		Optional: true,
-		Set:      schema.HashString,
-		Type:     schema.TypeSet,
-	},
+	"location":   attribute(required, forceNew, datacenter),
+	"enterprise": attribute(required, forceNew, enterprise),
+	"hwprofiles": attribute(optional, set(attribute(href), schema.HashString)),
+	"backups":    attribute(optional, set(attribute(href), schema.HashString)),
+	"dstiers":    attribute(optional, set(attribute(href), schema.HashString)),
 }
 
 func limitNew(d *resourceData) core.Resource {

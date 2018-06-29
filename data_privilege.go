@@ -14,10 +14,7 @@ var privileges = struct {
 }{}
 
 var privilegeDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
+	"name": attribute(required, text),
 }
 
 func privilegeRead(d *schema.ResourceData, meta interface{}) (err error) {

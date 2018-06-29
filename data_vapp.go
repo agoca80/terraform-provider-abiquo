@@ -11,15 +11,8 @@ import (
 )
 
 var vappDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"virtualdatacenter": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"name":              attribute(required, text),
+	"virtualdatacenter": attribute(required, vdc),
 }
 
 func vappDataRead(d *schema.ResourceData, meta interface{}) (err error) {

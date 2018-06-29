@@ -7,44 +7,15 @@ import (
 )
 
 var privateSchema = map[string]*schema.Schema{
-	"address": &schema.Schema{
-		ForceNew: true,
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"mask": &schema.Schema{
-		ForceNew: true,
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"gateway": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateIP,
-	},
-	"dns1": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateIP,
-	},
-	"dns2": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateIP,
-	},
-	"suffix": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"virtualdatacenter": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"address": attribute(required, ip, forceNew),
+	"mask":    attribute(required, natural, forceNew),
+	"name":    attribute(required, text),
+	"gateway": attribute(required, ip),
+	"dns1":    attribute(optional, ip),
+	"dns2":    attribute(optional, ip),
+	"suffix":  attribute(optional, text),
+	// Links
+	"virtualdatacenter": attribute(required, vdc, forceNew),
 }
 
 func privateEndpoint(d *resourceData) *core.Link {

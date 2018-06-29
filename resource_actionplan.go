@@ -6,50 +6,20 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+var actionPlanEntryResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"parameter":     attribute(optional, text),
+		"parametertype": attribute(optional, text),
+		"type":          attribute(required, text),
+	},
+}
+
 var actionPlanSchema = map[string]*schema.Schema{
-	"virtualmachine": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"description": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"triggers": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		Optional: true,
-		Type:     schema.TypeList,
-	},
-	"entries": &schema.Schema{
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"parameter": &schema.Schema{
-					Optional: true,
-					Type:     schema.TypeString,
-				},
-				"parametertype": &schema.Schema{
-					Optional: true,
-					Type:     schema.TypeString,
-				},
-				"type": &schema.Schema{
-					Required: true,
-					Type:     schema.TypeString,
-				},
-			},
-		},
-		MinItems: 1,
-		Required: true,
-		Type:     schema.TypeList,
-	},
+	"virtualmachine": attribute(required, text, forceNew),
+	"name":           attribute(required, text),
+	"description":    attribute(required, text),
+	"triggers":       attribute(optional, list(attribute(href))),
+	"entries":        attribute(required, min(1), list(actionPlanEntryResource)),
 }
 
 func actionPlanNew(d *resourceData) core.Resource {

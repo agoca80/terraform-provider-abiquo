@@ -10,19 +10,9 @@ import (
 )
 
 var networkDataSchema = map[string]*schema.Schema{
-	"ips": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"location": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"ips":      attribute(computed, text),
+	"name":     attribute(required, text),
+	"location": attribute(required, location),
 }
 
 func networkDataRead(d *schema.ResourceData, meta interface{}) (err error) {

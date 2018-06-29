@@ -7,30 +7,10 @@ import (
 )
 
 var alertSchema = map[string]*schema.Schema{
-	"virtualappliance": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"description": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"alarms": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		MinItems: 1,
-		Required: true,
-		Set:      schema.HashString,
-		Type:     schema.TypeSet,
-	},
+	"virtualappliance": attribute(required, vapp, forceNew),
+	"name":             attribute(required, text),
+	"description":      attribute(required, text),
+	"alarms":           attribute(required, set(attribute(href), schema.HashString), min(1)),
 }
 
 func alertNew(d *resourceData) core.Resource {

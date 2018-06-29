@@ -10,31 +10,10 @@ import (
 )
 
 var scopeSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"parent": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"datacenters": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		Optional: true,
-		Type:     schema.TypeList,
-	},
-	"enterprises": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		Optional: true,
-		Type:     schema.TypeList,
-	},
+	"name":        attribute(required, text),
+	"parent":      attribute(optional, href),
+	"datacenters": attribute(optional, list(attribute(datacenter))),
+	"enterprises": attribute(optional, list(attribute(enterprise))),
 }
 
 func scopeNew(d *resourceData) core.Resource {

@@ -9,16 +9,8 @@ import (
 )
 
 var storageLoadSchema = map[string]*schema.Schema{
-	"load": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"target": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"load":   attribute(required, integer),
+	"target": attribute(required, href, forceNew),
 }
 
 func storageLoadDTO(d *resourceData) core.Resource {

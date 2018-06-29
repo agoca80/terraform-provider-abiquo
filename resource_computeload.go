@@ -9,23 +9,10 @@ import (
 )
 
 var computeLoadSchema = map[string]*schema.Schema{
-	"aggregated": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeBool,
-	},
-	"cpuload": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"ramload": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"target": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"aggregated": attribute(optional, boolean),
+	"cpuload":    attribute(required, integer),
+	"ramload":    attribute(required, integer),
+	"target":     attribute(optional, href),
 }
 
 func computeLoadDTO(d *resourceData) core.Resource {

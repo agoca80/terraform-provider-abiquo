@@ -6,39 +6,15 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var hdSchema = map[string]*schema.Schema{
-	"size": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"label": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"type": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"IDE", "SCSI", "VIRTIO"}, false),
-	},
-	"ctrl": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"dstier": &schema.Schema{
-		ForceNew:     true,
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"virtualdatacenter": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"size":              attribute(required, natural),
+	"label":             attribute(required, text),
+	"type":              attribute(required, label([]string{"IDE", "SCSI", "VIRTIO"})),
+	"ctrl":              attribute(optional, text),
+	"dstier":            attribute(optional, computed, href),
+	"virtualdatacenter": attribute(required, vdc),
 }
 
 func hdLink(href string) *core.Link {

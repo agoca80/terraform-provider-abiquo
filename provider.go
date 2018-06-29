@@ -59,28 +59,13 @@ func Provider() *schema.Provider {
 		ConfigureFunc: configureProvider,
 
 		Schema: map[string]*schema.Schema{
-			"endpoint": &schema.Schema{
-				DefaultFunc:  schema.EnvDefaultFunc("ABQ_ENDPOINT", ""),
-				Required:     true,
-				Type:         schema.TypeString,
-				ValidateFunc: validateURL,
-			},
-			"username": &schema.Schema{
-				ConflictsWith: oAuthOptions,
-				DefaultFunc:   schema.EnvDefaultFunc("ABQ_USERNAME", ""),
-				Optional:      true,
-				Type:          schema.TypeString,
-			},
-			"password": &schema.Schema{
-				ConflictsWith: oAuthOptions,
-				DefaultFunc:   schema.EnvDefaultFunc("ABQ_PASSWORD", ""),
-				Optional:      true,
-				Type:          schema.TypeString,
-			},
-			"token":          &schema.Schema{Type: schema.TypeString, Optional: true, ConflictsWith: basicAuthOptions},
-			"tokensecret":    &schema.Schema{Type: schema.TypeString, Optional: true, ConflictsWith: basicAuthOptions},
-			"consumerkey":    &schema.Schema{Type: schema.TypeString, Optional: true, ConflictsWith: basicAuthOptions},
-			"consumersecret": &schema.Schema{Type: schema.TypeString, Optional: true, ConflictsWith: basicAuthOptions},
+			"endpoint":       attribute(required, href, variable("ABQ_ENDPOINT")),
+			"username":       attribute(optional, text, variable("ABQ_USERNAME"), conflicts(oAuthOptions)),
+			"password":       attribute(optional, text, variable("ABQ_PASSWORD"), conflicts(oAuthOptions)),
+			"token":          attribute(optional, text, conflicts(basicAuthOptions)),
+			"tokensecret":    attribute(optional, text, conflicts(basicAuthOptions)),
+			"consumerkey":    attribute(optional, text, conflicts(basicAuthOptions)),
+			"consumersecret": attribute(optional, text, conflicts(basicAuthOptions)),
 		},
 
 		ResourcesMap: map[string]*schema.Resource{

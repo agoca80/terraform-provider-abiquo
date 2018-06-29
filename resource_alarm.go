@@ -9,41 +9,14 @@ import (
 )
 
 var alarmSchema = map[string]*schema.Schema{
-	"target": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"formula": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"metric": &schema.Schema{
-		ForceNew: true,
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"evaluations": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"period": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"statistic": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"threshold": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
+	"target":      attribute(required, href, forceNew),
+	"formula":     attribute(required, text),
+	"name":        attribute(required, text),
+	"metric":      attribute(required, text, forceNew),
+	"evaluations": attribute(required, natural),
+	"period":      attribute(required, natural),
+	"statistic":   attribute(required, text),
+	"threshold":   attribute(required, integer),
 }
 
 func alarmEndpoint(d *resourceData) *core.Link {

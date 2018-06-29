@@ -7,56 +7,17 @@ import (
 )
 
 var publicSchema = map[string]*schema.Schema{
-	"address": &schema.Schema{
-		ForceNew: true,
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"tag": &schema.Schema{
-		ForceNew: true,
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"mask": &schema.Schema{
-		ForceNew: true,
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"gateway": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateIP,
-	},
-	"dns1": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateIP,
-	},
-	"dns2": &schema.Schema{
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateIP,
-	},
-	"suffix": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"networkservicetype": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"datacenter": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"address": attribute(required, ip, forceNew),
+	"tag":     attribute(required, natural, forceNew),
+	"mask":    attribute(required, natural, forceNew),
+	"name":    attribute(required, text),
+	"gateway": attribute(required, ip),
+	"dns1":    attribute(optional, ip),
+	"dns2":    attribute(optional, ip),
+	"suffix":  attribute(optional, text),
+	// Links
+	"networkservicetype": attribute(required, href, forceNew),
+	"datacenter":         attribute(required, datacenter, forceNew),
 }
 
 func publicNew(d *resourceData) core.Resource {

@@ -4,67 +4,29 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
+var backupType = []string{"COMPLETE", "SNAPSHOT", "FILESYSTEM"}
+var backupSubtype = []string{"DEFINED_HOUR", "HOURLY", "DAILY", "MONTHLY", "WEEKLY_PLANNED"}
+var weekDays = []string{"wednesday", "monday", "tuesday", "thursday", "friday", "saturday", "sunday"}
+
+// XXX If date is not properly set in the DTO it generates a GEN-13
+var backupConfiguration = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"subtype": attribute(required, label(backupSubtype)),
+		"time":    attribute(optional, text),
+		"type":    attribute(required, label(backupType)),
+		"days":    attribute(optional, set(attribute(label(weekDays)), schema.HashString), min(1)),
+	},
+}
+
 var backupSchema = map[string]*schema.Schema{
-	"datacenter": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"code": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"configurations": &schema.Schema{
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"subtype": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{"DEFINED_HOUR", "HOURLY", "DAILY", "MONTHLY", "WEEKLY_PLANNED"}, false),
-				},
-				// XXX If date is not properly set in the DTO it generates a GEN-13
-				"time": &schema.Schema{
-					Default:  "NOT_APPLY",
-					Optional: true,
-					Type:     schema.TypeString,
-				},
-				"type": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeString,
-					ValidateFunc: validation.StringInSlice([]string{"COMPLETE", "SNAPSHOT", "FILESYSTEM"}, false),
-				},
-				"days": &schema.Schema{
-					Elem: &schema.Schema{
-						Type:         schema.TypeString,
-						ValidateFunc: validation.StringInSlice([]string{"wednesday", "monday", "tuesday", "thursday", "friday", "saturday", "sunday"}, false),
-					},
-					MinItems: 1,
-					Optional: true,
-					Set:      schema.HashString,
-					Type:     schema.TypeSet,
-				},
-			},
-		},
-		MinItems: 1,
-		Required: true,
-		Type:     schema.TypeList,
-	},
-	"description": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"replication": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
+	"datacenter":     attribute(required, datacenter, forceNew),
+	"name":           attribute(required, text),
+	"code":           attribute(required, text),
+	"configurations": attribute(required, list(backupConfiguration), min(1)),
+	"description":    attribute(optional, text),
+	"replication":    attribute(optional, text),
 }
 
 func backupDTO(d *resourceData) core.Resource {

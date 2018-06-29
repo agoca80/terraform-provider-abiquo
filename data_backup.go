@@ -9,16 +9,13 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+func backup(s *schema.Schema) {
+	link(s, []string{"/cloud/locations/[0-9]+/backuppolicies/[0-9]+$"})
+}
+
 var backupDataSchema = map[string]*schema.Schema{
-	"code": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"location": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"code":     attribute(required, text),
+	"location": attribute(required, location),
 }
 
 func backupDataRead(d *schema.ResourceData, meta interface{}) (err error) {

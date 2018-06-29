@@ -10,10 +10,7 @@ import (
 )
 
 var templateDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
+	"name": attribute(required, text),
 }
 
 func templateRead(d *schema.ResourceData, meta interface{}) (err error) {

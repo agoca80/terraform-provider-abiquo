@@ -9,10 +9,7 @@ import (
 )
 
 var scopeDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
+	"name": attribute(required, text),
 }
 
 func scopeDataRead(d *schema.ResourceData, meta interface{}) (err error) {

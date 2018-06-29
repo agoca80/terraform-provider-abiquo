@@ -160,6 +160,10 @@ func TestVM_update(t *testing.T) {
 	resource.Test(t, updateCase(t, "abiquo_vm", "virtualmachine"))
 }
 
+func TestVMT_update(t *testing.T) {
+	resource.Test(t, updateCase(t, "abiquo_vmt", "virtualmachinetemplate"))
+}
+
 func TestVolume_update(t *testing.T) {
 	resource.Test(t, updateCase(t, "abiquo_vol", "volume"))
 }

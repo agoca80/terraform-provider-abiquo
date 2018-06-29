@@ -7,34 +7,9 @@ import (
 )
 
 var costCodeSchema = map[string]*schema.Schema{
-	"currency": &schema.Schema{
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"href": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeString,
-					ValidateFunc: validateURL,
-				},
-				"price": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeFloat,
-					ValidateFunc: validatePrice,
-				},
-			},
-		},
-		Required: true,
-		Set:      resourceSet,
-		Type:     schema.TypeSet,
-		MinItems: 1,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"description": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
+	"currency":    attribute(required, prices, min(1)),
+	"name":        attribute(required, text),
+	"description": attribute(optional, text),
 }
 
 func costCodeNew(d *resourceData) core.Resource {

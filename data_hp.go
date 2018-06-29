@@ -9,15 +9,8 @@ import (
 )
 
 var hpDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"location": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"name":     attribute(required, text),
+	"location": attribute(required, location),
 }
 
 func hpDataRead(d *schema.ResourceData, meta interface{}) (err error) {

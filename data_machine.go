@@ -11,39 +11,14 @@ import (
 
 var machineDataSchema = map[string]*schema.Schema{
 	// Discover parameters
-	"hypervisor": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"datacenter": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"ip": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"port": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"managerip": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"manageruser": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"managerpass": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"definition": &schema.Schema{
-		Computed: true,
-		Type:     schema.TypeString,
-	},
+	"hypervisor":  attribute(required, text),
+	"datacenter":  attribute(required, datacenter),
+	"ip":          attribute(required, ip),
+	"port":        attribute(optional, text),
+	"managerip":   attribute(optional, text),
+	"manageruser": attribute(optional, text),
+	"managerpass": attribute(optional, text),
+	"definition":  attribute(computed, text),
 }
 
 func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {

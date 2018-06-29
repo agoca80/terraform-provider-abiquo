@@ -9,121 +9,22 @@ import (
 )
 
 var vmSchema = map[string]*schema.Schema{
-	"cpu": &schema.Schema{
-		ConflictsWith: []string{"hardwareprofile"},
-		ForceNew:      true,
-		Optional:      true,
-		Type:          schema.TypeInt,
-	},
-	"backups": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		ForceNew: true,
-		Optional: true,
-		Type:     schema.TypeList,
-	},
-	"bootstrap": &schema.Schema{
-		ForceNew: true,
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"deploy": &schema.Schema{
-		ForceNew: true,
-		Optional: true,
-		Type:     schema.TypeBool,
-	},
-	"disks": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		ForceNew: true,
-		Optional: true,
-		Type:     schema.TypeList,
-	},
-	"fws": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		ForceNew: true,
-		Optional: true,
-		Type:     schema.TypeList,
-	},
-	"hardwareprofile": &schema.Schema{
-		ConflictsWith: []string{"cpu", "ram"},
-		ForceNew:      true,
-		Optional:      true,
-		Type:          schema.TypeString,
-		ValidateFunc:  validateURL,
-	},
-	"label": &schema.Schema{
-		ForceNew: true,
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"lbs": &schema.Schema{
-		Elem: &schema.Schema{
-			Type:         schema.TypeString,
-			ValidateFunc: validateURL,
-		},
-		ForceNew: true,
-		Optional: true,
-		Type:     schema.TypeList,
-	},
-	"monitored": &schema.Schema{
-		ForceNew: true,
-		Optional: true,
-		Type:     schema.TypeBool,
-	},
-	"ips": &schema.Schema{
-		Elem: &schema.Schema{
-			Type: schema.TypeString,
-			ValidateFunc: validateHref([]string{
-				href["privateip"],
-				href["externalip"],
-				href["publicip"],
-			}),
-		},
-		ForceNew: true,
-		Optional: true,
-		Type:     schema.TypeList,
-	},
-	"name": &schema.Schema{
-		Computed: true,
-		ForceNew: true,
-		Type:     schema.TypeString,
-	},
-	"ram": &schema.Schema{
-		ConflictsWith: []string{"hardwareprofile"},
-		ForceNew:      true,
-		Optional:      true,
-		Type:          schema.TypeInt,
-	},
-	"variables": &schema.Schema{
-		Elem: &schema.Schema{
-			Type: schema.TypeString,
-		},
-		ForceNew: true,
-		Optional: true,
-		Type:     schema.TypeMap,
-	},
-	"virtualappliance": &schema.Schema{
-		ForceNew: true,
-		Required: true,
-		Type:     schema.TypeString,
-		ValidateFunc: validateHref([]string{
-			href["virtualappliance"],
-		}),
-	},
-	"virtualmachinetemplate": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"cpu":                    attribute(optional, forceNew, natural, conflicts([]string{"hardwareprofile"})),
+	"backups":                attribute(optional, forceNew, list(attribute(backup))),
+	"bootstrap":              attribute(optional, forceNew, text),
+	"deploy":                 attribute(optional, forceNew, boolean),
+	"disks":                  attribute(optional, forceNew, list(attribute(href))),
+	"fws":                    attribute(optional, forceNew, list(attribute(href))),
+	"hardwareprofile":        attribute(optional, href, forceNew, conflicts([]string{"cpu", "ram"})),
+	"label":                  attribute(optional, text, forceNew),
+	"lbs":                    attribute(optional, forceNew, list(attribute(href))),
+	"ips":                    attribute(optional, forceNew, list(attribute(vdcIP))),
+	"monitored":              attribute(optional, forceNew, boolean),
+	"name":                   attribute(computed, forceNew, text),
+	"ram":                    attribute(optional, forceNew, natural, conflicts([]string{"hardwareprofile"})),
+	"variables":              attribute(optional, forceNew, hash(attribute(text)), forceNew),
+	"virtualappliance":       attribute(required, forceNew, vapp),
+	"virtualmachinetemplate": attribute(required, forceNew, href),
 }
 
 func vmNew(d *resourceData) core.Resource {

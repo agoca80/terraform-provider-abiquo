@@ -10,39 +10,13 @@ import (
 )
 
 var machineSchema = map[string]*schema.Schema{
-	"definition": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"datastores": &schema.Schema{
-		Elem:     &schema.Schema{Type: schema.TypeString},
-		Required: true,
-		Type:     schema.TypeMap,
-	},
-	"interfaces": &schema.Schema{
-		Elem:     &schema.Schema{Type: schema.TypeString},
-		Required: true,
-		Type:     schema.TypeMap,
-	},
-	"managerip": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"manageruser": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"managerpass": &schema.Schema{
-		Optional:  true,
-		Sensitive: true,
-		Type:      schema.TypeString,
-	},
-	"rack": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"definition":  attribute(required, text),
+	"datastores":  attribute(text, hash(attribute(text)), required),
+	"interfaces":  attribute(text, hash(attribute(text)), required),
+	"managerip":   attribute(optional, ip),
+	"manageruser": attribute(optional, text),
+	"managerpass": attribute(optional, text, sensitive),
+	"rack":        attribute(required, href, forceNew),
 }
 
 func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {

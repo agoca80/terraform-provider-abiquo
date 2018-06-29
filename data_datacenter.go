@@ -8,16 +8,17 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+func datacenter(s *schema.Schema) {
+	link(s, []string{"/admin/datacenters/[0-9]+$"})
+}
+
 var datacenters = struct {
 	sync.Once
 	datacenter map[string]*abiquo.Datacenter
 }{}
 
 var datacenterDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
+	"name": attribute(required, text),
 }
 
 func datacenterDataRead(d *schema.ResourceData, meta interface{}) (err error) {

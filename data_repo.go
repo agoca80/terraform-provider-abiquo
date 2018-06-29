@@ -9,11 +9,7 @@ import (
 )
 
 var repoDataSchema = map[string]*schema.Schema{
-	"datacenter": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"datacenter": attribute(required, text),
 }
 
 func dataRepoRead(d *schema.ResourceData, p interface{}) (err error) {

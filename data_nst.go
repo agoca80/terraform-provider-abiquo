@@ -10,15 +10,8 @@ import (
 )
 
 var nstDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"datacenter": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"name":       attribute(required, text),
+	"datacenter": attribute(required, datacenter),
 }
 
 func nstDataRead(d *schema.ResourceData, meta interface{}) (err error) {

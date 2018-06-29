@@ -7,45 +7,14 @@ import (
 )
 
 var deviceSchema = map[string]*schema.Schema{
-	"devicetype": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"endpoint": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"description": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"password": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"username": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"enterprise": &schema.Schema{
-		ForceNew:     true,
-		Optional:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"datacenter": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"devicetype":  attribute(required, href, forceNew),
+	"endpoint":    attribute(required, href, forceNew),
+	"description": attribute(optional, text),
+	"name":        attribute(required, text),
+	"password":    attribute(required, text),
+	"username":    attribute(required, text),
+	"enterprise":  attribute(optional, enterprise, forceNew),
+	"datacenter":  attribute(optional, datacenter, forceNew),
 }
 
 var deviceResource = &schema.Resource{

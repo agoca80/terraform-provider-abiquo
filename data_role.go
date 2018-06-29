@@ -9,10 +9,7 @@ import (
 )
 
 var roleDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
+	"name": attribute(required, text),
 }
 
 func roleDataRead(d *schema.ResourceData, meta interface{}) (err error) {

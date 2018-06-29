@@ -4,22 +4,11 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var fitPolicySchema = map[string]*schema.Schema{
-	"policy": &schema.Schema{
-		Required:     true,
-		ForceNew:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"PROGRESSIVE", "PERFORMANCE"}, false),
-	},
-	"target": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"policy": attribute(required, forceNew, label([]string{"PROGRESSIVE", "PERFORMANCE"})),
+	"target": attribute(required, forceNew, href),
 }
 
 func fitPolicyDTO(d *resourceData) core.Resource {

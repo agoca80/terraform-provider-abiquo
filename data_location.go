@@ -8,11 +8,12 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+func location(s *schema.Schema) {
+	link(s, []string{"/cloud/locations/[0-9]+$"})
+}
+
 var locationDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
+	"name": attribute(required, text),
 }
 
 func locationFind(name string) (location core.Resource) {

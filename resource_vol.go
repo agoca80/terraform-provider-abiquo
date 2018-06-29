@@ -4,47 +4,17 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
 var volumeSchema = map[string]*schema.Schema{
-	"size": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"bootable": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeBool,
-	},
-	"description": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"ctrl": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"type": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"IDE", "SCSI", "VIRTIO"}, false),
-	},
-	"tier": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"virtualdatacenter": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"size":              attribute(required, natural),
+	"name":              attribute(required, text),
+	"bootable":          attribute(optional, boolean),
+	"description":       attribute(optional, text),
+	"ctrl":              attribute(optional, text),
+	"type":              attribute(required, label([]string{"IDE", "SCSI", "VIRTIO"}), forceNew),
+	"tier":              attribute(required, href, forceNew),
+	"virtualdatacenter": attribute(required, vdc, forceNew),
 }
 
 func volNew(d *resourceData) core.Resource {

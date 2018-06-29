@@ -9,10 +9,7 @@ import (
 )
 
 var enterpriseDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
+	"name": attribute(required, text),
 }
 
 func enterpriseDataRead(d *schema.ResourceData, p interface{}) (err error) {

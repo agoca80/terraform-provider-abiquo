@@ -7,28 +7,11 @@ import (
 )
 
 var hpSchema = map[string]*schema.Schema{
-	"active": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeBool,
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"cpu": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"ram": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"datacenter": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
+	"active":     attribute(required, boolean),
+	"name":       attribute(required, text),
+	"cpu":        attribute(required, natural),
+	"ram":        attribute(required, natural),
+	"datacenter": attribute(required, datacenter, forceNew),
 }
 
 func hpNew(d *resourceData) core.Resource {

@@ -12,10 +12,7 @@ import (
 )
 
 var vdcDataSchema = map[string]*schema.Schema{
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
+	"name": attribute(required, text),
 }
 
 func dataVDCRead(d *schema.ResourceData, meta interface{}) (err error) {

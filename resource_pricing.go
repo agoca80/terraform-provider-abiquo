@@ -4,225 +4,46 @@ import (
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
-	"github.com/hashicorp/terraform/helper/validation"
 )
 
-var pricingDatacenterSchema = map[string]*schema.Schema{
-	"href": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"datastore_tier": &schema.Schema{
-		Computed: true,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"href": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeString,
-					ValidateFunc: validateURL,
-				},
-				"price": &schema.Schema{
-					Default:      0.0,
-					Optional:     true,
-					Type:         schema.TypeFloat,
-					ValidateFunc: validatePrice,
-				},
-			},
-		},
-		Optional: true,
-		Set:      resourceSet,
-		Type:     schema.TypeSet,
-	},
-	"firewall": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"hd_gb": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"hardware_profile": &schema.Schema{
-		Computed: true,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"href": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeString,
-					ValidateFunc: validateURL,
-				},
-				"price": &schema.Schema{
-					Default:      0.0,
-					Optional:     true,
-					Type:         schema.TypeFloat,
-					ValidateFunc: validatePrice,
-				},
-			},
-		},
-		Optional: true,
-		Set:      resourceSet,
-		Type:     schema.TypeSet,
-	},
-	"layer": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"loadbalancer": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"memory": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"memory_on": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"memory_off": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"nat_ip": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"public_ip": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"repository": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"tier": &schema.Schema{
-		Computed: true,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"href": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeString,
-					ValidateFunc: validateURL,
-				},
-				"price": &schema.Schema{
-					Default:      0.0,
-					Optional:     true,
-					Type:         schema.TypeFloat,
-					ValidateFunc: validatePrice,
-				},
-			},
-		},
-		Optional: true,
-		Set:      resourceSet,
-		Type:     schema.TypeSet,
-	},
-	"vcpu": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"vcpu_on": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"vcpu_off": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
-	},
-	"vlan": &schema.Schema{
-		Default:  0.0,
-		Optional: true,
-		Type:     schema.TypeFloat,
+var pricingDCResource = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"href":             attribute(required, href),
+		"datastore_tier":   attribute(optional, computed, prices),
+		"firewall":         attribute(price),
+		"hd_gb":            attribute(price),
+		"hardware_profile": attribute(optional, computed, prices),
+		"layer":            attribute(price),
+		"loadbalancer":     attribute(price),
+		"memory":           attribute(price),
+		"memory_on":        attribute(price),
+		"memory_off":       attribute(price),
+		"nat_ip":           attribute(price),
+		"public_ip":        attribute(price),
+		"repository":       attribute(price),
+		"tier":             attribute(optional, computed, prices),
+		"vcpu":             attribute(price),
+		"vcpu_on":          attribute(price),
+		"vcpu_off":         attribute(price),
+		"vlan":             attribute(price),
 	},
 }
 
+var pricingPeriodLabel = []string{"MINUTE", "HOUR", "DAY", "WEEK", "MONTH", "QUARTER", "YEAR"}
+
 var pricingSchema = map[string]*schema.Schema{
-	"charging_period": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"DAY", "WEEK", "MONTH", "QUARTER", "YEAR"}, false),
-	},
-	"costcode": &schema.Schema{
-		Computed: true,
-		Elem: &schema.Resource{
-			Schema: map[string]*schema.Schema{
-				"href": &schema.Schema{
-					Required:     true,
-					Type:         schema.TypeString,
-					ValidateFunc: validateURL,
-				},
-				"price": &schema.Schema{
-					Default:      0.0,
-					Optional:     true,
-					Type:         schema.TypeFloat,
-					ValidateFunc: validatePrice,
-				},
-			},
-		},
-		Optional: true,
-		Set:      resourceSet,
-		Type:     schema.TypeSet,
-	},
-	"currency": &schema.Schema{
-		ForceNew:     true,
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validateURL,
-	},
-	"datacenter": &schema.Schema{
-		Computed: true,
-		Elem: &schema.Resource{
-			Schema: pricingDatacenterSchema,
-		},
-		Optional: true,
-		Set:      resourceSet,
-		Type:     schema.TypeSet,
-	},
-	"deploy_message": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"description": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeString,
-	},
-	"minimum_charge": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeInt,
-	},
-	"minimum_charge_period": &schema.Schema{
-		Required:     true,
-		Type:         schema.TypeString,
-		ValidateFunc: validation.StringInSlice([]string{"MINUTE", "HOUR", "DAY", "WEEK", "MONTH", "QUARTER", "YEAR"}, false),
-	},
-	"name": &schema.Schema{
-		Required: true,
-		Type:     schema.TypeString,
-	},
-	"show_charges_before": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeBool,
-	},
-	"show_minimun_charge": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeBool,
-	},
-	"standing_charge_period": &schema.Schema{
-		Optional: true,
-		Type:     schema.TypeInt,
-	},
+	"charging_period":        attribute(required, label(pricingPeriodLabel[2:])),
+	"costcode":               attribute(optional, computed, prices),
+	"currency":               attribute(required, href, forceNew),
+	"datacenter":             attribute(optional, computed, set(pricingDCResource, resourceSet)),
+	"deploy_message":         attribute(optional, text),
+	"description":            attribute(optional, text),
+	"minimum_charge":         attribute(required, natural),
+	"minimum_charge_period":  attribute(required, label(pricingPeriodLabel)),
+	"name":                   attribute(required, text),
+	"show_charges_before":    attribute(optional, boolean),
+	"show_minimun_charge":    attribute(optional, boolean),
+	"standing_charge_period": attribute(optional, integer),
 }
 
 var pricingPeriod = map[string]int{
