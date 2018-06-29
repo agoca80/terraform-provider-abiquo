@@ -1,8 +1,8 @@
 data "abiquo_vdc"        "test"       { name = "tests" }
 
 resource "abiquo_vol" "test" {
-  tier               = "${abiquo_vdc.test.id}/tiers/1"
-  virtualdatacenter  = "${abiquo_vdc.test.id}"
+  tier               = "${data.abiquo_vdc.test.id}/tiers/1"
+  virtualdatacenter  = "${data.abiquo_vdc.test.id}"
 
   type = "SCSI"
   name = "test"
