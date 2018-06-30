@@ -9,6 +9,8 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+var machineType = []string{"VMX_04", "KVM"}
+
 var machineSchema = map[string]*schema.Schema{
 	"definition":  attribute(required, text),
 	"datastores":  attribute(text, hash(attribute(text)), required),
@@ -27,8 +29,7 @@ func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
 		return fmt.Errorf("definition is not a valid machine: %q", definition)
 	}
 
-	switch machine.Type {
-	case "VMX_04":
+	if machine.Type == "VMX_04" {
 		machine.ManagerIP = d.string("managerip")
 		machine.ManagerUser = d.string("manageruser")
 		machine.ManagerPass = d.string("managerpass")

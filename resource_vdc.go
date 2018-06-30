@@ -34,7 +34,7 @@ var vdcSchema = map[string]*schema.Schema{
 	"vlansoft":    attribute(optional, natural),
 	"volsoft":     attribute(optional, natural),
 	"volhard":     attribute(optional, natural),
-	"type":        attribute(required, label([]string{"VMX_04", "KVM"}), forceNew),
+	"type":        attribute(required, label(machineType), forceNew),
 	// Links
 	"enterprise": attribute(required, enterprise, forceNew),
 	"location":   attribute(required, location, forceNew),

@@ -11,7 +11,7 @@ import (
 
 var machineDataSchema = map[string]*schema.Schema{
 	// Discover parameters
-	"hypervisor":  attribute(required, text),
+	"hypervisor":  attribute(required, label(machineType)),
 	"datacenter":  attribute(required, datacenter),
 	"ip":          attribute(required, ip),
 	"port":        attribute(optional, text),
@@ -25,11 +25,11 @@ func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 	d := newResourceData(rd, "")
 
 	var query url.Values
-	hypervisor := d.string("hypervisor")
-	switch hypervisor {
+	switch d.string("hypervisor") {
 	case "KVM":
 		query = url.Values{
-			"ip": {d.string("ip")},
+			"ip":         {d.string("ip")},
+			"hypervisor": {"KVM"},
 		}
 	case "VMX_04":
 		query = url.Values{
@@ -37,9 +37,8 @@ func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 			"managerip":       {d.string("managerip")},
 			"manageruser":     {d.string("manageruser")},
 			"managerpassword": {d.string("managerpass")},
+			"hypervisor":      {"VMX_04"},
 		}
-	default:
-		return fmt.Errorf("unknown hypervisor type: %q", hypervisor)
 	}
 
 	resource := d.link("datacenter").SetType("datacenter").Walk()
@@ -48,7 +47,6 @@ func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 	}
 	datacenter := resource.(*abiquo.Datacenter)
 
-	query["hypervisor"] = []string{hypervisor}
 	if port := d.string("port"); port != "" {
 		query["port"] = []string{port}
 	}

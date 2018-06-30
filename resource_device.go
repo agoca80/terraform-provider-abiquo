@@ -7,14 +7,15 @@ import (
 )
 
 var deviceSchema = map[string]*schema.Schema{
-	"devicetype":  attribute(required, href, forceNew),
-	"endpoint":    attribute(required, href, forceNew),
 	"description": attribute(optional, text),
+	"endpoint":    attribute(required, forceNew, href),
 	"name":        attribute(required, text),
 	"password":    attribute(required, text, sensitive),
 	"username":    attribute(required, text),
-	"enterprise":  attribute(optional, enterprise, forceNew),
-	"datacenter":  attribute(optional, datacenter, forceNew),
+	// Links
+	"devicetype": attribute(required, forceNew, href),
+	"enterprise": attribute(optional, forceNew, enterprise),
+	"datacenter": attribute(optional, forceNew, datacenter),
 }
 
 var deviceResource = &schema.Resource{
