@@ -12,6 +12,7 @@ var deviceSchema = map[string]*schema.Schema{
 	"name":        attribute(required, text),
 	"password":    attribute(required, text, sensitive),
 	"username":    attribute(required, text),
+	"default":     attribute(optional, boolean),
 	// Links
 	"devicetype": attribute(required, forceNew, href),
 	"enterprise": attribute(optional, forceNew, enterprise),
@@ -34,7 +35,7 @@ func deviceDTO(d *resourceData) core.Resource {
 		Name:        d.string("name"),
 		Username:    d.string("username"),
 		Password:    d.string("password"),
-		Default:     true,
+		Default:     d.bool("default"),
 		DTO: core.NewDTO(
 			d.link("enterprise"),
 			d.link("devicetype"),
