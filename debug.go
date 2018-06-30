@@ -8,7 +8,7 @@ import (
 var debug *log.Logger
 
 func init() {
-	file, err := os.OpenFile("provider", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
+	file, err := os.OpenFile("/tmp/provider", os.O_WRONLY|os.O_CREATE|os.O_TRUNC, 0666)
 	if err != nil {
 		panic(err)
 	}
