@@ -295,6 +295,14 @@ func Provider() *schema.Provider {
 				Update: resourceUpdate(storageLoadDTO, nil, "datastoreloadrule"),
 				Read:   resourceRead(storageLoadDTO, storageLoadRead, "datastoreloadrule"),
 			},
+			"abiquo_storage": &schema.Resource{
+				Schema: storageDeviceSchema,
+				Delete: resourceDelete,
+				Exists: resourceExists("virtualappliance"),
+				Create: resourceCreate(storageDeviceNew, nil, storageDeviceRead, storageDeviceEndpoint),
+				Update: resourceUpdate(storageDeviceNew, nil, "storagedevice"),
+				Read:   resourceRead(storageDeviceNew, storageDeviceRead, "storagedevice"),
+			},
 			"abiquo_user": &schema.Resource{
 				Schema: userSchema,
 				Read:   resourceRead(userNew, userRead, "user"),
