@@ -23,8 +23,8 @@ var sgSchema = map[string]*schema.Schema{
 	"max":                  attribute(required, natural),
 	"scale_out":            attribute(required, list(sgScaleResource)),
 	"scale_in":             attribute(required, list(sgScaleResource)),
-	"virtualappliance":     attribute(required, vapp, forceNew),
-	"mastervirtualmachine": attribute(required, href, forceNew),
+	"virtualappliance":     attribute(required, forceNew, link("virtualappliance")),
+	"mastervirtualmachine": attribute(required, forceNew, href),
 }
 
 func sgRules(rules []interface{}) (sgRules []abiquo.ScalingGroupRule) {

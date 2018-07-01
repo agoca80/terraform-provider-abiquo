@@ -12,7 +12,7 @@ import (
 
 var vappDataSchema = map[string]*schema.Schema{
 	"name":              attribute(required, text),
-	"virtualdatacenter": attribute(required, vdc),
+	"virtualdatacenter": attribute(required, link("virtualdatacenter")),
 }
 
 func vappDataRead(d *schema.ResourceData, meta interface{}) (err error) {

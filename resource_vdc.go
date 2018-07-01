@@ -6,18 +6,6 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func vdc(s *schema.Schema) {
-	link(s, []string{"/cloud/virtualdatacenters/[0-9]+$"})
-}
-
-func vdcIP(s *schema.Schema) {
-	link(s, []string{
-		"/admin/enterprises/[0-9]+/limits/[0-9]+/externalnetworks/[0-9]+/ips/[0-9]+",
-		"/cloud/virtualdatacenters/[0-9]+/privatenetworks/[0-9]+/ips/[0-9]+$",
-		"/cloud/virtualdatacenters/[0-9]+/publicips/purchased/[0-9]+",
-	})
-}
-
 var vdcSchema = map[string]*schema.Schema{
 	"cpuhard":     attribute(optional, natural),
 	"cpusoft":     attribute(optional, natural),
@@ -36,8 +24,8 @@ var vdcSchema = map[string]*schema.Schema{
 	"volhard":     attribute(optional, natural),
 	"type":        attribute(required, label(machineType), forceNew),
 	// Links
-	"enterprise": attribute(required, enterprise, forceNew),
-	"location":   attribute(required, location, forceNew),
+	"enterprise": attribute(required, forceNew, link("enterprise")),
+	"location":   attribute(required, forceNew, link("location")),
 	"publicips":  attribute(optional, set(attribute(ip), schema.HashString)),
 	// Computed links
 	"externalips":      attribute(computed, text),

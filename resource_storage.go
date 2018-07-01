@@ -6,14 +6,10 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func storageDevice(s *schema.Schema) {
-	link(s, []string{"/admin/datacenters/[0-9]+/storage/devices/[0-9]+$"})
-}
-
 var storageDeviceSchema = map[string]*schema.Schema{
 	"name":       attribute(required, text),
 	"ip":         attribute(required, ip),
-	"datacenter": attribute(required, forceNew, datacenter),
+	"datacenter": attribute(required, forceNew, link("datacenter")),
 }
 
 func storageDeviceNew(d *resourceData) core.Resource {

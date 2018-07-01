@@ -15,8 +15,8 @@ var deviceSchema = map[string]*schema.Schema{
 	"default":     attribute(optional, boolean),
 	// Links
 	"devicetype": attribute(required, forceNew, href),
-	"enterprise": attribute(optional, forceNew, enterprise),
-	"datacenter": attribute(optional, forceNew, datacenter),
+	"enterprise": attribute(optional, forceNew, link("enterprise")),
+	"datacenter": attribute(optional, forceNew, link("datacenter")),
 }
 
 var deviceResource = &schema.Resource{

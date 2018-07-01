@@ -7,15 +7,14 @@ import (
 )
 
 var privateSchema = map[string]*schema.Schema{
-	"address": attribute(required, ip, forceNew),
-	"mask":    attribute(required, natural, forceNew),
-	"name":    attribute(required, text),
-	"gateway": attribute(required, ip),
-	"dns1":    attribute(optional, ip),
-	"dns2":    attribute(optional, ip),
-	"suffix":  attribute(optional, text),
-	// Links
-	"virtualdatacenter": attribute(required, vdc, forceNew),
+	"address":           attribute(required, forceNew, ip),
+	"mask":              attribute(required, forceNew, natural),
+	"name":              attribute(required, text),
+	"gateway":           attribute(required, ip),
+	"dns1":              attribute(optional, ip),
+	"dns2":              attribute(optional, ip),
+	"suffix":            attribute(optional, text),
+	"virtualdatacenter": attribute(required, forceNew, link("virtualdatacenter")),
 }
 
 func privateEndpoint(d *resourceData) *core.Link {

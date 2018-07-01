@@ -12,7 +12,7 @@ import (
 var machineDataSchema = map[string]*schema.Schema{
 	// Discover parameters
 	"hypervisor":  attribute(required, label(machineType)),
-	"datacenter":  attribute(required, datacenter),
+	"datacenter":  attribute(required, link("datacenter")),
 	"ip":          attribute(required, ip),
 	"port":        attribute(optional, text),
 	"managerip":   attribute(optional, text),

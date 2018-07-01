@@ -24,8 +24,8 @@ var limitSchema = map[string]*schema.Schema{
 	"vlanhard": attribute(optional, natural),
 	"volhard":  attribute(optional, natural),
 	// Links
-	"location":   attribute(required, forceNew, datacenter),
-	"enterprise": attribute(required, forceNew, enterprise),
+	"location":   attribute(required, forceNew, link("datacenter")),
+	"enterprise": attribute(required, forceNew, link("enterprise")),
 	"hwprofiles": attribute(optional, set(attribute(href), schema.HashString)),
 	"backups":    attribute(optional, set(attribute(href), schema.HashString)),
 	"dstiers":    attribute(optional, set(attribute(href), schema.HashString)),

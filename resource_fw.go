@@ -17,9 +17,9 @@ var fwRulesResource = &schema.Resource{
 }
 
 var firewallSchema = map[string]*schema.Schema{
+	"virtualdatacenter": attribute(required, forceNew, link("virtualdatacenter")),
 	"name":              attribute(required, text),
 	"description":       attribute(required, text),
-	"virtualdatacenter": attribute(required, vdc, forceNew),
 	"rules":             attribute(required, list(fwRulesResource), min(1)),
 }
 

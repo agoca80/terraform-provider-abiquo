@@ -11,7 +11,7 @@ import (
 
 var tierDataSchema = map[string]*schema.Schema{
 	"name":       attribute(required, text),
-	"datacenter": attribute(required, datacenter),
+	"datacenter": attribute(required, link("datacenter")),
 }
 
 func tierDataRead(d *schema.ResourceData, meta interface{}) (err error) {

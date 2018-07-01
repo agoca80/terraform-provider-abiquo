@@ -17,7 +17,7 @@ var publicSchema = map[string]*schema.Schema{
 	"suffix":  attribute(optional, text),
 	// Links
 	"networkservicetype": attribute(required, href, forceNew),
-	"datacenter":         attribute(required, datacenter, forceNew),
+	"datacenter":         attribute(required, link("datacenter"), forceNew),
 }
 
 func publicNew(d *resourceData) core.Resource {

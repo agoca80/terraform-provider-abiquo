@@ -12,7 +12,7 @@ var rackSchema = map[string]*schema.Schema{
 	"description": attribute(optional, text),
 	"vlanmax":     attribute(optional, natural),
 	"vlanmin":     attribute(optional, natural),
-	"datacenter":  attribute(required, datacenter, forceNew),
+	"datacenter":  attribute(required, link("datacenter"), forceNew),
 }
 
 func rackNew(d *resourceData) core.Resource {

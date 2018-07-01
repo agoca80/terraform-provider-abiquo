@@ -119,17 +119,19 @@ func href(s *schema.Schema) {
 	})
 }
 
-func link(s *schema.Schema, regexps []string) {
-	text(s)
-	validate(s, func(d interface{}, key string) (strs []string, errs []error) {
-		for _, re := range regexps {
-			if regexp.MustCompile(re).MatchString(d.(string)) {
-				return
+func link(media string) field {
+	return func(s *schema.Schema) {
+		text(s)
+		validate(s, func(d interface{}, key string) (strs []string, errs []error) {
+			for _, re := range hrefValidation["media"] {
+				if regexp.MustCompile(re).MatchString(d.(string)) {
+					return
+				}
 			}
-		}
-		errs = append(errs, fmt.Errorf("invalid %v value : %v", key, d.(string)))
-		return
-	})
+			errs = append(errs, fmt.Errorf("invalid %v value : %v", key, d.(string)))
+			return
+		})
+	}
 }
 
 func label(strs []string) field {

@@ -13,7 +13,7 @@ var userSchema = map[string]*schema.Schema{
 	"nick":       attribute(required, text),
 	"surname":    attribute(required, text),
 	"password":   attribute(computed, text),
-	"enterprise": attribute(required, enterprise, forceNew),
+	"enterprise": attribute(required, forceNew, link("enterprise")),
 	"scope":      attribute(optional, href),
 	"role":       attribute(required, href),
 }

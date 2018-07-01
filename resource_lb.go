@@ -22,8 +22,8 @@ var lbSchema = map[string]*schema.Schema{
 	"algorithm":           attribute(required, label(algorithms)),
 	"internal":            attribute(optional, boolean),
 	"routingrules":        attribute(required, list(lbRuleResource), min(1)),
-	"privatenetwork":      attribute(required, href, forceNew),
-	"virtualdatacenter":   attribute(required, vdc, forceNew),
+	"privatenetwork":      attribute(required, forceNew, href),
+	"virtualdatacenter":   attribute(required, forceNew, link("virtualdatacenter")),
 	"loadbalanceraddress": attribute(computed, text),
 }
 

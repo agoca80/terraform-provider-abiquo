@@ -8,10 +8,6 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func datacenter(s *schema.Schema) {
-	link(s, []string{"/admin/datacenters/[0-9]+$"})
-}
-
 var datacenters = struct {
 	sync.Once
 	datacenter map[string]*abiquo.Datacenter

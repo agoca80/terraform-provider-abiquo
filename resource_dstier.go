@@ -7,7 +7,7 @@ import (
 )
 
 var dstierSchema = map[string]*schema.Schema{
-	"datacenter":  attribute(required, datacenter, forceNew),
+	"datacenter":  attribute(required, forceNew, link("datacenter")),
 	"description": attribute(required, text),
 	"enabled":     attribute(required, boolean),
 	"name":        attribute(required, text),

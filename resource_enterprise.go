@@ -6,10 +6,6 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func enterprise(s *schema.Schema) {
-	link(s, []string{"/admin/enterprises/[0-9]+$"})
-}
-
 var enterpriseSchema = map[string]*schema.Schema{
 	"name":            attribute(required, text),
 	"properties":      attribute(optional, hash(attribute(text))),

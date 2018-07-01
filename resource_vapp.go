@@ -6,13 +6,9 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-func vapp(s *schema.Schema) {
-	link(s, []string{"/cloud/virtualdatacenters/[0-9]+/virtualappliances/[0-9]+$"})
-}
-
 var vappSchema = map[string]*schema.Schema{
 	"name":              attribute(required, text),
-	"virtualdatacenter": attribute(required, vdc, forceNew),
+	"virtualdatacenter": attribute(required, forceNew, link("virtualdatacenter")),
 }
 
 func vappNew(d *resourceData) core.Resource {

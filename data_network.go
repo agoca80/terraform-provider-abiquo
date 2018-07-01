@@ -12,7 +12,7 @@ import (
 var networkDataSchema = map[string]*schema.Schema{
 	"ips":      attribute(computed, text),
 	"name":     attribute(required, text),
-	"location": attribute(required, location),
+	"location": attribute(required, link("location")),
 }
 
 func networkDataRead(d *schema.ResourceData, meta interface{}) (err error) {

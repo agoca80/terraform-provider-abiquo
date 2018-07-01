@@ -14,7 +14,7 @@ var hdSchema = map[string]*schema.Schema{
 	"type":              attribute(required, label([]string{"IDE", "SCSI", "VIRTIO"})),
 	"ctrl":              attribute(optional, text),
 	"dstier":            attribute(optional, computed, href),
-	"virtualdatacenter": attribute(required, vdc),
+	"virtualdatacenter": attribute(required, link("virtualdatacenter")),
 }
 
 func hdLink(href string) *core.Link {

@@ -11,7 +11,7 @@ import (
 var roleSchema = map[string]*schema.Schema{
 	"blocked":    attribute(boolean, optional),
 	"name":       attribute(required, text),
-	"enterprise": attribute(optional, enterprise),
+	"enterprise": attribute(optional, link("enterprise")),
 	"privileges": &schema.Schema{
 		Elem:     attribute(text),
 		Required: true,

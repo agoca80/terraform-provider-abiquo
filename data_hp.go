@@ -10,7 +10,7 @@ import (
 
 var hpDataSchema = map[string]*schema.Schema{
 	"name":     attribute(required, text),
-	"location": attribute(required, location),
+	"location": attribute(required, link("location")),
 }
 
 func hpDataRead(d *schema.ResourceData, meta interface{}) (err error) {

@@ -11,7 +11,7 @@ var hpSchema = map[string]*schema.Schema{
 	"name":       attribute(required, text),
 	"cpu":        attribute(required, natural),
 	"ram":        attribute(required, natural),
-	"datacenter": attribute(required, datacenter, forceNew),
+	"datacenter": attribute(required, link("datacenter"), forceNew),
 }
 
 func hpNew(d *resourceData) core.Resource {
