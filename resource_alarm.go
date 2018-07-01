@@ -31,12 +31,12 @@ func alarmNew(d *resourceData) core.Resource {
 	metric := d.string("metric")
 	href := fmt.Sprintf("%v/metrics/%v", target, metric)
 	return &abiquo.Alarm{
-		EvaluationPeriods: d.int("evaluations"),
+		EvaluationPeriods: d.integer("evaluations"),
 		Name:              d.string("name"),
 		Formula:           d.string("formula"),
-		Period:            d.int("period"),
+		Period:            d.integer("period"),
 		Statistic:         d.string("statistic"),
-		Threshold:         d.int("threshold"),
+		Threshold:         d.integer("threshold"),
 		DTO: core.NewDTO(
 			core.NewLinkType(href, "metric").SetRel("metric"),
 		),

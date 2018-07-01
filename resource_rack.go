@@ -17,7 +17,7 @@ var rackSchema = map[string]*schema.Schema{
 
 func rackNew(d *resourceData) core.Resource {
 	rack := &abiquo.Rack{
-		ID:   d.int("number"),
+		ID:   d.integer("number"),
 		Name: d.string("name"),
 	}
 

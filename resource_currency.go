@@ -14,7 +14,7 @@ var currencySchema = map[string]*schema.Schema{
 
 func currencyNew(d *resourceData) core.Resource {
 	return &abiquo.Currency{
-		Digits: d.int("digits"),
+		Digits: d.integer("digits"),
 		Name:   d.string("name"),
 		Symbol: d.string("symbol"),
 	}

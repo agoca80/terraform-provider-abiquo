@@ -34,21 +34,21 @@ var limitSchema = map[string]*schema.Schema{
 func limitNew(d *resourceData) core.Resource {
 	limit := &abiquo.Limit{
 		// Soft limits
-		CPUSoft:  d.int("cpusoft"),
-		HDSoft:   d.int("hdsoft"),
-		IPSoft:   d.int("ipsoft"),
-		RAMSoft:  d.int("ramsoft"),
-		RepoSoft: d.int("reposoft"),
-		VolSoft:  d.int("VolSoft"),
-		VLANSoft: d.int("vlansoft"),
+		CPUSoft:  d.integer("cpusoft"),
+		HDSoft:   d.integer("hdsoft"),
+		IPSoft:   d.integer("ipsoft"),
+		RAMSoft:  d.integer("ramsoft"),
+		RepoSoft: d.integer("reposoft"),
+		VolSoft:  d.integer("VolSoft"),
+		VLANSoft: d.integer("vlansoft"),
 		// Hard limits
-		CPUHard:  d.int("cpuhard"),
-		HDHard:   d.int("hdhard"),
-		IPHard:   d.int("iphard"),
-		RAMHard:  d.int("ramhard"),
-		RepoHard: d.int("repohard"),
-		VolHard:  d.int("volhard"),
-		VLANHard: d.int("vlanhard"),
+		CPUHard:  d.integer("cpuhard"),
+		HDHard:   d.integer("hdhard"),
+		IPHard:   d.integer("iphard"),
+		RAMHard:  d.integer("ramhard"),
+		RepoHard: d.integer("repohard"),
+		VolHard:  d.integer("volhard"),
+		VLANHard: d.integer("vlanhard"),
 		// Links
 		DTO: core.NewDTO(
 			d.link("location"),

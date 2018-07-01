@@ -23,7 +23,7 @@ var roleSchema = map[string]*schema.Schema{
 func roleNew(d *resourceData) core.Resource {
 	return &abiquo.Role{
 		Name:    d.string("name"),
-		Blocked: d.bool("blocked"),
+		Blocked: d.boolean("blocked"),
 		DTO:     core.NewDTO(d.link("enterprise")),
 	}
 }

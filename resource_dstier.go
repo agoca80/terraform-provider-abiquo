@@ -17,7 +17,7 @@ var dstierSchema = map[string]*schema.Schema{
 func dstierDTO(d *resourceData) core.Resource {
 	return &abiquo.DatastoreTier{
 		Description: d.string("description"),
-		Enabled:     d.bool("enabled"),
+		Enabled:     d.boolean("enabled"),
 		Name:        d.string("name"),
 		Policy:      d.string("policy"),
 	}

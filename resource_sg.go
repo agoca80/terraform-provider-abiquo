@@ -49,9 +49,9 @@ func sgRules(rules []interface{}) (sgRules []abiquo.ScalingGroupRule) {
 func sgNew(d *resourceData) core.Resource {
 	return &abiquo.ScalingGroup{
 		Name:     d.string("name"),
-		Cooldown: d.int("cooldown"),
-		Max:      d.int("max"),
-		Min:      d.int("min"),
+		Cooldown: d.integer("cooldown"),
+		Max:      d.integer("max"),
+		Min:      d.integer("min"),
 		ScaleIn:  sgRules(d.slice("scale_in")),
 		ScaleOut: sgRules(d.slice("scale_out")),
 		DTO: core.NewDTO(

@@ -56,14 +56,14 @@ func (d *resourceData) string(name string) string {
 	return d.ResourceData.Get(name).(string)
 }
 
-func (d *resourceData) int(name string) (val int) {
+func (d *resourceData) integer(name string) (val int) {
 	if i, ok := d.GetOk(name); ok {
 		val = i.(int)
 	}
 	return
 }
 
-func (d *resourceData) bool(name string) (val bool) {
+func (d *resourceData) boolean(name string) (val bool) {
 	if i, ok := d.GetOk(name); ok {
 		val = i.(bool)
 	}

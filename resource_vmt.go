@@ -18,11 +18,11 @@ var vmtSchema = map[string]*schema.Schema{
 
 func vmtNew(d *resourceData) core.Resource {
 	return &abiquo.VirtualMachineTemplate{
-		CPURequired: d.int("cpu"),
+		CPURequired: d.integer("cpu"),
 		Name:        d.string("name"),
 		Description: d.string("description"),
 		IconURL:     d.string("icon"),
-		RAMRequired: d.int("ram"),
+		RAMRequired: d.integer("ram"),
 	}
 }
 
@@ -44,8 +44,8 @@ func vmtCreate(rd *schema.ResourceData, m interface{}) (err error) {
 	vmt.Name = d.string("name")
 	vmt.IconURL = d.string("icon")
 	vmt.Description = d.string("description")
-	vmt.CPURequired = d.int("cpu")
-	vmt.RAMRequired = d.int("ram")
+	vmt.CPURequired = d.integer("cpu")
+	vmt.RAMRequired = d.integer("ram")
 	err = core.Update(vmt, vmt)
 
 	return
@@ -67,7 +67,7 @@ func vmtUpdate(rd *schema.ResourceData, meta interface{}) (err error) {
 	vmt.Name = d.string("name")
 	vmt.Description = d.string("description")
 	vmt.IconURL = d.string("icon")
-	vmt.CPURequired = d.int("cpu")
-	vmt.RAMRequired = d.int("ram")
+	vmt.CPURequired = d.integer("cpu")
+	vmt.RAMRequired = d.integer("ram")
 	return core.Update(d, vmt)
 }

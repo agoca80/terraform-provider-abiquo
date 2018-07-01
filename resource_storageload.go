@@ -15,7 +15,7 @@ var storageLoadSchema = map[string]*schema.Schema{
 
 func storageLoadDTO(d *resourceData) core.Resource {
 	storageLoadRule := &abiquo.DatastoreLoadRule{
-		StorageLoadPercentage: d.int("load"),
+		StorageLoadPercentage: d.integer("load"),
 	}
 
 	if h, ok := d.GetOk("target"); ok {

@@ -17,9 +17,9 @@ var computeLoadSchema = map[string]*schema.Schema{
 
 func computeLoadDTO(d *resourceData) core.Resource {
 	machineLoadRule := &abiquo.MachineLoadRule{
-		Aggregated:        d.bool("aggregated"),
-		CPULoadPercentage: d.int("cpuload"),
-		RAMLoadPercentage: d.int("ramload"),
+		Aggregated:        d.boolean("aggregated"),
+		CPULoadPercentage: d.integer("cpuload"),
+		RAMLoadPercentage: d.integer("ramload"),
 	}
 
 	if h, ok := d.GetOk("target"); ok {

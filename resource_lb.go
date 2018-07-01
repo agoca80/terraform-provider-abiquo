@@ -30,7 +30,7 @@ var lbSchema = map[string]*schema.Schema{
 func lbAddresses(d *resourceData) abiquo.LoadBalancerAddresses {
 	return abiquo.LoadBalancerAddresses{
 		Collection: []abiquo.LoadBalancerAddress{
-			abiquo.LoadBalancerAddress{Internal: d.bool("internal")},
+			abiquo.LoadBalancerAddress{Internal: d.boolean("internal")},
 		},
 	}
 }

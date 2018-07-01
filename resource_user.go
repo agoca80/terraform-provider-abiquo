@@ -20,7 +20,7 @@ var userSchema = map[string]*schema.Schema{
 
 func userNew(d *resourceData) core.Resource {
 	return &abiquo.User{
-		Active:   d.bool("active"),
+		Active:   d.boolean("active"),
 		Email:    d.string("email"),
 		Name:     d.string("name"),
 		Nick:     d.string("nick"),

@@ -23,8 +23,8 @@ func volNew(d *resourceData) core.Resource {
 		Description:        d.string("description"),
 		DiskControllerType: d.string("type"),
 		DiskController:     d.string("ctrl"),
-		Bootable:           d.bool("bootable"),
-		SizeInMB:           d.int("size"),
+		Bootable:           d.boolean("bootable"),
+		SizeInMB:           d.integer("size"),
 		DTO: core.NewDTO(
 			d.link("tier"),
 		),

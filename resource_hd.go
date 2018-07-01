@@ -32,7 +32,7 @@ func hdNew(d *resourceData) core.Resource {
 		Label:              d.string("label"),
 		DiskController:     d.string("ctrl"),
 		DiskControllerType: d.string("type"),
-		SizeInMb:           d.int("size"),
+		SizeInMb:           d.integer("size"),
 		DTO:                core.NewDTO(d.link("dstier")),
 	}
 }

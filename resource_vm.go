@@ -33,10 +33,10 @@ func vmNew(d *resourceData) core.Resource {
 		variables[key] = value.(string)
 	}
 	return &abiquo.VirtualMachine{
-		CPU:       d.int("cpu"),
-		RAM:       d.int("ram"),
+		CPU:       d.integer("cpu"),
+		RAM:       d.integer("ram"),
 		Label:     d.string("label"),
-		Monitored: d.bool("monitored"),
+		Monitored: d.boolean("monitored"),
 		Variables: variables,
 		DTO: core.NewDTO(
 			d.link("hardwareprofile"),
@@ -120,7 +120,7 @@ func vmCreate(d *resourceData, resource core.Resource) (err error) {
 	}
 
 	d.SetId(vm.URL())
-	if d.bool("deploy") {
+	if d.boolean("deploy") {
 		err = vm.Deploy()
 	}
 

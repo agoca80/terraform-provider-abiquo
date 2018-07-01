@@ -16,10 +16,10 @@ var hpSchema = map[string]*schema.Schema{
 
 func hpNew(d *resourceData) core.Resource {
 	return &abiquo.HardwareProfile{
-		Active:  d.bool("active"),
+		Active:  d.boolean("active"),
 		Name:    d.string("name"),
-		CPU:     d.int("cpu"),
-		RAMInMB: d.int("ram"),
+		CPU:     d.integer("cpu"),
+		RAMInMB: d.integer("ram"),
 	}
 }
 

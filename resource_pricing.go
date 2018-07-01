@@ -111,7 +111,7 @@ func pricingNew(d *resourceData) core.Resource {
 		CostCodes:           resourcePrices(d.Get("costcode"), "costcode"),
 		Name:                d.string("name"),
 		Description:         d.string("description"),
-		MinimumCharge:       d.int("minimum_charge"),
+		MinimumCharge:       d.integer("minimum_charge"),
 		MinimumChargePeriod: pricingPeriod[d.string("minimum_charge_period")],
 		DTO: core.NewDTO(
 			d.linkTypeRel("currency", "currency", "currency"),

@@ -35,7 +35,7 @@ func deviceDTO(d *resourceData) core.Resource {
 		Name:        d.string("name"),
 		Username:    d.string("username"),
 		Password:    d.string("password"),
-		Default:     d.bool("default"),
+		Default:     d.boolean("default"),
 		DTO: core.NewDTO(
 			d.link("enterprise"),
 			d.link("devicetype"),

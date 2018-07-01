@@ -8,7 +8,7 @@ import (
 func networkNew(d *resourceData) *abiquo.Network {
 	return &abiquo.Network{
 		Address: d.string("address"),
-		Mask:    d.int("mask"),
+		Mask:    d.integer("mask"),
 		Gateway: d.string("gateway"),
 		Name:    d.string("name"),
 		DNS1:    d.string("dns1"),
