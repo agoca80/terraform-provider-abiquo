@@ -128,7 +128,7 @@ func link(media string) field {
 					return
 				}
 			}
-			errs = append(errs, fmt.Errorf("invalid %v value : %v", key, d.(string)))
+			errs = append(errs, fmt.Errorf("invalid %v : %v", key, d.(string)))
 			return
 		})
 	}
