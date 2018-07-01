@@ -1,12 +1,6 @@
 package main
 
 import (
-	"fmt"
-	"net"
-	"net/url"
-	"regexp"
-	"time"
-
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -37,6 +31,8 @@ func set(elem interface{}, set schema.SchemaSetFunc) field {
 	}
 }
 
+func setLink(media string) field { return set(attribute(link(media)), schema.HashString) }
+
 func list(elem interface{}) field {
 	return func(s *schema.Schema) {
 		s.Elem = elem
@@ -52,92 +48,56 @@ func min(m int) field {
 
 func port(s *schema.Schema) {
 	integer(s)
-	validate(s, func(d interface{}, key string) (strs []string, errs []error) {
-		port := d.(int)
-		if port < 0 && 65535 < port {
-			errs = append(errs, fmt.Errorf("%v is an invalid value for %v", port, key))
-		}
-		return
-	})
+	s.ValidateFunc = validatePort
 }
 
 func protocol(s *schema.Schema) {
 	text(s)
-	validate(s, validation.StringInSlice([]string{"TCP", "HTTP", "HTTPS"}, false))
-}
-
-func validate(s *schema.Schema, validate schema.SchemaValidateFunc) {
-	s.ValidateFunc = validate
+	s.ValidateFunc = validation.StringInSlice([]string{"TCP", "HTTP", "HTTPS"}, false)
 }
 
 func price(s *schema.Schema) {
-	s.Default = 0.0
-	s.Optional = true
 	s.Type = schema.TypeFloat
-	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
-		if 0 > d.(float64) {
-			errs = append(errs, fmt.Errorf("prize should be 0 or greater"))
-		}
-		return
-	}
+	s.Optional = true
+	s.ValidateFunc = validatePrice
 }
 
 func natural(s *schema.Schema) {
 	integer(s)
-	validate(s, validation.IntAtLeast(0))
+	s.ValidateFunc = validation.IntAtLeast(0)
+}
+
+func positive(s *schema.Schema) {
+	integer(s)
+	s.ValidateFunc = validation.IntAtLeast(1)
 }
 
 func ip(s *schema.Schema) {
 	text(s)
-	validate(s, func(d interface{}, key string) (strs []string, errs []error) {
-		if net.ParseIP(d.(string)) == nil {
-			errs = append(errs, fmt.Errorf("%v is an invalid IP", d.(string)))
-		}
-		return
-	})
+	s.ValidateFunc = validateIP
 }
-
-const tsFormat = "2006/01/02 15:04"
 
 func timestamp(s *schema.Schema) {
 	integer(s)
-	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
-		if _, err := time.Parse(tsFormat, d.(string)); err != nil {
-			errs = append(errs, fmt.Errorf("%v is an invalid date", d.(string)))
-		}
-		return
-	}
+	s.ValidateFunc = validateTS
 }
 
 func href(s *schema.Schema) {
 	text(s)
-	validate(s, func(d interface{}, key string) (strs []string, errs []error) {
-		if _, err := url.Parse(d.(string)); err != nil {
-			errs = append(errs, fmt.Errorf("%v is an invalid IP", d.(string)))
-		}
-		return
-	})
+	s.ValidateFunc = validateHref
 }
 
 func link(media string) field {
 	return func(s *schema.Schema) {
 		text(s)
-		validate(s, func(d interface{}, key string) (strs []string, errs []error) {
-			for _, re := range hrefValidation["media"] {
-				if regexp.MustCompile(re).MatchString(d.(string)) {
-					return
-				}
-			}
-			errs = append(errs, fmt.Errorf("invalid %v : %v", key, d.(string)))
-			return
-		})
+		s.ValidateFunc = validateMedia[media]
 	}
 }
 
 func label(strs []string) field {
 	return func(s *schema.Schema) {
 		text(s)
-		validate(s, validation.StringInSlice(strs, false))
+		s.ValidateFunc = validation.StringInSlice(strs, false)
 	}
 }
 

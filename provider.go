@@ -41,12 +41,10 @@ func configureProvider(d *schema.ResourceData) (meta interface{}, err error) {
 		if abq.err = core.Init(endpoint, credentials); abq.err != nil {
 			return
 		}
-
 		abq.user = abiquo.Login()
 		resource := abq.user.Rel("enterprise").Walk()
 		abq.enterprise = resource.(*abiquo.Enterprise)
 	})
-
 	return &abq, abq.err
 }
 
@@ -338,7 +336,7 @@ func Provider() *schema.Provider {
 				Schema: vmtSchema,
 				Create: vmtCreate,
 				Delete: resourceDelete,
-				Update: vmtUpdate,
+				Update: resourceUpdate(vmtNew, nil, "virtualmachinetemplate"),
 				Read:   resourceRead(vmtNew, vmtRead, "virtualmachinetemplate"),
 				Exists: resourceExists("virtualmachinetemplate"),
 			},

@@ -11,10 +11,32 @@ import (
 
 var machineType = []string{"VMX_04", "KVM"}
 
+var machineInterface = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"mac": attribute(required, text),
+		"nst": attribute(required, href),
+	},
+}
+
+func interfaceSet(v interface{}) int {
+	return schema.HashString(v.(map[string]interface{})["mac"])
+}
+
+var machineDatastore = &schema.Resource{
+	Schema: map[string]*schema.Schema{
+		"uuid":   attribute(required, text),
+		"dstier": attribute(required, href),
+	},
+}
+
+func datastoreSet(v interface{}) int {
+	return schema.HashString(v.(map[string]interface{})["uuid"])
+}
+
 var machineSchema = map[string]*schema.Schema{
 	"definition":  attribute(required, text),
-	"datastores":  attribute(text, hash(attribute(text)), required),
-	"interfaces":  attribute(text, hash(attribute(text)), required),
+	"datastore":   attribute(required, min(1), set(machineDatastore, datastoreSet)),
+	"interface":   attribute(required, min(1), set(machineInterface, interfaceSet)),
 	"managerip":   attribute(optional, ip),
 	"manageruser": attribute(optional, text),
 	"managerpass": attribute(optional, text, sensitive),
@@ -35,42 +57,39 @@ func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
 		machine.ManagerPass = d.string("managerpass")
 	}
 
-	// Enable interfaces
-	ifaces := d.dict("interfaces")
-	for _, iface := range machine.Interfaces.Collection {
-		if href, ok := ifaces[iface.MAC]; ok {
+	interfaces := make(map[string]interface{})
+	for _, i := range d.set("interface").List() {
+		iface := i.(map[string]interface{})
+		interfaces[iface["mac"].(string)] = iface["nst"]
+	}
+
+	for _, i := range machine.Interfaces.Collection {
+		if href, ok := interfaces[i.MAC]; ok {
 			nst := core.NewLinkType(href.(string), "networkservicetype")
-			iface.Add(nst.SetRel("networkservicetype"))
+			i.Add(nst.SetRel("networkservicetype"))
 		}
 	}
 
-	// Enable datastores
-	dstores := d.dict("datastores")
-	for _, dstore := range machine.Datastores.Collection {
-		var dstier *core.Link
-		href, ok := dstores[dstore.UUID]
-		if !ok {
-			continue
+	datastores := make(map[string]interface{})
+	for _, d := range d.set("datastore").List() {
+		datastore := d.(map[string]interface{})
+		datastores[datastore["uuid"].(string)] = datastore["dstier"]
+	}
+
+	for _, d := range machine.Datastores.Collection {
+		if href, ok := datastores[d.UUID]; ok {
+			dstier := core.NewLinkType(href.(string), "datastoretier")
+			d.Add(dstier.SetRel("datastoretier"))
+			d.Enabled = true
 		}
-		if href.(string) != "" {
-			dstier = core.NewLinkType(href.(string), "datastoretier").SetRel("datastoretier")
-		}
-		dstore.Enabled = true
-		dstore.Add(dstier)
 	}
 
 	endpoint := core.NewLinkType(d.string("rack")+"/machines", "machine")
-	if err = core.Create(endpoint, machine); err != nil {
-		return
+	if err = core.Create(endpoint, machine); err == nil {
+		d.SetId(machine.URL())
 	}
-	d.SetId(machine.URL())
 	return
 }
 
-func machineUpdate(rd *schema.ResourceData, _ interface{}) (err error) {
-	return
-}
-
-func machineRead(rd *schema.ResourceData, _ interface{}) (err error) {
-	return
-}
+func machineUpdate(rd *schema.ResourceData, _ interface{}) (err error) { return }
+func machineRead(rd *schema.ResourceData, _ interface{}) (err error)   { return }

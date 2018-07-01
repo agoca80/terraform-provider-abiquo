@@ -10,23 +10,19 @@ import (
 )
 
 var tierDataSchema = map[string]*schema.Schema{
-	"name":       attribute(required, text),
-	"datacenter": attribute(required, link("datacenter")),
+	"name":     attribute(required, text),
+	"location": attribute(required, href),
 }
 
 func tierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	href := d.Get("datacenter").(string)
-	datacenter := core.NewLinker(href, "datacenter").Walk()
-	if datacenter == nil {
-		return fmt.Errorf("datacenter not found: %q", href)
-	}
-
 	name := d.Get("name").(string)
-	tier := datacenter.Rel("tiers").Collection(nil).Find(func(r core.Resource) bool {
+	href := d.Get("location").(string)
+	endpoint := core.NewLinkType(href, "tiers")
+	tier := endpoint.Collection(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.Tier).Name == name
 	})
 	if tier == nil {
-		return fmt.Errorf("datastore tier not found: %q", name)
+		return fmt.Errorf("tier not found: %q", name)
 	}
 
 	d.SetId(tier.URL())

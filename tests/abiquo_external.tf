@@ -1,6 +1,12 @@
-data "abiquo_enterprise" "test" { name = "Abiquo" }
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
-data "abiquo_nst"        "test" {
+data "abiquo_enterprise" "test" {
+  name = "Abiquo"
+}
+
+data "abiquo_datacenter" "test" {
+  name = "datacenter 1"
+}
+
+data "abiquo_nst" "test" {
   datacenter = "${data.abiquo_datacenter.test.id}"
   name       = "Service Network"
 }
@@ -11,7 +17,9 @@ resource "abiquo_external" "test" {
   networkservicetype = "${data.abiquo_nst.test.id}"
 
   # XXX workaround ABICLOUDPREMIUM-9660
-  lifecycle = { ignore_changes = [ "dns1", "dns2" ] }
+  lifecycle = {
+    ignore_changes = ["dns1", "dns2"]
+  }
 
   tag     = 1331
   mask    = 24
@@ -21,4 +29,9 @@ resource "abiquo_external" "test" {
   dns1    = "4.4.4.4"
   dns2    = "8.8.8.8"
   suffix  = "external.test.abiquo.com"
+}
+
+data "abiquo_network" "test" {
+  location = "${data.abiquo_datacenter.test.network}"
+  name     = "${abiquo_external.test.name}"
 }

@@ -12,8 +12,8 @@ import (
 var scopeSchema = map[string]*schema.Schema{
 	"name":        attribute(required, text),
 	"parent":      attribute(optional, href),
-	"datacenters": attribute(optional, list(link("datacenter"))),
-	"enterprises": attribute(optional, list(link("enterprise"))),
+	"datacenters": attribute(optional, list(attribute(link("datacenter")))),
+	"enterprises": attribute(optional, list(attribute(link("enterprise")))),
 }
 
 func scopeNew(d *resourceData) core.Resource {

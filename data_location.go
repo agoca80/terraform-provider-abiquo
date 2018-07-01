@@ -13,16 +13,14 @@ var locationDataSchema = map[string]*schema.Schema{
 }
 
 func locationFind(name string) (location core.Resource) {
-	datacenters := abiquo.PrivateLocations(nil)
-	if location = datacenters.Find(func(r core.Resource) bool {
-		return r.(*abiquo.Datacenter).Name == name
+	if location = abiquo.PublicLocations(nil).Find(func(r core.Resource) bool {
+		return r.(*abiquo.Location).Name == name
 	}); location != nil {
 		return
 	}
 
-	regions := abiquo.PublicLocations(nil)
-	location = regions.Find(func(r core.Resource) bool {
-		return r.(*abiquo.Location).Name == name
+	location = abiquo.PrivateLocations(nil).Find(func(r core.Resource) bool {
+		return r.(*abiquo.Datacenter).Name == name
 	})
 
 	return

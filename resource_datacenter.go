@@ -19,6 +19,7 @@ var datacenterSchema = map[string]*schema.Schema{
 	"dhcp":     attribute(required, text),
 	"dhcpv6":   attribute(required, text),
 	"ra":       attribute(required, text),
+	"tiers":    attribute(computed, text),
 }
 
 var rssMap = map[string]string{
@@ -55,6 +56,7 @@ func datacenterRead(d *resourceData, resource core.Resource) (err error) {
 	datacenter := resource.(*abiquo.Datacenter)
 	d.Set("name", datacenter.Name)
 	d.Set("location", datacenter.Location)
+	d.Set("tiers", datacenter.Rel("tiers").Href)
 	for _, rs := range datacenter.RemoteServices.Collection {
 		d.Set(rssMap[rs.Type], rs.URI)
 	}

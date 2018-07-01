@@ -9,7 +9,9 @@ import (
 )
 
 var datacenterDataSchema = map[string]*schema.Schema{
-	"name": attribute(required, text),
+	"name":    attribute(required, text),
+	"network": attribute(computed, text),
+	"tiers":   attribute(computed, text),
 }
 
 func datacenterDataRead(d *schema.ResourceData, meta interface{}) (err error) {
@@ -21,5 +23,7 @@ func datacenterDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 		return fmt.Errorf("Datacenter %v does not exist", d.Get("name"))
 	}
 	d.SetId(datacenter.URL())
+	d.Set("network", datacenter.Rel("network").Href)
+	d.Set("tiers", datacenter.Rel("tiers").Href)
 	return
 }

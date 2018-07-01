@@ -1,10 +1,17 @@
-data "abiquo_vdc"        "test"       { name = "tests" }
+data "abiquo_vdc" "test" {
+  name = "tests"
+}
+
+data "abiquo_tier" "test" {
+  location = "${data.abiquo_vdc.test.tiers}"
+  name     = "Default Tier 1"
+}
 
 resource "abiquo_vol" "test" {
-  tier               = "${data.abiquo_vdc.test.id}/tiers/1"
-  virtualdatacenter  = "${data.abiquo_vdc.test.id}"
+  tier              = "${data.abiquo_tier.test.id}"
+  virtualdatacenter = "${data.abiquo_vdc.test.id}"
 
   type = "SCSI"
-  name = "test"
+  name = "test vol"
   size = 32
 }

@@ -7,28 +7,25 @@ import (
 )
 
 var limitSchema = map[string]*schema.Schema{
-	// Soft limits
-	"cpusoft":  attribute(optional, natural),
-	"hdsoft":   attribute(optional, natural),
-	"ipsoft":   attribute(optional, natural),
-	"ramsoft":  attribute(optional, natural),
-	"reposoft": attribute(optional, natural),
-	"volsoft":  attribute(optional, natural),
-	"vlansoft": attribute(optional, natural),
-	// Hard limits
-	"cpuhard":  attribute(optional, natural),
-	"hdhard":   attribute(optional, natural),
-	"iphard":   attribute(optional, natural),
-	"ramhard":  attribute(optional, natural),
-	"repohard": attribute(optional, natural),
-	"vlanhard": attribute(optional, natural),
-	"volhard":  attribute(optional, natural),
-	// Links
-	"location":   attribute(required, forceNew, link("datacenter")),
+	"backups":    attribute(optional, setLink("backuppolicy_dc")),
+	"cpuhard":    attribute(optional, natural),
+	"cpusoft":    attribute(optional, natural),
+	"dstiers":    attribute(optional, setLink("datastoretier_dc")),
 	"enterprise": attribute(required, forceNew, link("enterprise")),
-	"hwprofiles": attribute(optional, set(attribute(href), schema.HashString)),
-	"backups":    attribute(optional, set(attribute(href), schema.HashString)),
-	"dstiers":    attribute(optional, set(attribute(href), schema.HashString)),
+	"hdhard":     attribute(optional, natural),
+	"hdsoft":     attribute(optional, natural),
+	"hwprofiles": attribute(optional, setLink("hardwareprofile_dc")),
+	"iphard":     attribute(optional, natural),
+	"ipsoft":     attribute(optional, natural),
+	"location":   attribute(required, forceNew, link("datacenter")),
+	"ramhard":    attribute(optional, natural),
+	"ramsoft":    attribute(optional, natural),
+	"repohard":   attribute(optional, natural),
+	"reposoft":   attribute(optional, natural),
+	"volhard":    attribute(optional, natural),
+	"volsoft":    attribute(optional, natural),
+	"vlanhard":   attribute(optional, natural),
+	"vlansoft":   attribute(optional, natural),
 }
 
 func limitNew(d *resourceData) core.Resource {
@@ -67,6 +64,7 @@ func limitNew(d *resourceData) core.Resource {
 	// HWprofiles
 	hwprofiles := d.set("hwprofiles")
 	if hwprofiles != nil && hwprofiles.Len() > 0 {
+		limit.EnableHPs = true
 		for _, entry := range hwprofiles.List() {
 			href := entry.(string)
 			limit.Add(core.NewLinkType(href, "hardwareprofile").SetRel("hardwareprofile"))
@@ -97,7 +95,7 @@ func limitRead(d *resourceData, resource core.Resource) (err error) {
 	}))
 
 	hwprofiles := mapHrefs(limit.Links.Filter(func(l *core.Link) bool {
-		return l.IsMedia("hwprofile")
+		return l.IsMedia("hardwareprofile")
 	}))
 
 	dstiers := mapHrefs(limit.Links.Filter(func(l *core.Link) bool {
