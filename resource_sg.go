@@ -10,8 +10,8 @@ import (
 
 var sgScaleResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"starttime":         attribute(optional, timestamp),
-		"stoptime":          attribute(optional, timestamp),
+		"endtime":           attribute(required, timestamp),
+		"starttime":         attribute(required, timestamp),
 		"numberofinstances": attribute(required, natural),
 	},
 }
@@ -27,20 +27,21 @@ var sgSchema = map[string]*schema.Schema{
 	"mastervirtualmachine": attribute(required, forceNew, href),
 }
 
+func ruleTS(dateStr string) (timestamp int64) {
+	if dateStr != "" {
+		date, _ := time.Parse(tsFormat, dateStr)
+		timestamp = date.Unix()
+	}
+	return
+}
+
 func sgRules(rules []interface{}) (sgRules []abiquo.ScalingGroupRule) {
 	for _, r := range rules {
-		rule := struct {
-			NumberOfInstances int
-			StartTime         string
-			EndType           string
-		}{}
-		mapDecoder(r, &rule)
-		from, _ := time.Parse(tsFormat, rule.StartTime)
-		until, _ := time.Parse(tsFormat, rule.EndType)
+		rule := r.(map[string]interface{})
 		sgRules = append(sgRules, abiquo.ScalingGroupRule{
-			NumberOfInstances: rule.NumberOfInstances,
-			StartTime:         from.Unix(),
-			EndTime:           until.Unix(),
+			NumberOfInstances: rule["numberofinstances"].(int),
+			StartTime:         ruleTS(rule["starttime"].(string)),
+			EndTime:           ruleTS(rule["endtime"].(string)),
 		})
 	}
 	return
@@ -78,13 +79,6 @@ func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
 		return
 	}
 
-	vms := []*core.Link{}
-	for _, l := range sg.Links {
-		if l.Rel == "virtualmachine" {
-			vms = append(vms, l)
-		}
-	}
-
 	// Go to maintenance mode
 	if !sg.Maintenance {
 		if err = sg.StartMaintenance(); err != nil {
@@ -92,15 +86,20 @@ func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
 		}
 	}
 
-	// PENDING move to ojal/abiquo
 	// Delete the SG
-	if err = core.Remove(d); err == nil {
-		// Delete the SG VMs
-		for _, vm := range vms {
-			if err = core.Remove(vm); err != nil {
-				return
-			}
+	if err = core.Remove(sg); err != nil {
+		return
+	}
+
+	// Delete the SG VMs
+	vms := sg.Links.Filter(func(l *core.Link) bool {
+		return l.Rel == "virtualmachine"
+	})
+	for _, vm := range vms {
+		if err = core.Remove(vm); err != nil {
+			return
 		}
 	}
+
 	return
 }

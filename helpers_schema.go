@@ -78,7 +78,7 @@ func ip(s *schema.Schema) {
 }
 
 func timestamp(s *schema.Schema) {
-	integer(s)
+	text(s)
 	s.ValidateFunc = validateTS
 }
 

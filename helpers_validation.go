@@ -58,8 +58,10 @@ func validatePrice(d interface{}, key string) (strs []string, errs []error) {
 const tsFormat = "2006/01/02 15:04"
 
 func validateTS(d interface{}, key string) (strs []string, errs []error) {
-	if _, err := time.Parse(tsFormat, d.(string)); err != nil {
-		errs = append(errs, fmt.Errorf("%v is an invalid date", d.(string)))
+	if d.(string) != "" {
+		if _, err := time.Parse(tsFormat, d.(string)); err != nil {
+			errs = append(errs, fmt.Errorf("%v is an invalid date", d.(string)))
+		}
 	}
 	return
 }
