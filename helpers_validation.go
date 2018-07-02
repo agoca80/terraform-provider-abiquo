@@ -21,6 +21,7 @@ var validateMedia = map[string]schema.SchemaValidateFunc{
 	// cloud
 	"location":          validateLink([]string{"/cloud/locations/[0-9]+"}),
 	"backuppolicy_vdc":  validateLink([]string{"/cloud/locations/[0-9]+/backuppolicies/[0-9]+"}),
+	"privatenetwork":    validateLink([]string{"/cloud/virtualdatacenters/[0-9]+/privatenetworks/[0-9]+"}),
 	"vdcTier":           validateLink([]string{"/cloud/virtualdatacenters/[0-9]+/tiers/[0-9]+"}),
 	"virtualappliance":  validateLink([]string{"/cloud/virtualdatacenters/[0-9]+/virtualappliances/[0-9]+"}),
 	"virtualdatacenter": validateLink([]string{"/cloud/virtualdatacenters/[0-9]+"}),

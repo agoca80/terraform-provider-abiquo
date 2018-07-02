@@ -30,6 +30,7 @@ var vdcSchema = map[string]*schema.Schema{
 	// Computed links
 	"externalips":      attribute(computed, text),
 	"externalnetworks": attribute(computed, text),
+	"network":          attribute(computed, text),
 	"privatenetworks":  attribute(computed, text),
 	"topurchase":       attribute(computed, text),
 	"purchased":        attribute(computed, text),
@@ -104,6 +105,7 @@ func vdcCreate(d *resourceData, resource core.Resource) (err error) {
 	// Computed links
 	d.Set("externalips", resource.Rel("externalips").Href)
 	d.Set("externalnetworks", resource.Rel("externalnetworks").Href)
+	d.Set("network", vdcNetwork(resource).Href)
 	d.Set("privatenetworks", resource.Rel("privatenetworks").Href)
 	d.Set("topurchase", resource.Rel("topurchase").Href)
 	d.Set("purchased", resource.Rel("purchased").Href)

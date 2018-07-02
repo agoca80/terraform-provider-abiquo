@@ -12,8 +12,19 @@ import (
 )
 
 var vdcDataSchema = map[string]*schema.Schema{
-	"name":  attribute(required, text),
-	"tiers": attribute(computed, text),
+	"name":    attribute(required, text),
+	"tiers":   attribute(computed, text),
+	"network": attribute(computed, text),
+}
+
+func vdcNetwork(r core.Resource) *core.Link {
+	vdc := r.(*abiquo.VirtualDatacenter)
+	for _, l := range vdc.Links {
+		if l.Title == "default_private_network" {
+			return l
+		}
+	}
+	return nil
 }
 
 func dataVDCRead(d *schema.ResourceData, meta interface{}) (err error) {
@@ -34,5 +45,6 @@ func dataVDCRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	d.SetId(vdc.URL())
 	d.Set("tiers", vdc.Rel("tiers").Href)
+	d.Set("network", vdcNetwork(vdc).Href)
 	return
 }
