@@ -9,23 +9,21 @@ import (
 )
 
 var templateDataSchema = map[string]*schema.Schema{
-	"name": attribute(required, text),
+	"templates": attribute(required, link("templates")),
+	"name":      attribute(required, text),
 }
 
 func templateRead(d *schema.ResourceData, meta interface{}) (err error) {
-	enterprise := meta.(*provider).Enterprise()
-	dcrepos := enterprise.Rel("datacenterrepositories").Collection(nil)
-	for _, repo := range dcrepos.List() {
-		vmtemplates := repo.Rel("virtualmachinetemplates").Collection(nil)
-		template := vmtemplates.Find(func(r core.Resource) bool {
-			t := r.(*abiquo.VirtualMachineTemplate)
-			return t.Name == d.Get("name").(string) && t.State != "UNAVAILABLE"
-		})
-		if template != nil {
-			d.SetId(template.URL())
-			return
-		}
+	name := d.Get("name").(string)
+	templates := d.Get("templates").(string)
+	endpoint := core.NewLinker(templates, "virtualmachinetemplates")
+	template := endpoint.Collection(nil).Find(func(r core.Resource) bool {
+		t := r.(*abiquo.VirtualMachineTemplate)
+		return t.Name == name && t.State != "UNAVAILABLE"
+	})
+	if template == nil {
+		return fmt.Errorf("template %q was not found", d.Get("name"))
 	}
-
-	return fmt.Errorf("template %q was not found", d.Get("name"))
+	d.SetId(template.URL())
+	return
 }

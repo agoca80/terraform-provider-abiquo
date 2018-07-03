@@ -11,9 +11,11 @@ import (
 )
 
 var vdcDataSchema = map[string]*schema.Schema{
-	"name":    attribute(required, text),
-	"tiers":   attribute(computed, text),
-	"network": attribute(computed, text),
+	"name":      attribute(required, text),
+	"tiers":     attribute(computed, text),
+	"location":  attribute(computed, text),
+	"network":   attribute(computed, text),
+	"templates": attribute(computed, text),
 }
 
 func vdcNetwork(r core.Resource) string {
@@ -41,5 +43,7 @@ func dataVDCRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(vdc.URL())
 	d.Set("tiers", vdc.Rel("tiers").Href)
 	d.Set("network", vdcNetwork(vdc))
+	d.Set("location", vdc.Rel("location").Href)
+	d.Set("templates", vdc.Rel("templates").Href)
 	return
 }

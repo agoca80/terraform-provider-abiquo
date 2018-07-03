@@ -1,5 +1,8 @@
-data "abiquo_template"   "test"   { name = "tests" }
 data "abiquo_vdc"        "test"   { name = "tests" }
+data "abiquo_template"   "test"   {
+  templates = "${data.abiquo_vdc.test.templates}"
+  name      = "tests"
+}
 
 resource "abiquo_vapp" "test" {
   virtualdatacenter = "${data.abiquo_vdc.test.id}"

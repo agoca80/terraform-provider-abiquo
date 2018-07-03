@@ -32,6 +32,7 @@ var vdcSchema = map[string]*schema.Schema{
 	"externalnetworks": attribute(computed, text),
 	"network":          attribute(computed, text),
 	"privatenetworks":  attribute(computed, text),
+	"templates":        attribute(computed, text),
 	"topurchase":       attribute(computed, text),
 	"purchased":        attribute(computed, text),
 	"tiers":            attribute(computed, text),
@@ -109,6 +110,7 @@ func vdcCreate(d *resourceData, resource core.Resource) (err error) {
 	d.Set("privatenetworks", resource.Rel("privatenetworks").Href)
 	d.Set("topurchase", resource.Rel("topurchase").Href)
 	d.Set("purchased", resource.Rel("purchased").Href)
+	d.Set("templates", resource.Rel("templates").Href)
 	d.Set("tiers", resource.Rel("tiers").Href)
 	purchaseIPs(resource, d.set("publicips"))
 	return

@@ -31,6 +31,9 @@ var validateMedia = map[string]schema.SchemaValidateFunc{
 		"/cloud/virtualdatacenters/[0-9]+/privatenetworks/[0-9]+/ips/[0-9]+",
 		"/cloud/virtualdatacenters/[0-9]+/publicips/purchased/[0-9]+",
 	}),
+	"templates": validateLink([]string{
+		"/cloud/virtualdatacenters/[0-9]+/action/templates"},
+	),
 }
 
 func validateIP(d interface{}, key string) (strs []string, errs []error) {

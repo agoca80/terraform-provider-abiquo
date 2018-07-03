@@ -1,10 +1,44 @@
+resource "abiquo_vm" "test" {
+  deploy                 = false
+  backups                = [ "${data.abiquo_backup.test.id}" ]
+  cpu                    = 1
+  ram                    = 64
+  label                  = "testVM"
+  virtualappliance       = "${abiquo_vapp.test.id}"
+  virtualmachinetemplate = "${data.abiquo_template.test.id}"
+
+  lbs = [ "${abiquo_lb.test.id}" ]
+  fws = [ "${abiquo_fw.test.id}" ]
+
+  variables = {
+    name1 = "value1"
+    name2 = "value2"
+  }
+
+  ips = [
+    "${abiquo_ip.private.id}",
+    "${data.abiquo_ip.external.id}",
+    "${data.abiquo_ip.public.id}"
+  ]
+
+  bootstrap = <<EOF
+#!/bin/sh
+exit 0
+EOF
+}
+
 data "abiquo_enterprise" "test" { name = "Abiquo" }
 data "abiquo_location"   "test" { name = "datacenter 1" }
 data "abiquo_datacenter" "test" { name = "datacenter 1" }
-data "abiquo_template"   "test" { name = "tests" }
+
 data "abiquo_nst"        "test"        {
   datacenter = "${data.abiquo_datacenter.test.id}"
   name       = "Service Network"
+}
+
+data "abiquo_template" "test" { 
+  templates = "${abiquo_vdc.test.templates}"
+  name = "tests"
 }
 
 resource "abiquo_backup" "test" {
@@ -114,33 +148,4 @@ data "abiquo_ip" "public" {
 data "abiquo_ip" "external" {
   pool = "${abiquo_vdc.test.externalips}"
   ip   = "${abiquo_ip.external.ip}"
-}
-
-resource "abiquo_vm" "test" {
-  deploy                 = false
-  backups                = [ "${data.abiquo_backup.test.id}" ]
-  cpu                    = 1
-  ram                    = 64
-  label                  = "testVM"
-  virtualappliance       = "${abiquo_vapp.test.id}"
-  virtualmachinetemplate = "${data.abiquo_template.test.id}"
-
-  lbs = [ "${abiquo_lb.test.id}" ]
-  fws = [ "${abiquo_fw.test.id}" ]
-
-  variables = {
-    name1 = "value1"
-    name2 = "value2"
-  }
-
-  ips = [
-    "${abiquo_ip.private.id}",
-    "${data.abiquo_ip.external.id}",
-    "${data.abiquo_ip.public.id}"
-  ]
-
-  bootstrap = <<EOF
-#!/bin/sh
-exit 0
-EOF
 }

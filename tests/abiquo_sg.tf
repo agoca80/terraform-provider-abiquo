@@ -1,6 +1,8 @@
 data "abiquo_vdc"      "test"     { name = "tests" }
-data "abiquo_template" "template" { name = "tests" }
-
+data "abiquo_template" "test"     {
+  templates = "${data.abiquo_vdc.test.templates}"
+  name      = "tests"
+}
 
 resource "abiquo_vapp" "test" {
   virtualdatacenter = "${data.abiquo_vdc.test.id}"
@@ -11,7 +13,7 @@ resource "abiquo_vapp" "test" {
 resource "abiquo_vm" "test" {
   deploy                 = false
   virtualappliance       = "${abiquo_vapp.test.id}"
-  virtualmachinetemplate = "${data.abiquo_template.template.id}"
+  virtualmachinetemplate = "${data.abiquo_template.test.id}"
   label                  = "test sg"
 }
 
