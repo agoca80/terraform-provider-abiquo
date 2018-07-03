@@ -54,7 +54,7 @@ func lbNew(d *resourceData) core.Resource {
 		},
 		DTO: core.NewDTO(
 			d.link("virtualdatacenter"),
-			d.link("privatenetwork"),
+			d.link("privatenetwork").SetType("vlan"),
 		),
 	}
 }
