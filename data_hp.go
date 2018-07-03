@@ -23,7 +23,7 @@ func hpDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	if hardwareprofile == nil {
 		return fmt.Errorf("hwprofile %q does not exist in %q", name, href)
 	}
-	d.SetId(hardwareprofile.URL())
 
+	d.SetId(hardwareprofile.URL())
 	return
 }

@@ -30,8 +30,7 @@ func ipDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	address := d.Get("ip").(string)
 	pool := d.Get("pool").(string)
 	query := url.Values{"hasIP": {address}}
-	ips := core.NewLinkType(pool, ipsMedia(pool)).Collection(query)
-	ip := ips.First()
+	ip := core.NewLinkType(pool, ipsMedia(pool)).Collection(query).First()
 	if ip == nil {
 		return fmt.Errorf("ip %q not found", address)
 	}

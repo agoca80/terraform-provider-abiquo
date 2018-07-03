@@ -13,13 +13,13 @@ var scopeDataSchema = map[string]*schema.Schema{
 }
 
 func scopeDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	finder := func(r core.Resource) bool {
+	scope := abiquo.Scopes(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.Scope).Name == d.Get("name").(string)
-	}
-	if scope := abiquo.Scopes(nil).Find(finder); scope != nil {
-		d.SetId(scope.URL())
-		return
+	})
+	if scope == nil {
+		return fmt.Errorf("scope %q was not found", d.Get("name"))
 	}
 
-	return fmt.Errorf("scope %q was not found", d.Get("name"))
+	d.SetId(scope.URL())
+	return
 }

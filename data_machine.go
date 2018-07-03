@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"net/url"
 
-	"github.com/abiquo/ojal/abiquo"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -41,16 +40,15 @@ func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 		}
 	}
 
-	resource := d.link("datacenter").SetType("datacenter").Walk()
-	if resource == nil {
+	datacenter := d.link("datacenter").SetType("datacenter").Walk()
+	if datacenter == nil {
 		return fmt.Errorf("datacenter not found: %q", d.string("datacenter"))
 	}
-	datacenter := resource.(*abiquo.Datacenter)
 
 	if port := d.string("port"); port != "" {
 		query["port"] = []string{port}
 	}
-	resource = datacenter.Rel("discover").Collection(query).First()
+	resource := datacenter.Rel("discover").Collection(query).First()
 	if resource == nil {
 		return fmt.Errorf("machine not found: %v", query)
 	}

@@ -1,7 +1,6 @@
 package main
 
 import (
-	"errors"
 	"fmt"
 
 	"github.com/abiquo/ojal/abiquo"
@@ -15,19 +14,14 @@ var templateDataSchema = map[string]*schema.Schema{
 
 func templateRead(d *schema.ResourceData, meta interface{}) (err error) {
 	enterprise := meta.(*provider).Enterprise()
-	if enterprise == nil {
-		return errors.New("The user enterprise was not found")
-	}
-
 	dcrepos := enterprise.Rel("datacenterrepositories").Collection(nil)
-	for _, dcrepo := range dcrepos.List() {
-		repo := dcrepo.(*abiquo.DatacenterRepository)
-		finder := func(r core.Resource) bool {
+	for _, repo := range dcrepos.List() {
+		vmtemplates := repo.Rel("virtualmachinetemplates").Collection(nil)
+		template := vmtemplates.Find(func(r core.Resource) bool {
 			t := r.(*abiquo.VirtualMachineTemplate)
 			return t.Name == d.Get("name").(string) && t.State != "UNAVAILABLE"
-		}
-		vmtemplates := repo.Rel("virtualmachinetemplates").Collection(nil)
-		if template := vmtemplates.Find(finder); template != nil {
+		})
+		if template != nil {
 			d.SetId(template.URL())
 			return
 		}

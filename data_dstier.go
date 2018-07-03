@@ -22,7 +22,8 @@ func dstierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	}
 
 	name := d.Get("name").(string)
-	dstier := datacenter.Rel("datastoretiers").Collection(nil).Find(func(r core.Resource) bool {
+	dstiers := datacenter.Rel("datastoretiers").Collection(nil)
+	dstier := dstiers.Find(func(r core.Resource) bool {
 		return r.(*abiquo.DatastoreTier).Name == name
 	})
 	if dstier == nil {

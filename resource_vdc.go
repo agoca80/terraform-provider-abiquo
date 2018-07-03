@@ -105,7 +105,7 @@ func vdcCreate(d *resourceData, resource core.Resource) (err error) {
 	// Computed links
 	d.Set("externalips", resource.Rel("externalips").Href)
 	d.Set("externalnetworks", resource.Rel("externalnetworks").Href)
-	d.Set("network", vdcNetwork(resource).Href)
+	d.Set("network", vdcNetwork(resource))
 	d.Set("privatenetworks", resource.Rel("privatenetworks").Href)
 	d.Set("topurchase", resource.Rel("topurchase").Href)
 	d.Set("purchased", resource.Rel("purchased").Href)

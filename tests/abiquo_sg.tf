@@ -23,6 +23,6 @@ resource "abiquo_sg" "test" {
   cooldown  = 60
   min       = 0
   max       = 4
-  scale_in  = [ { numberofinstances = 1 } ]
-  scale_out = [ { numberofinstances = 1 } ]
+  scale_in  = [ { numberofinstances = 1, starttime = "", endtime = "" } ]
+  scale_out = [ { numberofinstances = 1, starttime = "", endtime = "" } ]
 }

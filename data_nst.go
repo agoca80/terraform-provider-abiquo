@@ -24,13 +24,14 @@ func nstDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	name := d.Get("name").(string)
 	datacenter := resource.(*abiquo.Datacenter)
-	resource = datacenter.Rel("networkservicetypes").Collection(nil).Find(func(r core.Resource) bool {
+	nsts := datacenter.Rel("networkservicetypes").Collection(nil)
+	nst := nsts.Find(func(r core.Resource) bool {
 		return r.(*abiquo.NetworkServiceType).Name == name
 	})
-	if resource == nil {
+	if nst == nil {
 		return fmt.Errorf("network service type not found: %q", name)
 	}
 
-	d.SetId(resource.URL())
+	d.SetId(nst.URL())
 	return
 }

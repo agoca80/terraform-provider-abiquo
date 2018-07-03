@@ -13,7 +13,6 @@ func sensitive(s *schema.Schema) { s.Sensitive = true }
 
 func text(s *schema.Schema)    { s.Type = schema.TypeString }
 func integer(s *schema.Schema) { s.Type = schema.TypeInt }
-func decimal(s *schema.Schema) { s.Type = schema.TypeFloat }
 func boolean(s *schema.Schema) { s.Type = schema.TypeBool }
 
 func hash(elem interface{}) field {
@@ -63,13 +62,14 @@ func price(s *schema.Schema) {
 }
 
 func natural(s *schema.Schema) {
-	integer(s)
-	s.ValidateFunc = validation.IntAtLeast(0)
+	atLeast(0)(s)
 }
 
-func positive(s *schema.Schema) {
-	integer(s)
-	s.ValidateFunc = validation.IntAtLeast(1)
+func atLeast(m int) field {
+	return func(s *schema.Schema) {
+		integer(s)
+		s.ValidateFunc = validation.IntAtLeast(m)
+	}
 }
 
 func ip(s *schema.Schema) {
