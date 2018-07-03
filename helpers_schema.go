@@ -122,6 +122,12 @@ func resourceSet(v interface{}) int {
 	return schema.HashString(resource["href"].(string))
 }
 
+func byDefault(i interface{}) field {
+	return func(s *schema.Schema) {
+		s.Default = i
+	}
+}
+
 func variable(name string) field {
 	return func(s *schema.Schema) {
 		s.DefaultFunc = schema.EnvDefaultFunc(name, "")

@@ -10,8 +10,8 @@ import (
 
 var sgScaleResource = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"endtime":           attribute(required, timestamp),
-		"starttime":         attribute(required, timestamp),
+		"endtime":           attribute(optional, timestamp, byDefault("")),
+		"starttime":         attribute(optional, timestamp, byDefault("")),
 		"numberofinstances": attribute(required, natural),
 	},
 }
