@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/abiquo/ojal/abiquo"
@@ -68,18 +69,45 @@ func sgEndpoint(d *resourceData) *core.Link {
 func sgRead(d *resourceData, resource core.Resource) (e error) {
 	sg := resource.(*abiquo.ScalingGroup)
 	d.Set("name", sg.Name)
+	d.Set("cooldown", sg.Cooldown)
+	d.Set("max", sg.Max)
+	d.Set("min", sg.Min)
+	return
+}
+
+func sgUpdate(rd *schema.ResourceData, m interface{}) (err error) {
+	d := newResourceData(rd, "scalinggroup")
+	resource := d.Link.Walk()
+	if resource == nil {
+		return fmt.Errorf("scaling group %q was not found", d.Id())
+	}
+
+	sg := resource.(*abiquo.ScalingGroup)
+	if !sg.Maintenance {
+		if err = sg.StartMaintenance(); err != nil {
+			return
+		}
+	}
+
+	// Update the SG
+	modify := sgNew(d).(*abiquo.ScalingGroup)
+	if err = core.Update(d, modify); err != nil {
+		return
+	}
+
+	err = modify.EndMaintenance()
+
 	return
 }
 
 func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
 	d := newResourceData(rd, "scalinggroup")
-	// Get the VMs inside the SG
-	sg := new(abiquo.ScalingGroup)
-	if err = core.Read(d, sg); err != nil {
-		return
+	resource := d.Link.Walk()
+	if resource == nil {
+		return fmt.Errorf("scaling group %q was not found", d.Id())
 	}
 
-	// Go to maintenance mode
+	sg := resource.(*abiquo.ScalingGroup)
 	if !sg.Maintenance {
 		if err = sg.StartMaintenance(); err != nil {
 			return

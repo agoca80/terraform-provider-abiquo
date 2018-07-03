@@ -281,7 +281,7 @@ func Provider() *schema.Provider {
 			"abiquo_sg": &schema.Resource{
 				Schema: sgSchema,
 				Delete: sgDelete,
-				Update: resourceUpdate(sgNew, nil, "scalinggroup"),
+				Update: sgUpdate,
 				Create: resourceCreate(sgNew, nil, sgRead, sgEndpoint),
 				Read:   resourceRead(sgNew, sgRead, "scalinggroup"),
 			},
