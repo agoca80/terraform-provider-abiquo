@@ -18,9 +18,11 @@ var validateMedia = map[string]schema.SchemaValidateFunc{
 	"enterprise":         validateLink([]string{"/admin/enterprises/[0-9]+"}),
 	"hardwareprofile_dc": validateLink([]string{"/admin/datacenters/[0-9]+/hardwareprofiles/[0-9]+"}),
 	"storagedevice":      validateLink([]string{"/admin/datacenters/[0-9]+/storage/devices/[0-9]+"}),
+	"template":           validateLink([]string{"/admin/enterprises/[0-9]+/datacenterrepositories/[0-9]+/virtualmachinetemplates/[0-9]+"}),
 	// cloud
 	"location":          validateLink([]string{"/cloud/locations/[0-9]+"}),
 	"backuppolicy_vdc":  validateLink([]string{"/cloud/locations/[0-9]+/backuppolicies/[0-9]+"}),
+	"loadbalancer":      validateLink([]string{"/cloud/locations/[0-9]+/devices/[0-9]+/loadbalancers/[0-9]+"}),
 	"privatenetwork":    validateLink([]string{"/cloud/virtualdatacenters/[0-9]+/privatenetworks/[0-9]+"}),
 	"vdcTier":           validateLink([]string{"/cloud/virtualdatacenters/[0-9]+/tiers/[0-9]+"}),
 	"virtualappliance":  validateLink([]string{"/cloud/virtualdatacenters/[0-9]+/virtualappliances/[0-9]+"}),
@@ -32,8 +34,9 @@ var validateMedia = map[string]schema.SchemaValidateFunc{
 		"/cloud/virtualdatacenters/[0-9]+/publicips/purchased/[0-9]+",
 	}),
 	"templates": validateLink([]string{
-		"/cloud/virtualdatacenters/[0-9]+/action/templates"},
-	),
+		"/admin/enterprises/[0-9]+/datacenterrepositories/[0-9]+/virtualmachinetemplates",
+		"/cloud/virtualdatacenters/[0-9]+/action/templates",
+	}),
 }
 
 func validateIP(d interface{}, key string) (strs []string, errs []error) {

@@ -17,14 +17,14 @@ var vmSchema = map[string]*schema.Schema{
 	"fws":                    attribute(optional, forceNew, list(attribute(href))),
 	"hardwareprofile":        attribute(optional, forceNew, href, conflicts([]string{"cpu", "ram"})),
 	"label":                  attribute(optional, forceNew, text),
-	"lbs":                    attribute(optional, forceNew, list(attribute(href))),
+	"lbs":                    attribute(optional, forceNew, list(attribute(link("loadbalancer")))),
 	"ips":                    attribute(optional, forceNew, list(attribute(link("virtualmachine_ip")))),
 	"monitored":              attribute(optional, forceNew, boolean),
 	"name":                   attribute(computed, forceNew, text),
 	"ram":                    attribute(optional, forceNew, natural, conflicts([]string{"hardwareprofile"})),
 	"variables":              attribute(optional, forceNew, hash(attribute(text))),
 	"virtualappliance":       attribute(required, forceNew, link("virtualappliance")),
-	"virtualmachinetemplate": attribute(required, forceNew, href),
+	"virtualmachinetemplate": attribute(required, forceNew, link("template")),
 }
 
 func vmNew(d *resourceData) core.Resource {
