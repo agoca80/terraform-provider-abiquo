@@ -15,7 +15,7 @@ func fitPolicyDTO(d *resourceData) core.Resource {
 	return &abiquo.FitPolicy{
 		FitPolicy: d.string("policy"),
 		DTO: core.NewDTO(
-			d.linkTypeRel("target", "datacenter", "datacenter"),
+			d.link("target").SetRel("datacenter").SetType("datacenter"),
 		),
 	}
 }

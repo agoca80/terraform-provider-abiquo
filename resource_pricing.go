@@ -114,7 +114,7 @@ func pricingNew(d *resourceData) core.Resource {
 		MinimumCharge:       d.integer("minimum_charge"),
 		MinimumChargePeriod: pricingPeriod[d.string("minimum_charge_period")],
 		DTO: core.NewDTO(
-			d.linkTypeRel("currency", "currency", "currency"),
+			d.link("currency"),
 		),
 	}
 }

@@ -44,7 +44,7 @@ func enterpriseDTO(d *resourceData) core.Resource {
 		VLANHard: d.integer("vlanhard"),
 		VLANSoft: d.integer("vlansoft"),
 		DTO: core.NewDTO(
-			d.linkTypeRel("pricingtemplate", "pricingtemplate", "pricingtemplate"),
+			d.link("pricingtemplate"),
 		),
 	}
 }
