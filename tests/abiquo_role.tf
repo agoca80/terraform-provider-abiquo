@@ -1,5 +1,5 @@
 resource "abiquo_role" "test" {
-  name = "test"
+  name = "test role"
   privileges = [
     "APPLIB_UPLOAD_IMAGE",
     "VAPP_CREATE_STATEFUL",

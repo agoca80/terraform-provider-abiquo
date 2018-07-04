@@ -1,34 +1,3 @@
-data "abiquo_datacenter" "test" {
-  name = "datacenter 1"
-}
-
-data "abiquo_dstier" "test" {
-  datacenter = "${data.abiquo_datacenter.test.id}"
-  name       = "Default Tier"
-}
-
-data "abiquo_tier" "test" {
-  location = "${data.abiquo_datacenter.test.tiers}"
-  name     = "Default Tier 1"
-}
-
-resource "abiquo_currency" "test" {
-  digits = 2
-  symbol = "TEST"
-  name   = "test pricing"
-}
-
-resource "abiquo_costcode" "test" {
-  currency {
-    href = "${abiquo_currency.test.id}"
-
-    price = 1
-  }
-
-  description = "test pricing"
-  name        = "test pricing"
-}
-
 resource "abiquo_pricing" "test" {
   currency               = "${abiquo_currency.test.id}"
   charging_period        = "DAY"
@@ -59,4 +28,35 @@ resource "abiquo_pricing" "test" {
 
     firewall = 1.2
   }
+}
+
+data "abiquo_datacenter" "test" {
+  name = "datacenter 1"
+}
+
+data "abiquo_dstier" "test" {
+  datacenter = "${data.abiquo_datacenter.test.id}"
+  name       = "Default Tier"
+}
+
+data "abiquo_tier" "test" {
+  location = "${data.abiquo_datacenter.test.tiers}"
+  name     = "Default Tier 1"
+}
+
+resource "abiquo_currency" "test" {
+  digits = 2
+  symbol = "TEST"
+  name   = "test pricing"
+}
+
+resource "abiquo_costcode" "test" {
+  currency {
+    href = "${abiquo_currency.test.id}"
+
+    price = 1
+  }
+
+  description = "test pricing"
+  name        = "test pricing"
 }
