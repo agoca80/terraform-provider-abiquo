@@ -25,14 +25,7 @@ var lbSchema = map[string]*schema.Schema{
 	"privatenetwork":      attribute(optional, forceNew, link("privatenetwork")),
 	"virtualdatacenter":   attribute(required, forceNew, link("virtualdatacenter")),
 	"loadbalanceraddress": attribute(computed, text),
-}
-
-func lbAddresses(d *resourceData) abiquo.LoadBalancerAddresses {
-	return abiquo.LoadBalancerAddresses{
-		Collection: []abiquo.LoadBalancerAddress{
-			abiquo.LoadBalancerAddress{Internal: d.boolean("internal")},
-		},
-	}
+	"virtualmachines":     attribute(computed, list(attribute(text))),
 }
 
 func lbRules(d *resourceData) (rules []abiquo.RoutingRule) {
@@ -46,9 +39,13 @@ func lbRules(d *resourceData) (rules []abiquo.RoutingRule) {
 
 func lbNew(d *resourceData) core.Resource {
 	return &abiquo.LoadBalancer{
-		Name:                  d.string("name"),
-		Algorithm:             d.string("algorithm"),
-		LoadBalancerAddresses: lbAddresses(d),
+		Name:      d.string("name"),
+		Algorithm: d.string("algorithm"),
+		LoadBalancerAddresses: abiquo.LoadBalancerAddresses{
+			Collection: []abiquo.LoadBalancerAddress{
+				abiquo.LoadBalancerAddress{Internal: d.boolean("internal")},
+			},
+		},
 		RoutingRules: abiquo.RoutingRules{
 			Collection: lbRules(d),
 		},
@@ -65,6 +62,14 @@ func lbRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("algorithm", lb.Algorithm)
 	// Computed attributes
 	d.Set("loadbalanceraddress", lb.Rel("loadbalanceraddress").Title)
+
+	vms := lb.Rel("virtualmachines").Walk()
+	list := []interface{}{}
+	for _, l := range vms.(*core.DTO).Links {
+		list = append(list, l.Href)
+	}
+	d.Set("virtualmachines", list)
+
 	return
 }
 
