@@ -10,7 +10,7 @@ import (
 
 var vmSchema = map[string]*schema.Schema{
 	"cpu":                    attribute(optional, forceNew, natural, conflicts([]string{"hardwareprofile"})),
-	"backups":                attribute(optional, forceNew, list(attribute(link("backuppolicy")))),
+	"backups":                attribute(optional, forceNew, list(attribute(link("backuppolicy_vdc")))),
 	"bootstrap":              attribute(optional, forceNew, text),
 	"deploy":                 attribute(optional, forceNew, boolean),
 	"disks":                  attribute(optional, forceNew, list(attribute(href))),
