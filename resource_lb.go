@@ -58,17 +58,17 @@ func lbNew(d *resourceData) core.Resource {
 
 func lbRead(d *resourceData, resource core.Resource) (err error) {
 	lb := resource.(*abiquo.LoadBalancer)
+
+	// Get lb virtualmachines hrefs
+	virtualmachines := []interface{}{}
+	lb.VMs().Map(func(l *core.Link) {
+		virtualmachines = append(virtualmachines, l.Href)
+	})
+
 	d.Set("name", lb.Name)
 	d.Set("algorithm", lb.Algorithm)
-	// Computed attributes
 	d.Set("loadbalanceraddress", lb.Rel("loadbalanceraddress").Title)
-
-	vms := lb.Rel("virtualmachines").Walk()
-	list := []interface{}{}
-	for _, l := range vms.(*core.DTO).Links {
-		list = append(list, l.Href)
-	}
-	d.Set("virtualmachines", list)
+	d.Set("virtualmachines", virtualmachines)
 
 	return
 }
