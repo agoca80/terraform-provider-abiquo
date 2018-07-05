@@ -9,14 +9,14 @@ import (
 )
 
 var alarmSchema = map[string]*schema.Schema{
-	"target":      attribute(required, href, forceNew),
-	"formula":     attribute(required, text),
-	"name":        attribute(required, text),
-	"metric":      attribute(required, text, forceNew),
-	"evaluations": attribute(required, natural),
-	"period":      attribute(required, natural),
-	"statistic":   attribute(required, text),
-	"threshold":   attribute(required, integer),
+	"target":     attribute(required, href, forceNew),
+	"formula":    attribute(required, text),
+	"name":       attribute(required, text),
+	"metric":     attribute(required, text, forceNew),
+	"timerange":  attribute(required, natural),
+	"datapoints": attribute(optional, natural),
+	"statistic":  attribute(required, text),
+	"threshold":  attribute(required, integer),
 }
 
 func alarmEndpoint(d *resourceData) *core.Link {
@@ -31,12 +31,12 @@ func alarmNew(d *resourceData) core.Resource {
 	metric := d.string("metric")
 	href := fmt.Sprintf("%v/metrics/%v", target, metric)
 	return &abiquo.Alarm{
-		EvaluationPeriods: d.integer("evaluations"),
-		Name:              d.string("name"),
-		Formula:           d.string("formula"),
-		Period:            d.integer("period"),
-		Statistic:         d.string("statistic"),
-		Threshold:         d.integer("threshold"),
+		TimeRangeMinutes: d.integer("timerange"),
+		DataPointsLimit:  d.integer("datapoints"),
+		Name:             d.string("name"),
+		Formula:          d.string("formula"),
+		Statistic:        d.string("statistic"),
+		Threshold:        d.integer("threshold"),
 		DTO: core.NewDTO(
 			core.NewLinkType(href, "metric").SetRel("metric"),
 		),
@@ -46,9 +46,9 @@ func alarmNew(d *resourceData) core.Resource {
 func alarmRead(d *resourceData, resource core.Resource) (err error) {
 	alarm := resource.(*abiquo.Alarm)
 	d.Set("name", alarm.Name)
-	d.Set("evaluations", alarm.EvaluationPeriods)
+	d.Set("timerange", alarm.TimeRangeMinutes)
 	d.Set("formula", alarm.Formula)
-	d.Set("period", alarm.Period)
+	d.Set("datapoints", alarm.DataPointsLimit)
 	d.Set("statistic", alarm.Statistic)
 	d.Set("threshold", alarm.Threshold)
 	return

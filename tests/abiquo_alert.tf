@@ -1,3 +1,18 @@
+resource "abiquo_alert" "test" {
+  virtualappliance = "${abiquo_vapp.test.id}"
+  name        = "test alert"
+  description = "test alert"
+
+  alarms = [
+    "${abiquo_alarm.test.id}"
+  ]
+
+  subscribers = [
+    "test1@test.com",
+    "test2@test.com",
+  ]
+}
+
 data "abiquo_vdc"        "test"   { name = "tests" }
 data "abiquo_template"   "test"   {
   templates = "${data.abiquo_vdc.test.templates}"
@@ -22,19 +37,8 @@ resource "abiquo_alarm" "test" {
   target      = "${abiquo_vm.test.id}"
   name        = "test alert"
   metric      = "cpu_time"
-  period      = 60
-  evaluations = 3
+  timerange   = 3
   statistic   = "average"
   formula     = "lessthan"
   threshold   = 10000
-}
-
-resource "abiquo_alert" "test" {
-  virtualappliance = "${abiquo_vapp.test.id}"
-  name        = "test alert"
-  description = "test alert"
-
-  alarms = [
-    "${abiquo_alarm.test.id}"
-  ]
 }

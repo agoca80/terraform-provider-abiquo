@@ -66,6 +66,17 @@ func protocol(s *schema.Schema) {
 	s.ValidateFunc = validation.StringInSlice([]string{"TCP", "HTTP", "HTTPS"}, false)
 }
 
+func email(s *schema.Schema) {
+	text(s)
+	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
+		const emailRe = "^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$"
+		if !regexp.MustCompile(emailRe).MatchString(d.(string)) {
+			errs = append(errs, fmt.Errorf("%v is an invalid email", d.(string)))
+		}
+		return
+	}
+}
+
 func price(s *schema.Schema) {
 	s.Type = schema.TypeFloat
 	s.Optional = true

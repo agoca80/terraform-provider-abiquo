@@ -22,8 +22,7 @@ resource "abiquo_alarm" "test" {
   target      = "${abiquo_vm.test.id}"
   name        = "test alarm"
   metric      = "cpu_time"
-  period      = 60
-  evaluations = 3
+  timerange   = 3
   statistic   = "average"
   formula     = "lessthan"
   threshold   = 10000
