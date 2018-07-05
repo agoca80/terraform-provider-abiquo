@@ -1,6 +1,11 @@
 package main
 
 import (
+	"fmt"
+	"net"
+	"net/url"
+	"regexp"
+
 	"github.com/hashicorp/terraform/helper/schema"
 	"github.com/hashicorp/terraform/helper/validation"
 )
@@ -47,7 +52,13 @@ func min(m int) field {
 
 func port(s *schema.Schema) {
 	integer(s)
-	s.ValidateFunc = validatePort
+	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
+		port := d.(int)
+		if port < 1 && 65535 < port {
+			errs = append(errs, fmt.Errorf("%v is an invalid port", key))
+		}
+		return
+	}
 }
 
 func protocol(s *schema.Schema) {
@@ -58,39 +69,61 @@ func protocol(s *schema.Schema) {
 func price(s *schema.Schema) {
 	s.Type = schema.TypeFloat
 	s.Optional = true
-	s.ValidateFunc = validatePrice
+	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
+		if 0 > d.(float64) {
+			errs = append(errs, fmt.Errorf("price should be 0 or greater"))
+		}
+		return
+	}
 }
 
 func natural(s *schema.Schema) {
-	atLeast(0)(s)
-}
-
-func atLeast(m int) field {
-	return func(s *schema.Schema) {
-		integer(s)
-		s.ValidateFunc = validation.IntAtLeast(m)
-	}
+	integer(s)
+	s.ValidateFunc = validation.IntAtLeast(0)
 }
 
 func ip(s *schema.Schema) {
 	text(s)
-	s.ValidateFunc = validateIP
+	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
+		if net.ParseIP(d.(string)) == nil {
+			errs = append(errs, fmt.Errorf("%v is an invalid IP", d.(string)))
+		}
+		return
+	}
 }
 
 func timestamp(s *schema.Schema) {
 	text(s)
-	s.ValidateFunc = validateTS
+	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
+		if d.(string) != "" {
+			strs, errs = validation.ValidateRFC3339TimeString(d, key)
+		}
+		return
+	}
 }
 
 func href(s *schema.Schema) {
 	text(s)
-	s.ValidateFunc = validateHref
+	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
+		if _, err := url.Parse(d.(string)); err != nil {
+			errs = append(errs, fmt.Errorf("%v is an invalid href", d.(string)))
+		}
+		return
+	}
 }
 
 func link(media string) field {
 	return func(s *schema.Schema) {
 		text(s)
-		s.ValidateFunc = validateMedia[media]
+		s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
+			for _, re := range validateMedia[media] {
+				if regexp.MustCompile(re + "$").MatchString(d.(string)) {
+					return
+				}
+			}
+			errs = append(errs, fmt.Errorf("invalid %v : %v", key, d.(string)))
+			return
+		}
 	}
 }
 

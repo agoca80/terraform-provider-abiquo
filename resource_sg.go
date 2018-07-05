@@ -30,7 +30,7 @@ var sgSchema = map[string]*schema.Schema{
 
 func ruleTS(dateStr string) (timestamp int64) {
 	if dateStr != "" {
-		date, _ := time.Parse(tsFormat, dateStr)
+		date, _ := time.Parse(time.RFC3339, dateStr)
 		timestamp = date.Unix()
 	}
 	return
