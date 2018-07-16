@@ -26,7 +26,7 @@ var vdcSchema = map[string]*schema.Schema{
 	// Links
 	"enterprise": attribute(required, forceNew, link("enterprise")),
 	"location":   attribute(required, forceNew, link("location")),
-	"publicips":  attribute(optional, set(attribute(ip), schema.HashString)),
+	"publicips":  attribute(optional, set(ip)),
 	// Computed links
 	"externalips":      attribute(computed, text),
 	"externalnetworks": attribute(computed, text),

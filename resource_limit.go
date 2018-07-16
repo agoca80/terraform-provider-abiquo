@@ -7,14 +7,14 @@ import (
 )
 
 var limitSchema = map[string]*schema.Schema{
-	"backups":    attribute(optional, setLink("backuppolicy_dc")),
+	"backups":    attribute(optional, set(link("backuppolicy_dc"))),
 	"cpuhard":    attribute(optional, natural),
 	"cpusoft":    attribute(optional, natural),
-	"dstiers":    attribute(optional, setLink("datastoretier_dc")),
+	"dstiers":    attribute(optional, set(link("datastoretier_dc"))),
 	"enterprise": attribute(required, forceNew, link("enterprise")),
 	"hdhard":     attribute(optional, natural),
 	"hdsoft":     attribute(optional, natural),
-	"hwprofiles": attribute(optional, setLink("hardwareprofile_dc")),
+	"hwprofiles": attribute(optional, set(link("hardwareprofile_dc"))),
 	"iphard":     attribute(optional, natural),
 	"ipsoft":     attribute(optional, natural),
 	"location":   attribute(required, forceNew, link("datacenter")),

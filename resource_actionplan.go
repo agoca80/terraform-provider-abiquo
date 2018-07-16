@@ -18,7 +18,7 @@ var actionPlanSchema = map[string]*schema.Schema{
 	"virtualmachine": attribute(required, text, forceNew),
 	"name":           attribute(required, text),
 	"description":    attribute(required, text),
-	"triggers":       attribute(optional, list(attribute(href))),
+	"triggers":       attribute(optional, list(href)),
 	"entries":        attribute(required, min(1), list(actionPlanEntryResource)),
 }
 

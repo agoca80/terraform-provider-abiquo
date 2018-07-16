@@ -9,7 +9,6 @@ import (
 
 type (
 	factory        func(*resourceData) core.Resource
-	endpoint       func(*resourceData) *core.Link
 	resourceMethod func(*resourceData, core.Resource) error
 )
 
@@ -23,7 +22,7 @@ func resourceExists(media string) schema.ExistsFunc {
 	}
 }
 
-func resourceCreate(factory factory, create resourceMethod, read resourceMethod, endpoint endpoint) schema.CreateFunc {
+func resourceCreate(factory factory, create resourceMethod, read resourceMethod, endpoint func(*resourceData) *core.Link) schema.CreateFunc {
 	return func(rd *schema.ResourceData, m interface{}) (err error) {
 		d := newResourceData(rd, "")
 

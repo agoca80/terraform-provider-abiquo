@@ -8,7 +8,7 @@ import (
 
 var enterpriseSchema = map[string]*schema.Schema{
 	"name":            attribute(required, text),
-	"properties":      attribute(optional, hash(attribute(text))),
+	"properties":      attribute(optional, hash(text)),
 	"pricingtemplate": attribute(optional, href),
 	"cpuhard":         attribute(optional, natural),
 	"cpusoft":         attribute(optional, natural),

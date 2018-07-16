@@ -11,8 +11,8 @@ var fwRulesResource = &schema.Resource{
 		"protocol": attribute(required, protocol),
 		"fromport": attribute(required, port),
 		"toport":   attribute(required, port),
-		"targets":  attribute(optional, list(attribute(text)), min(1)),
-		"sources":  attribute(optional, list(attribute(text)), min(1)),
+		"targets":  attribute(optional, list(text), min(1)),
+		"sources":  attribute(optional, list(text), min(1)),
 	},
 }
 

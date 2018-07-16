@@ -10,8 +10,8 @@ var alertSchema = map[string]*schema.Schema{
 	"virtualappliance": attribute(required, forceNew, link("virtualappliance")),
 	"name":             attribute(required, text),
 	"description":      attribute(optional, text),
-	"subscribers":      attribute(optional, set(attribute(email), schema.HashString)),
-	"alarms":           attribute(required, set(attribute(href), schema.HashString), min(1)),
+	"subscribers":      attribute(optional, set(email)),
+	"alarms":           attribute(required, set(href), min(1)),
 }
 
 func alertNew(d *resourceData) core.Resource {

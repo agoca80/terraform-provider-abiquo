@@ -20,31 +20,28 @@ func text(s *schema.Schema)    { s.Type = schema.TypeString }
 func integer(s *schema.Schema) { s.Type = schema.TypeInt }
 func boolean(s *schema.Schema) { s.Type = schema.TypeBool }
 
-func hash(elem interface{}) field {
+func aggregate(e interface{}, t schema.ValueType, f schema.SchemaSetFunc) func(*schema.Schema) {
 	return func(s *schema.Schema) {
-		s.Elem = elem
-		s.Type = schema.TypeMap
+		switch elem := e.(type) {
+		case func(*schema.Schema):
+			s.Elem = attribute(elem)
+		default:
+			s.Elem = elem
+		}
+		s.Type = t
+		s.Set = f
 	}
 }
 
-func set(elem interface{}, set schema.SchemaSetFunc) field {
-	return func(s *schema.Schema) {
-		s.Elem = elem
-		s.Set = set
-		s.Type = schema.TypeSet
-	}
+func set(e interface{}) func(*schema.Schema)  { return aggregate(e, schema.TypeSet, schema.HashString) }
+func list(e interface{}) func(*schema.Schema) { return aggregate(e, schema.TypeList, nil) }
+func hash(e interface{}) func(*schema.Schema) { return aggregate(e, schema.TypeMap, nil) }
+
+func setFn(e interface{}, s schema.SchemaSetFunc) func(*schema.Schema) {
+	return aggregate(e, schema.TypeSet, s)
 }
 
-func setLink(media string) field { return set(attribute(link(media)), schema.HashString) }
-
-func list(elem interface{}) field {
-	return func(s *schema.Schema) {
-		s.Elem = elem
-		s.Type = schema.TypeList
-	}
-}
-
-func min(m int) field {
+func min(m int) func(*schema.Schema) {
 	return func(s *schema.Schema) {
 		s.MinItems = m
 	}
@@ -88,10 +85,15 @@ func price(s *schema.Schema) {
 	}
 }
 
-func natural(s *schema.Schema) {
-	integer(s)
-	s.ValidateFunc = validation.IntAtLeast(0)
+func atLeast(m int) func(*schema.Schema) {
+	return func(s *schema.Schema) {
+		integer(s)
+		s.ValidateFunc = validation.IntAtLeast(m)
+	}
 }
+
+func natural(s *schema.Schema)  { atLeast(0)(s) }
+func positive(s *schema.Schema) { atLeast(1)(s) }
 
 func ip(s *schema.Schema) {
 	text(s)
@@ -105,9 +107,9 @@ func ip(s *schema.Schema) {
 
 func timestamp(s *schema.Schema) {
 	text(s)
-	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
+	s.ValidateFunc = func(d interface{}, k string) (strs []string, errs []error) {
 		if d.(string) != "" {
-			strs, errs = validation.ValidateRFC3339TimeString(d, key)
+			strs, errs = validation.ValidateRFC3339TimeString(d, k)
 		}
 		return
 	}
@@ -123,7 +125,7 @@ func href(s *schema.Schema) {
 	}
 }
 
-func link(media string) field {
+func link(media string) func(*schema.Schema) {
 	return func(s *schema.Schema) {
 		text(s)
 		s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
@@ -133,27 +135,26 @@ func link(media string) field {
 				}
 			}
 			errs = append(errs, fmt.Errorf("invalid %v : %v", key, d.(string)))
+			errs = append(errs, fmt.Errorf("%v", validateMedia[media]))
 			return
 		}
 	}
 }
 
-func label(strs []string) field {
+func label(strs []string) func(*schema.Schema) {
 	return func(s *schema.Schema) {
 		text(s)
 		s.ValidateFunc = validation.StringInSlice(strs, false)
 	}
 }
 
-func conflicts(strs []string) field {
+func conflicts(strs []string) func(*schema.Schema) {
 	return func(s *schema.Schema) {
 		s.ConflictsWith = strs
 	}
 }
 
-type field func(*schema.Schema)
-
-func attribute(fields ...field) (media *schema.Schema) {
+func attribute(fields ...func(*schema.Schema)) (media *schema.Schema) {
 	media = &schema.Schema{}
 	for _, field := range fields {
 		field(media)
@@ -166,13 +167,13 @@ func resourceSet(v interface{}) int {
 	return schema.HashString(resource["href"].(string))
 }
 
-func byDefault(i interface{}) field {
+func byDefault(i interface{}) func(*schema.Schema) {
 	return func(s *schema.Schema) {
 		s.Default = i
 	}
 }
 
-func variable(name string) field {
+func variable(name string) func(*schema.Schema) {
 	return func(s *schema.Schema) {
 		s.DefaultFunc = schema.EnvDefaultFunc(name, "")
 	}
@@ -187,4 +188,12 @@ func prices(s *schema.Schema) {
 			"price": attribute(price),
 		},
 	}
+}
+
+func endpoint(media string) *schema.Schema {
+	return attribute(func(s *schema.Schema) {
+		required(s)
+		forceNew(s)
+		link(media)(s)
+	})
 }

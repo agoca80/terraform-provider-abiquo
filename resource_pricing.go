@@ -35,7 +35,7 @@ var pricingSchema = map[string]*schema.Schema{
 	"charging_period":        attribute(required, label(pricingPeriodLabel[2:])),
 	"costcode":               attribute(optional, computed, prices),
 	"currency":               attribute(required, href, forceNew),
-	"datacenter":             attribute(optional, computed, set(pricingDCResource, resourceSet)),
+	"datacenter":             attribute(optional, computed, setFn(pricingDCResource, resourceSet)),
 	"deploy_message":         attribute(optional, text),
 	"description":            attribute(optional, text),
 	"minimum_charge":         attribute(required, natural),

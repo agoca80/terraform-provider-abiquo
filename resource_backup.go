@@ -16,7 +16,7 @@ var backupConfiguration = &schema.Resource{
 		"subtype": attribute(required, label(backupSubtype)),
 		"time":    attribute(optional, text),
 		"type":    attribute(required, label(backupType)),
-		"days":    attribute(optional, set(attribute(label(weekDays)), schema.HashString), min(1)),
+		"days":    attribute(optional, set(label(weekDays)), min(1)),
 	},
 }
 

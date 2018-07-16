@@ -25,7 +25,7 @@ var lbSchema = map[string]*schema.Schema{
 	"privatenetwork":      attribute(optional, forceNew, link("privatenetwork")),
 	"virtualdatacenter":   attribute(required, forceNew, link("virtualdatacenter")),
 	"loadbalanceraddress": attribute(computed, text),
-	"virtualmachines":     attribute(computed, list(attribute(text))),
+	"virtualmachines":     attribute(computed, list(text)),
 }
 
 func lbRules(d *resourceData) (rules []abiquo.RoutingRule) {
