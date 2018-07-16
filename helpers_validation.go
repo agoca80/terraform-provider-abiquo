@@ -1,14 +1,17 @@
 package main
 
 var validateMedia = map[string][]string{
-	// admin
+	// admin/datacenters
 	"backuppolicy_dc":    []string{"/admin/datacenters/[0-9]+/backuppolicies/[0-9]+"},
 	"datacenter":         []string{"/admin/datacenters/[0-9]+"},
 	"datastoretier_dc":   []string{"/admin/datacenters/[0-9]+/datastoretiers/[0-9]+"},
-	"enterprise":         []string{"/admin/enterprises/[0-9]+"},
 	"hardwareprofile_dc": []string{"/admin/datacenters/[0-9]+/hardwareprofiles/[0-9]+"},
+	"rack":               []string{"/admin/datacenters/[0-9]+/racks/[0-9]+"},
 	"storagedevice":      []string{"/admin/datacenters/[0-9]+/storage/devices/[0-9]+"},
-	"template":           []string{"/admin/enterprises/[0-9]+/datacenterrepositories/[0-9]+/virtualmachinetemplates/[0-9]+"},
+	// admin/enterprises
+	"dcrepository": []string{"/admin/enterprises/[0-9]+/datacenterrepositories/[0-9]+"},
+	"enterprise":   []string{"/admin/enterprises/[0-9]+"},
+	"template":     []string{"/admin/enterprises/[0-9]+/datacenterrepositories/[0-9]+/virtualmachinetemplates/[0-9]+"},
 	// cloud
 	"location":          []string{"/cloud/locations/[0-9]+"},
 	"backuppolicy_vdc":  []string{"/cloud/locations/[0-9]+/backuppolicies/[0-9]+"},
