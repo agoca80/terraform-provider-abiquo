@@ -7,8 +7,8 @@ import (
 )
 
 var vappSchema = map[string]*schema.Schema{
+	"virtualdatacenter": endpoint("virtualdatacenter"),
 	"name":              attribute(required, text),
-	"virtualdatacenter": attribute(required, forceNew, link("virtualdatacenter")),
 }
 
 func vappNew(d *resourceData) core.Resource {

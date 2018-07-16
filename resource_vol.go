@@ -7,6 +7,7 @@ import (
 )
 
 var volumeSchema = map[string]*schema.Schema{
+	"virtualdatacenter": endpoint("virtualdatacenter"),
 	"size":              attribute(required, natural),
 	"name":              attribute(required, text),
 	"bootable":          attribute(optional, boolean),
@@ -14,7 +15,6 @@ var volumeSchema = map[string]*schema.Schema{
 	"ctrl":              attribute(optional, text),
 	"type":              attribute(required, label([]string{"IDE", "SCSI", "VIRTIO"})),
 	"tier":              attribute(required, forceNew, href),
-	"virtualdatacenter": attribute(required, forceNew, link("virtualdatacenter")),
 }
 
 func volNew(d *resourceData) core.Resource {

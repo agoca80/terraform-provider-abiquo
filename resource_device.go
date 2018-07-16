@@ -13,10 +13,9 @@ var deviceSchema = map[string]*schema.Schema{
 	"password":    attribute(required, text, sensitive),
 	"username":    attribute(required, text),
 	"default":     attribute(optional, boolean),
-	// Links
-	"devicetype": attribute(required, forceNew, href),
-	"enterprise": attribute(optional, forceNew, link("enterprise")),
-	"datacenter": attribute(optional, forceNew, link("datacenter")),
+	"devicetype":  attribute(required, forceNew, href),
+	"enterprise":  attribute(optional, forceNew, link("enterprise")),
+	"datacenter":  attribute(optional, forceNew, link("datacenter")),
 }
 
 var deviceResource = &schema.Resource{

@@ -7,17 +7,16 @@ import (
 )
 
 var publicSchema = map[string]*schema.Schema{
-	"address": attribute(required, ip, forceNew),
-	"tag":     attribute(required, natural, forceNew),
-	"mask":    attribute(required, natural, forceNew),
-	"name":    attribute(required, text),
-	"gateway": attribute(required, ip),
-	"dns1":    attribute(optional, ip),
-	"dns2":    attribute(optional, ip),
-	"suffix":  attribute(optional, text),
-	// Links
+	"datacenter":         endpoint("datacenter"),
+	"address":            attribute(required, ip, forceNew),
+	"tag":                attribute(required, natural, forceNew),
+	"mask":               attribute(required, natural, forceNew),
+	"name":               attribute(required, text),
+	"gateway":            attribute(required, ip),
+	"dns1":               attribute(optional, ip),
+	"dns2":               attribute(optional, ip),
+	"suffix":             attribute(optional, text),
 	"networkservicetype": attribute(required, href, forceNew),
-	"datacenter":         attribute(required, link("datacenter"), forceNew),
 }
 
 func publicNew(d *resourceData) core.Resource {

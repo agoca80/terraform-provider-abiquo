@@ -21,7 +21,7 @@ var backupConfiguration = &schema.Resource{
 }
 
 var backupSchema = map[string]*schema.Schema{
-	"datacenter":     attribute(required, forceNew, link("datacenter")),
+	"datacenter":     endpoint("datacenter"),
 	"name":           attribute(required, text),
 	"code":           attribute(required, text),
 	"configurations": attribute(required, list(backupConfiguration), min(1)),

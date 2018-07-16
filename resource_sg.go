@@ -18,13 +18,13 @@ var sgScaleResource = &schema.Resource{
 }
 
 var sgSchema = map[string]*schema.Schema{
+	"virtualappliance":     endpoint("virtualappliance"),
 	"name":                 attribute(required, text),
 	"cooldown":             attribute(required, natural),
 	"min":                  attribute(required, natural),
 	"max":                  attribute(required, natural),
 	"scale_out":            attribute(required, list(sgScaleResource)),
 	"scale_in":             attribute(required, list(sgScaleResource)),
-	"virtualappliance":     attribute(required, forceNew, link("virtualappliance")),
 	"mastervirtualmachine": attribute(required, forceNew, href),
 }
 

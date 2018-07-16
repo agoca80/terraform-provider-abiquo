@@ -7,9 +7,9 @@ import (
 )
 
 var storageDeviceSchema = map[string]*schema.Schema{
+	"datacenter": endpoint("datacenter"),
 	"name":       attribute(required, text),
 	"ip":         attribute(required, ip),
-	"datacenter": attribute(required, forceNew, link("datacenter")),
 }
 
 func storageDeviceNew(d *resourceData) core.Resource {

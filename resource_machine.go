@@ -34,13 +34,13 @@ func datastoreSet(v interface{}) int {
 }
 
 var machineSchema = map[string]*schema.Schema{
+	"rack":        endpoint("rack"),
 	"definition":  attribute(required, text),
 	"datastore":   attribute(required, setFn(machineDatastore, datastoreSet), min(1)),
 	"interface":   attribute(required, setFn(machineInterface, interfaceSet), min(1)),
 	"managerip":   attribute(optional, ip),
 	"manageruser": attribute(optional, text),
 	"managerpass": attribute(optional, text, sensitive),
-	"rack":        attribute(required, href, forceNew),
 }
 
 func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {

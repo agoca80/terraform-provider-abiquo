@@ -7,17 +7,16 @@ import (
 )
 
 var externalSchema = map[string]*schema.Schema{
-	"address": attribute(required, forceNew, ip),
-	"tag":     attribute(required, forceNew, natural),
-	"mask":    attribute(required, forceNew, natural),
-	"name":    attribute(required, text),
-	"gateway": attribute(required, ip),
-	"dns1":    attribute(optional, ip),
-	"dns2":    attribute(optional, ip),
-	"suffix":  attribute(optional, text),
-	// Links
+	"datacenter":         endpoint("datacenter"),
+	"address":            attribute(required, forceNew, ip),
+	"tag":                attribute(required, forceNew, natural),
+	"mask":               attribute(required, forceNew, natural),
+	"name":               attribute(required, text),
+	"gateway":            attribute(required, ip),
+	"dns1":               attribute(optional, ip),
+	"dns2":               attribute(optional, ip),
+	"suffix":             attribute(optional, text),
 	"networkservicetype": attribute(required, forceNew, href),
-	"datacenter":         attribute(required, forceNew, link("datacenter")),
 	"enterprise":         attribute(required, forceNew, link("enterprise")),
 }
 

@@ -7,11 +7,11 @@ import (
 )
 
 var hpSchema = map[string]*schema.Schema{
+	"datacenter": endpoint("datacenter"),
 	"active":     attribute(required, boolean),
 	"name":       attribute(required, text),
 	"cpu":        attribute(required, natural),
 	"ram":        attribute(required, natural),
-	"datacenter": attribute(required, link("datacenter"), forceNew),
 }
 
 func hpNew(d *resourceData) core.Resource {

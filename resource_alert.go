@@ -7,7 +7,7 @@ import (
 )
 
 var alertSchema = map[string]*schema.Schema{
-	"virtualappliance": attribute(required, forceNew, link("virtualappliance")),
+	"virtualappliance": endpoint("virtualappliance"),
 	"name":             attribute(required, text),
 	"description":      attribute(optional, text),
 	"subscribers":      attribute(optional, set(email)),

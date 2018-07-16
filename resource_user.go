@@ -7,13 +7,13 @@ import (
 )
 
 var userSchema = map[string]*schema.Schema{
+	"enterprise": endpoint("enterprise"),
 	"active":     attribute(required, boolean),
 	"email":      attribute(required, text),
 	"name":       attribute(required, text),
 	"nick":       attribute(required, text),
 	"surname":    attribute(required, text),
 	"password":   attribute(computed, text),
-	"enterprise": attribute(required, forceNew, link("enterprise")),
 	"scope":      attribute(optional, href),
 	"role":       attribute(required, href),
 }

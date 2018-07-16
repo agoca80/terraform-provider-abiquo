@@ -18,12 +18,12 @@ var lbRuleResource = &schema.Resource{
 }
 
 var lbSchema = map[string]*schema.Schema{
+	"virtualdatacenter":   endpoint("virtualdatacenter"),
 	"name":                attribute(required, text),
 	"algorithm":           attribute(required, label(algorithms)),
 	"internal":            attribute(optional, boolean),
 	"routingrules":        attribute(required, list(lbRuleResource), min(1)),
 	"privatenetwork":      attribute(optional, forceNew, link("privatenetwork")),
-	"virtualdatacenter":   attribute(required, forceNew, link("virtualdatacenter")),
 	"loadbalanceraddress": attribute(computed, text),
 	"virtualmachines":     attribute(computed, list(text)),
 }

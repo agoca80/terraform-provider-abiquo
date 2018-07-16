@@ -9,12 +9,12 @@ import (
 )
 
 var vmtSchema = map[string]*schema.Schema{
+	"repo":        endpoint("dcrepository"),
 	"cpu":         attribute(required, natural),
 	"name":        attribute(required, text),
 	"description": attribute(optional, text),
 	"file":        attribute(required, text, forceNew),
 	"ram":         attribute(required, natural),
-	"repo":        attribute(required, href, forceNew),
 	"icon":        attribute(optional, href),
 }
 

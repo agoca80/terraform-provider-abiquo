@@ -7,12 +7,12 @@ import (
 )
 
 var rackSchema = map[string]*schema.Schema{
+	"datacenter":  endpoint("datacenter"),
 	"name":        attribute(required, text),
 	"number":      attribute(computed, integer), // ABICLOUDPREMIUM-10197
 	"description": attribute(optional, text),
 	"vlanmax":     attribute(optional, natural),
 	"vlanmin":     attribute(optional, natural),
-	"datacenter":  attribute(required, link("datacenter"), forceNew),
 }
 
 func rackNew(d *resourceData) core.Resource {

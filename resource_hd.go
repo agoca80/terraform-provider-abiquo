@@ -9,12 +9,12 @@ import (
 )
 
 var hdSchema = map[string]*schema.Schema{
+	"virtualdatacenter": endpoint("virtualdatacenter"),
 	"size":              attribute(required, natural),
 	"label":             attribute(required, text),
 	"type":              attribute(required, label([]string{"IDE", "SCSI", "VIRTIO"})),
 	"ctrl":              attribute(optional, text),
 	"dstier":            attribute(optional, computed, href),
-	"virtualdatacenter": attribute(required, link("virtualdatacenter")),
 }
 
 func hdLink(href string) *core.Link {
