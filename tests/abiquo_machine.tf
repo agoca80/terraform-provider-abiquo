@@ -19,7 +19,7 @@ data "abiquo_dstier" "test" {
 }
 
 variable "kvm" {}
-variable "mac" {}
+variable "iface" {}
 variable "datastore" {}
 
 data "abiquo_machine" "test" {
@@ -33,8 +33,8 @@ resource "abiquo_machine" "test" {
   definition = "${data.abiquo_machine.test.definition}"
 
   interface {
-    mac = "${var.mac}"
-    nst = "${data.abiquo_nst.test.id}"
+    name = "${var.iface}"
+    nst  = "${data.abiquo_nst.test.id}"
   }
 
   datastore {

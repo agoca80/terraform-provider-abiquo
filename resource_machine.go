@@ -13,13 +13,13 @@ var machineType = []string{"VMX_04", "KVM"}
 
 var machineInterface = &schema.Resource{
 	Schema: map[string]*schema.Schema{
-		"mac": attribute(required, text),
-		"nst": attribute(required, href),
+		"name": attribute(required, text),
+		"nst":  attribute(required, href),
 	},
 }
 
 func interfaceSet(v interface{}) int {
-	return schema.HashString(v.(map[string]interface{})["mac"])
+	return schema.HashString(v.(map[string]interface{})["name"])
 }
 
 var machineDatastore = &schema.Resource{
@@ -60,11 +60,11 @@ func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
 	interfaces := make(map[string]interface{})
 	for _, i := range d.set("interface").List() {
 		iface := i.(map[string]interface{})
-		interfaces[iface["mac"].(string)] = iface["nst"]
+		interfaces[iface["name"].(string)] = iface["nst"]
 	}
 
 	for _, i := range machine.Interfaces.Collection {
-		if href, ok := interfaces[i.MAC]; ok {
+		if href, ok := interfaces[i.Name]; ok {
 			nst := core.NewLinkType(href.(string), "networkservicetype")
 			i.Add(nst.SetRel("networkservicetype"))
 		}
