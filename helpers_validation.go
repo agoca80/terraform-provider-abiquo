@@ -20,7 +20,7 @@ var validateMedia = map[string][]string{
 	"vdcTier":           []string{"/cloud/virtualdatacenters/[0-9]+/tiers/[0-9]+"},
 	"virtualappliance":  []string{"/cloud/virtualdatacenters/[0-9]+/virtualappliances/[0-9]+"},
 	"virtualdatacenter": []string{"/cloud/virtualdatacenters/[0-9]+"},
-	"virtualmachine":    []string{"/cloud/virtualdatacenters/[0-9]+/virtualappliances/[0-9]/virtualmachines/[0-9]+"},
+	"virtualmachine":    []string{"/cloud/virtualdatacenters/[0-9]+/virtualappliances/[0-9]+/virtualmachines/[0-9]+"},
 	"virtualmachine_ip": []string{
 		"/admin/enterprises/[0-9]+/limits/[0-9]+/externalnetworks/[0-9]+/ips/[0-9]+",
 		"/cloud/virtualdatacenters/[0-9]+/privatenetworks/[0-9]+/ips/[0-9]+",
