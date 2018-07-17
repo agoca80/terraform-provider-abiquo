@@ -41,6 +41,7 @@ var machineSchema = map[string]*schema.Schema{
 	"managerip":   attribute(optional, ip),
 	"manageruser": attribute(optional, text),
 	"managerpass": attribute(optional, text, sensitive),
+	"type":        attribute(computed, text),
 }
 
 func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
@@ -87,6 +88,7 @@ func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
 	endpoint := core.NewLinkType(d.string("rack")+"/machines", "machine")
 	if err = core.Create(endpoint, machine); err == nil {
 		d.SetId(machine.URL())
+		d.Set("type", machine.Type)
 	}
 	return
 }
