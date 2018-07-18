@@ -51,17 +51,14 @@ func fwEndpoint(d *resourceData) (link *core.Link) {
 	return
 }
 
-func fwCreate(d *resourceData, resource core.Resource) (err error) {
-	fw := resource.(*abiquo.Firewall)
-	if rules := fwRules(d); len(rules.Collection) > 0 {
-		err = fw.SetRules(fwRules(d))
-	}
-	return
-}
+func fwCreate(d *resourceData, r core.Resource) error { return fwUpdateRules(d, r) }
+func fwUpdate(d *resourceData, r core.Resource) error { return fwUpdateRules(d, r) }
 
-func fwUpdate(d *resourceData, resource core.Resource) (err error) {
+func fwUpdateRules(d *resourceData, resource core.Resource) (err error) {
 	fw := resource.(*abiquo.Firewall)
-	err = fw.SetRules(fwRules(d))
+	if d.HasChange("rules") {
+		err = core.Update(fw.Rel("rules"), fwRules(d))
+	}
 	return
 }
 

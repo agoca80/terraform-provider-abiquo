@@ -57,18 +57,15 @@ func actionPlanRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-func actionPlanTriggers(d *resourceData) (triggers core.DTO) {
-	for _, trigger := range d.slice("triggers") {
-		link := core.NewLinkType(trigger.(string), "alert").SetRel("alert")
-		triggers.Links = append(triggers.Links, link)
-	}
-	return
-}
-
 func actionPlanCreate(d *resourceData, resource core.Resource) (err error) {
 	a := resource.(*abiquo.ActionPlan)
-	if triggers := actionPlanTriggers(d); len(triggers.Links) > 0 {
-		err = a.SetTriggers(&triggers)
+	if d.HasChange("triggers") {
+		triggers := new(core.DTO)
+		for _, trigger := range d.slice("triggers") {
+			link := core.NewLinkType(trigger.(string), "alert").SetRel("alert")
+			triggers.Links = append(triggers.Links, link)
+		}
+		err = core.Create(a.Rel("alerttriggers"), triggers)
 	}
 	return
 }
