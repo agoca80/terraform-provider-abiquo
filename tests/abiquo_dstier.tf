@@ -1,5 +1,3 @@
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
-
 resource "abiquo_dstier" "test" {
   datacenter  = "${data.abiquo_datacenter.test.id}"
   description = "required description"
@@ -7,3 +5,5 @@ resource "abiquo_dstier" "test" {
   name        = "testAccDSTierBasic"
   policy      = "PERFORMANCE"
 }
+
+data "abiquo_datacenter" "test" { name = "datacenter 1" }

@@ -1,16 +1,3 @@
-data "abiquo_enterprise" "test" {
-  name = "Abiquo"
-}
-
-data "abiquo_datacenter" "test" {
-  name = "datacenter 1"
-}
-
-data "abiquo_nst" "test" {
-  datacenter = "${data.abiquo_datacenter.test.id}"
-  name       = "Service Network"
-}
-
 resource "abiquo_external" "test" {
   enterprise         = "${data.abiquo_enterprise.test.id}"
   datacenter         = "${data.abiquo_datacenter.test.id}"
@@ -29,6 +16,16 @@ resource "abiquo_external" "test" {
   dns1    = "4.4.4.4"
   dns2    = "8.8.8.8"
   suffix  = "external.test.abiquo.com"
+}
+
+data "abiquo_enterprise" "test" { name = "Abiquo" }
+data "abiquo_datacenter" "test" {
+  name = "datacenter 1"
+}
+
+data "abiquo_nst" "test" {
+  datacenter = "${data.abiquo_datacenter.test.id}"
+  name       = "Service Network"
 }
 
 data "abiquo_network" "test" {

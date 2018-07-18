@@ -15,17 +15,8 @@ resource "abiquo_pricing" "test" {
 
   datacenter {
     href = "${data.abiquo_datacenter.test.id}"
-
-    datastore_tier {
-      href  = "${data.abiquo_dstier.test.id}"
-      price = 2.3
-    }
-
-    tier {
-      href  = "${data.abiquo_tier.test.id}"
-      price = 4.5
-    }
-
+    datastore_tier { href  = "${data.abiquo_dstier.test.id}", price = 2.3 }
+    tier           { href  = "${data.abiquo_tier.test.id}",   price = 4.5 }
     firewall = 1.2
   }
 }

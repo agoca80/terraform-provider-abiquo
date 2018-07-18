@@ -1,6 +1,3 @@
-data     "abiquo_devicetype" "test" { name = "LOGICAL" }
-data     "abiquo_datacenter" "test" { name = "datacenter 1" }
-
 resource "abiquo_device"     "test" {
   default    = false
   devicetype = "${data.abiquo_devicetype.test.id}"
@@ -10,3 +7,6 @@ resource "abiquo_device"     "test" {
   password   = "password"
   datacenter = "${data.abiquo_datacenter.test.id}"
 }
+
+data     "abiquo_devicetype" "test" { name = "LOGICAL" }
+data     "abiquo_datacenter" "test" { name = "datacenter 1" }

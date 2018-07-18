@@ -1,5 +1,3 @@
-data "abiquo_vdc" "test" { name = "tests" }
-
 resource "abiquo_private" "test" {
   virtualdatacenter = "${data.abiquo_vdc.test.id}"
 
@@ -14,3 +12,5 @@ resource "abiquo_private" "test" {
   dns2    = "4.4.4.4"
   suffix  = "test.bcn.com"
 }
+
+data "abiquo_vdc" "test" { name = "tests" }

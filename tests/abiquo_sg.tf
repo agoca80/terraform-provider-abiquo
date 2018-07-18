@@ -1,3 +1,15 @@
+resource "abiquo_sg" "test" {
+  mastervirtualmachine = "${abiquo_vm.test.id}"
+  virtualappliance     = "${abiquo_vapp.test.id}"
+
+  name      = "test sg"
+  cooldown  = 60
+  min       = 0
+  max       = 4
+  scale_in  = [ { numberofinstances = 1 } ]
+  scale_out = [ { numberofinstances = 1 } ]
+}
+
 data "abiquo_vdc"      "test"     { name = "tests" }
 data "abiquo_template" "test"     {
   templates = "${data.abiquo_vdc.test.templates}"
@@ -15,16 +27,4 @@ resource "abiquo_vm" "test" {
   virtualappliance       = "${abiquo_vapp.test.id}"
   virtualmachinetemplate = "${data.abiquo_template.test.id}"
   label                  = "test sg"
-}
-
-resource "abiquo_sg" "test" {
-  mastervirtualmachine = "${abiquo_vm.test.id}"
-  virtualappliance     = "${abiquo_vapp.test.id}"
-
-  name      = "test sg"
-  cooldown  = 60
-  min       = 0
-  max       = 4
-  scale_in  = [ { numberofinstances = 1 } ]
-  scale_out = [ { numberofinstances = 1 } ]
 }

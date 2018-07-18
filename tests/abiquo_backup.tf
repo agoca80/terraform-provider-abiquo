@@ -1,5 +1,3 @@
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
-
 resource "abiquo_backup" "test" {
   # endpoint
   datacenter     = "${data.abiquo_datacenter.test.id}"
@@ -11,3 +9,5 @@ resource "abiquo_backup" "test" {
     { type = "COMPLETE", subtype = "HOURLY", time = "2" }
   ]
 }
+
+data "abiquo_datacenter" "test" { name = "datacenter 1" }

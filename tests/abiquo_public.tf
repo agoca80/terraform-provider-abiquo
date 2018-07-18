@@ -1,9 +1,3 @@
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
-data "abiquo_nst"        "test" {
-  datacenter = "${data.abiquo_datacenter.test.id}"
-  name       = "Service Network"
-}
-
 resource "abiquo_public" "test" {
   datacenter         = "${data.abiquo_datacenter.test.id}"
   networkservicetype = "${data.abiquo_nst.test.id}"
@@ -19,4 +13,10 @@ resource "abiquo_public" "test" {
   dns1    = "4.4.4.4"
   dns2    = "8.8.8.8"
   suffix  = "public.com"
+}
+
+data "abiquo_datacenter" "test" { name = "datacenter 1" }
+data "abiquo_nst"        "test" {
+  datacenter = "${data.abiquo_datacenter.test.id}"
+  name       = "Service Network"
 }

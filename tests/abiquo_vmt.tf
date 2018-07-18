@@ -1,6 +1,3 @@
-variable "ova" {  }
-data     "abiquo_repo" "repo" { datacenter = "datacenter 1" }
-
 resource "abiquo_vmt" "test" {
   cpu         = 1
   ram         = 64
@@ -9,3 +6,6 @@ resource "abiquo_vmt" "test" {
   name        = "test vmt"
   description = "test vmt"
 }
+
+variable "ova" {  }
+data     "abiquo_repo" "repo" { datacenter = "datacenter 1" }

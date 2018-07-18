@@ -1,3 +1,22 @@
+resource "abiquo_machine" "test" {
+  rack       = "${abiquo_rack.test.id}"
+  definition = "${data.abiquo_machine.test.definition}"
+
+  interface {
+    name = "${var.iface}"
+    nst  = "${data.abiquo_nst.test.id}"
+  }
+
+  datastore {
+    uuid   = "${var.datastore}"
+    dstier = "${data.abiquo_dstier.test.id}"
+  }
+
+  lifecycle = {
+    "ignore_changes" = ["definition"]
+  }
+}
+
 data "abiquo_datacenter" "test" {
   name = "datacenter 1"
 }
@@ -26,23 +45,4 @@ data "abiquo_machine" "test" {
   datacenter = "${data.abiquo_datacenter.test.id}"
   hypervisor = "KVM"
   ip         = "${var.kvm}"
-}
-
-resource "abiquo_machine" "test" {
-  rack       = "${abiquo_rack.test.id}"
-  definition = "${data.abiquo_machine.test.definition}"
-
-  interface {
-    name = "${var.iface}"
-    nst  = "${data.abiquo_nst.test.id}"
-  }
-
-  datastore {
-    uuid   = "${var.datastore}"
-    dstier = "${data.abiquo_dstier.test.id}"
-  }
-
-  lifecycle = {
-    "ignore_changes" = ["definition"]
-  }
 }

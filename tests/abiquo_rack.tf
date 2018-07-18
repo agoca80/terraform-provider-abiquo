@@ -1,5 +1,3 @@
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
-
 resource "abiquo_rack" "test" {
   name        = "testAccRackBasic"
   vlanmin     = 1000
@@ -7,3 +5,5 @@ resource "abiquo_rack" "test" {
   description = "kvm"
   datacenter  = "${data.abiquo_datacenter.test.id}"
 }
+
+data "abiquo_datacenter" "test" { name = "datacenter 1" }

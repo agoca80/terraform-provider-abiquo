@@ -1,3 +1,15 @@
+resource "abiquo_lb" "test" {
+  virtualdatacenter = "${data.abiquo_vdc.test.id}"
+  privatenetwork    = "${abiquo_private.test.id}"
+
+  name         = "test lb"
+  internal     = false
+  algorithm    = "ROUND_ROBIN"
+  routingrules = [
+    { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
+  ]
+}
+
 data "abiquo_location"   "test" { name = "datacenter 1" }
 data "abiquo_enterprise" "test" { name = "Abiquo" }
 data "abiquo_vdc"        "test"   { name = "tests" }
@@ -15,16 +27,4 @@ resource "abiquo_private" "test" {
   dns1    = "8.8.8.8"
   dns2    = "4.4.4.4"
   suffix  = "test.abiquo.com"
-}
-
-resource "abiquo_lb" "test" {
-  virtualdatacenter = "${data.abiquo_vdc.test.id}"
-  privatenetwork    = "${abiquo_private.test.id}"
-
-  name         = "test lb"
-  internal     = false
-  algorithm    = "ROUND_ROBIN"
-  routingrules = [
-    { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
-  ]
 }

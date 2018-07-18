@@ -1,3 +1,13 @@
+resource "abiquo_alarm" "test" {
+  target      = "${abiquo_vm.test.id}"
+  name        = "test alarm"
+  metric      = "cpu_time"
+  timerange   = 3
+  statistic   = "average"
+  formula     = "lessthan"
+  threshold   = 10000
+}
+
 data "abiquo_vdc"        "test"   { name = "tests" }
 data "abiquo_template"   "test"   {
   templates = "${data.abiquo_vdc.test.templates}"
@@ -16,14 +26,4 @@ resource "abiquo_vm" "test" {
   label                  = "test alarm"
   virtualappliance       = "${abiquo_vapp.test.id}"
   virtualmachinetemplate = "${data.abiquo_template.test.id}"
-}
-
-resource "abiquo_alarm" "test" {
-  target      = "${abiquo_vm.test.id}"
-  name        = "test alarm"
-  metric      = "cpu_time"
-  timerange   = 3
-  statistic   = "average"
-  formula     = "lessthan"
-  threshold   = 10000
 }

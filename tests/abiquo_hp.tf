@@ -1,5 +1,3 @@
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
-
 resource "abiquo_hp" "test" {
   active = true
   name = "test hp"
@@ -7,3 +5,5 @@ resource "abiquo_hp" "test" {
   ram  = 64
   datacenter = "${data.abiquo_datacenter.test.id}"
 }
+
+data "abiquo_datacenter" "test" { name = "datacenter 1" }

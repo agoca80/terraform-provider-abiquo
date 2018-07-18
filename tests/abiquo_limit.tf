@@ -1,8 +1,13 @@
-data "abiquo_datacenter" "test" {
-  name = "datacenter 1"
+resource "abiquo_limit" "test" {
+  enterprise = "${abiquo_enterprise.test.id}"
+  location   = "${data.abiquo_datacenter.test.id}"
+  dstiers    = ["${data.abiquo_dstier.test.id}"]
+  backups    = ["${abiquo_backup.test.id}"]
+  hwprofiles = ["${abiquo_hp.test.id}"]
 }
 
-data "abiquo_dstier" "test" {
+data "abiquo_datacenter" "test" { name = "datacenter 1" }
+data "abiquo_dstier"     "test" {
   name       = "Default Tier"
   datacenter = "${data.abiquo_datacenter.test.id}"
 }
@@ -32,12 +37,4 @@ resource "abiquo_backup" "test" {
 
 resource "abiquo_enterprise" "test" {
   name = "test limit"
-}
-
-resource "abiquo_limit" "test" {
-  enterprise = "${abiquo_enterprise.test.id}"
-  location   = "${data.abiquo_datacenter.test.id}"
-  dstiers    = ["${data.abiquo_dstier.test.id}"]
-  backups    = ["${abiquo_backup.test.id}"]
-  hwprofiles = ["${abiquo_hp.test.id}"]
 }
