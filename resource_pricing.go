@@ -34,7 +34,7 @@ var pricingPeriodLabel = []string{"MINUTE", "HOUR", "DAY", "WEEK", "MONTH", "QUA
 var pricingSchema = map[string]*schema.Schema{
 	"charging_period":        attribute(required, label(pricingPeriodLabel[2:])),
 	"costcode":               attribute(optional, computed, prices),
-	"currency":               attribute(required, href, forceNew),
+	"currency":               attribute(required, link("currency"), forceNew),
 	"datacenter":             attribute(optional, computed, setFn(pricingDCResource, resourceSet)),
 	"deploy_message":         attribute(optional, text),
 	"description":            attribute(optional, text),

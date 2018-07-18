@@ -135,7 +135,6 @@ func link(media string) func(*schema.Schema) {
 				}
 			}
 			errs = append(errs, fmt.Errorf("invalid %v : %v", key, d.(string)))
-			errs = append(errs, fmt.Errorf("%v", validateMedia[media]))
 			return
 		}
 	}

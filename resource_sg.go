@@ -25,7 +25,7 @@ var sgSchema = map[string]*schema.Schema{
 	"max":                  attribute(required, natural),
 	"scale_out":            attribute(required, list(sgScaleResource)),
 	"scale_in":             attribute(required, list(sgScaleResource)),
-	"mastervirtualmachine": attribute(required, forceNew, href),
+	"mastervirtualmachine": attribute(required, link("virtualmachine"), forceNew),
 }
 
 func ruleTS(dateStr string) (timestamp int64) {

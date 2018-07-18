@@ -9,19 +9,19 @@ import (
 )
 
 var vmSchema = map[string]*schema.Schema{
-	"cpu":                    attribute(optional, forceNew, natural, conflicts([]string{"hardwareprofile"})),
+	"cpu":                    attribute(optional, forceNew, positive, conflicts([]string{"hardwareprofile"})),
 	"backups":                attribute(optional, forceNew, list(link("backuppolicy_vdc"))),
 	"bootstrap":              attribute(optional, forceNew, text),
 	"deploy":                 attribute(optional, forceNew, boolean),
 	"disks":                  attribute(optional, forceNew, list(href)),
-	"fws":                    attribute(optional, forceNew, list(href)),
-	"hardwareprofile":        attribute(optional, forceNew, href, conflicts([]string{"cpu", "ram"})),
+	"fws":                    attribute(optional, forceNew, list(link("firewall"))),
+	"hardwareprofile":        attribute(optional, forceNew, link("hardwareprofile"), conflicts([]string{"cpu", "ram"})),
 	"label":                  attribute(optional, forceNew, text),
 	"lbs":                    attribute(optional, forceNew, list(link("loadbalancer"))),
 	"ips":                    attribute(optional, forceNew, list(link("virtualmachine_ip"))),
 	"monitored":              attribute(optional, forceNew, boolean),
 	"name":                   attribute(computed, forceNew, text),
-	"ram":                    attribute(optional, forceNew, natural, conflicts([]string{"hardwareprofile"})),
+	"ram":                    attribute(optional, forceNew, positive, conflicts([]string{"hardwareprofile"})),
 	"variables":              attribute(optional, forceNew, hash(text)),
 	"virtualappliance":       attribute(required, forceNew, link("virtualappliance")),
 	"virtualmachinetemplate": attribute(required, forceNew, link("template")),

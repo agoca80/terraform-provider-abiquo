@@ -13,9 +13,9 @@ var userSchema = map[string]*schema.Schema{
 	"name":       attribute(required, text),
 	"nick":       attribute(required, text),
 	"surname":    attribute(required, text),
-	"password":   attribute(computed, text),
-	"scope":      attribute(optional, href),
-	"role":       attribute(required, href),
+	"password":   attribute(optional, text, computed),
+	"scope":      attribute(optional, link("scope")),
+	"role":       attribute(required, link("role")),
 }
 
 func userNew(d *resourceData) core.Resource {
