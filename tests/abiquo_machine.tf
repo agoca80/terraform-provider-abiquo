@@ -3,12 +3,12 @@ resource "abiquo_machine" "test" {
   definition = "${data.abiquo_machine.test.definition}"
 
   interface {
-    name = "${var.iface}"
+    name = "${var.test_kvm_interface}"
     nst  = "${data.abiquo_nst.test.id}"
   }
 
   datastore {
-    uuid   = "${var.datastore}"
+    uuid   = "${var.test_kvm_datastore}"
     dstier = "${data.abiquo_dstier.test.id}"
   }
 
@@ -37,12 +37,12 @@ data "abiquo_dstier" "test" {
   name       = "Default Tier"
 }
 
-variable "kvm" {}
-variable "iface" {}
-variable "datastore" {}
+variable "test_kvm_ip" {}
+variable "test_kvm_interface" {}
+variable "test_kvm_datastore" {}
 
 data "abiquo_machine" "test" {
   datacenter = "${data.abiquo_datacenter.test.id}"
   hypervisor = "KVM"
-  ip         = "${var.kvm}"
+  ip         = "${var.test_kvm_ip}"
 }
