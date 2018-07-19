@@ -28,9 +28,9 @@ var lbSchema = map[string]*schema.Schema{
 	"virtualmachines":     attribute(computed, list(text)),
 }
 
-func lbRules(d *resourceData) (rules []abiquo.RoutingRule) {
+func lbRules(d *resourceData) (rules []abiquo.LoadBalancerRule) {
 	for _, r := range d.slice("routingrules") {
-		rule := abiquo.RoutingRule{}
+		rule := abiquo.LoadBalancerRule{}
 		mapDecoder(r, &rule)
 		rules = append(rules, rule)
 	}
@@ -46,7 +46,7 @@ func lbNew(d *resourceData) core.Resource {
 				abiquo.LoadBalancerAddress{Internal: d.boolean("internal")},
 			},
 		},
-		RoutingRules: abiquo.RoutingRules{
+		RoutingRules: abiquo.LoadBalancerRules{
 			Collection: lbRules(d),
 		},
 		DTO: core.NewDTO(
@@ -73,11 +73,14 @@ func lbRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-func lbUpdate(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "loadbalancer")
-	lb := lbNew(d).(*abiquo.LoadBalancer)
-	if err = core.Update(d, lb); err == nil {
-		err = lb.SetRules(lbRules(d))
+func lbUpdate(d *resourceData, resource core.Resource) (err error) {
+	if d.HasChange("routingrules") {
+		loadBalancerRules := abiquo.LoadBalancerRules{
+			Collection: lbRules(d),
+		}
+		if err = core.Update(resource.Rel("rules"), loadBalancerRules); err != nil {
+			return
+		}
 	}
 	return
 }

@@ -56,7 +56,7 @@ var pricingPeriod = map[string]int{
 	"YEAR":    6,
 }
 
-func resourcePrices(r interface{}, media string) (rp []abiquo.ResourcePrice) {
+func resourcePrices(r interface{}, media string) (rp []abiquo.PricingResource) {
 	if r == nil {
 		return
 	}
@@ -64,7 +64,7 @@ func resourcePrices(r interface{}, media string) (rp []abiquo.ResourcePrice) {
 	for _, r := range resources.List() {
 		resource := r.(map[string]interface{})
 		href := resource["href"].(string)
-		rp = append(rp, abiquo.ResourcePrice{
+		rp = append(rp, abiquo.PricingResource{
 			Price: resource["price"].(float64),
 			DTO:   core.NewDTO(core.NewLinkType(href, media).SetRel(media)),
 		})
@@ -72,10 +72,10 @@ func resourcePrices(r interface{}, media string) (rp []abiquo.ResourcePrice) {
 	return
 }
 
-func datacenterPrices(dc interface{}) abiquo.AbstractDCPrice {
+func datacenterPrices(dc interface{}) abiquo.PricingDatacenter {
 	datacenter := dc.(map[string]interface{})
 	href := datacenter["href"].(string)
-	return abiquo.AbstractDCPrice{
+	return abiquo.PricingDatacenter{
 		HPAbstractDC:   resourcePrices(datacenter["hardware_profile"], "hardwareprofile"),
 		DatastoreTiers: resourcePrices(datacenter["datastore_tier"], "datastoretier"),
 		Tiers:          resourcePrices(datacenter["tier"], "tier"),
@@ -98,14 +98,14 @@ func datacenterPrices(dc interface{}) abiquo.AbstractDCPrice {
 }
 
 func pricingNew(d *resourceData) core.Resource {
-	datacentersPrices := []abiquo.AbstractDCPrice{}
+	datacentersPrices := []abiquo.PricingDatacenter{}
 	if dcSet := d.set("datacenter"); dcSet != nil {
 		for _, dc := range dcSet.List() {
 			datacentersPrices = append(datacentersPrices, datacenterPrices(dc))
 		}
 	}
 
-	return &abiquo.PricingTemplate{
+	return &abiquo.Pricing{
 		AbstractDCPrices:    datacentersPrices,
 		ChargingPeriod:      pricingPeriod[d.string("charging_period")],
 		CostCodes:           resourcePrices(d.Get("costcode"), "costcode"),
@@ -123,7 +123,7 @@ func pricingEndpoint(d *resourceData) *core.Link {
 	return core.NewLinkType("config/pricingtemplates", "pricingtemplate")
 }
 
-func resourcePricesRead(resources []abiquo.ResourcePrice, rel string) (set *schema.Set) {
+func resourcePricesRead(resources []abiquo.PricingResource, rel string) (set *schema.Set) {
 	set = schema.NewSet(resourceSet, nil)
 	for _, resource := range resources {
 		set.Add(map[string]interface{}{
@@ -135,7 +135,7 @@ func resourcePricesRead(resources []abiquo.ResourcePrice, rel string) (set *sche
 }
 
 func pricingRead(d *resourceData, resource core.Resource) (err error) {
-	pricing := resource.(*abiquo.PricingTemplate)
+	pricing := resource.(*abiquo.Pricing)
 	datacenters := schema.NewSet(resourceSet, nil)
 	for _, dc := range pricing.AbstractDCPrices {
 		datacenters.Add(map[string]interface{}{

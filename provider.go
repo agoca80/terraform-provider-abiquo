@@ -198,7 +198,7 @@ func Provider() *schema.Provider {
 				Delete: resourceDelete,
 				Exists: resourceExists("loadbalancer"),
 				Create: resourceCreate(lbNew, nil, lbRead, lbEndpoint),
-				Update: resourceUpdate(lbNew, nil, "loadbalancer"),
+				Update: resourceUpdate(lbNew, lbUpdate, "loadbalancer"),
 				Read:   resourceRead(lbNew, lbRead, "loadbalancer"),
 			},
 			"abiquo_license": &schema.Resource{

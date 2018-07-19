@@ -13,12 +13,12 @@ var costCodeSchema = map[string]*schema.Schema{
 }
 
 func costCodeNew(d *resourceData) core.Resource {
-	currencies := []abiquo.ResourcePrice{}
+	currencies := []abiquo.PricingResource{}
 	for _, c := range d.set("currency").List() {
 		currency := c.(map[string]interface{})
 		href := currency["href"].(string)
 		link := core.NewLinkType(href, "currency").SetRel("currency")
-		currencies = append(currencies, abiquo.ResourcePrice{
+		currencies = append(currencies, abiquo.PricingResource{
 			Price: currency["price"].(float64),
 			DTO:   core.NewDTO(link),
 		})
