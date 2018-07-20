@@ -36,3 +36,12 @@ func hpRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("datacenter", hp.Rel("datacenter").URL())
 	return
 }
+
+var resourceHp = &schema.Resource{
+	Schema: hpSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("hardwareprofile"),
+	Create: resourceCreate(hpNew, nil, hpRead, hpEndpoint),
+	Update: resourceUpdate(hpNew, nil, "hardwareprofile"),
+	Read:   resourceRead(hpNew, hpRead, "hardwareprofile"),
+}

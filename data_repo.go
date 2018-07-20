@@ -23,3 +23,8 @@ func dataRepoRead(d *schema.ResourceData, p interface{}) (err error) {
 	d.SetId(repo.URL())
 	return
 }
+
+var dataRepo = &schema.Resource{
+	Schema: repoDataSchema,
+	Read:   dataRepoRead,
+}

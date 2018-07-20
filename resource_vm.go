@@ -177,3 +177,11 @@ func vmDelete(rd *schema.ResourceData, m interface{}) (err error) {
 
 	return core.Remove(vm)
 }
+
+var resourceVm = &schema.Resource{
+	Schema: vmSchema,
+	Read:   resourceRead(vmNew, vmRead, "virtualmachine"),
+	Exists: resourceExists("virtualmachine"),
+	Delete: vmDelete,
+	Create: resourceCreate(vmNew, vmCreate, vmRead, vmEndpoint),
+}

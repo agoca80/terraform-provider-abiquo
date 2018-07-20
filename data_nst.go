@@ -35,3 +35,8 @@ func nstDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(nst.URL())
 	return
 }
+
+var dataNst = &schema.Resource{
+	Schema: nstDataSchema,
+	Read:   nstDataRead,
+}

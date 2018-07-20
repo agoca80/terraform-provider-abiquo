@@ -95,3 +95,12 @@ func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
 
 func machineUpdate(rd *schema.ResourceData, _ interface{}) (err error) { return }
 func machineRead(rd *schema.ResourceData, _ interface{}) (err error)   { return }
+
+var resourceMachine = &schema.Resource{
+	Schema: machineSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("machine"),
+	Create: machineCreate,
+	Update: machineUpdate,
+	Read:   machineRead,
+}

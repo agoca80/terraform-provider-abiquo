@@ -65,3 +65,11 @@ func ipExists(rd *schema.ResourceData, meta interface{}) (ok bool, err error) {
 	err = core.Read(endpoint, nil)
 	return err == nil, err
 }
+
+var resourceIp = &schema.Resource{
+	Schema: ipSchema,
+	Delete: resourceDelete,
+	Exists: ipExists,
+	Create: ipCreate,
+	Read:   ipRead,
+}

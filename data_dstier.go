@@ -33,3 +33,8 @@ func dstierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(dstier.URL())
 	return
 }
+
+var dataDstier = &schema.Resource{
+	Schema: dstierDataSchema,
+	Read:   dstierDataRead,
+}

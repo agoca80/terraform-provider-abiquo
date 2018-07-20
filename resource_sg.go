@@ -131,3 +131,11 @@ func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
 
 	return
 }
+
+var resourceSg = &schema.Resource{
+	Schema: sgSchema,
+	Delete: sgDelete,
+	Update: sgUpdate,
+	Create: resourceCreate(sgNew, nil, sgRead, sgEndpoint),
+	Read:   resourceRead(sgNew, sgRead, "scalinggroup"),
+}

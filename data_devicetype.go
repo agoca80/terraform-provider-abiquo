@@ -24,3 +24,8 @@ func deviceTypeDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(resource.URL())
 	return
 }
+
+var dataDeviceType = &schema.Resource{
+	Schema: deviceTypeDataSchema,
+	Read:   deviceTypeDataRead,
+}

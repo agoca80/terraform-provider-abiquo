@@ -34,3 +34,8 @@ func backupDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	return
 }
+
+var dataBackup = &schema.Resource{
+	Schema: backupDataSchema,
+	Read:   backupDataRead,
+}

@@ -30,3 +30,11 @@ func fitPolicyRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("target", policy.Rel("datacenter").URL())
 	return
 }
+
+var resourceFitPolicy = &schema.Resource{
+	Schema: fitPolicySchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("fitpolicyrule"),
+	Create: resourceCreate(fitPolicyDTO, nil, fitPolicyRead, fitPolicyEndpoint),
+	Read:   resourceRead(fitPolicyDTO, fitPolicyRead, "fitpolicyrule"),
+}

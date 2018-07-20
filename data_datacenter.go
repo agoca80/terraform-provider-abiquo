@@ -27,3 +27,8 @@ func datacenterDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.Set("tiers", datacenter.Rel("tiers").Href)
 	return
 }
+
+var dataDatacenter = &schema.Resource{
+	Schema: datacenterDataSchema,
+	Read:   datacenterDataRead,
+}

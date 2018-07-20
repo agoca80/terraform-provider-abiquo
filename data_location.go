@@ -33,3 +33,8 @@ func locationRead(d *schema.ResourceData, meta interface{}) (err error) {
 	}
 	return fmt.Errorf("Location %q does not exist", d.Get("name"))
 }
+
+var dataLocation = &schema.Resource{
+	Schema: locationDataSchema,
+	Read:   locationRead,
+}

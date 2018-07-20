@@ -158,3 +158,12 @@ func vdcDevice(link *core.Link) (device core.Resource) {
 	}
 	return
 }
+
+var resourceVdc = &schema.Resource{
+	Schema: vdcSchema,
+	Delete: resourceDelete,
+	Create: resourceCreate(vdcNew, vdcCreate, vdcRead, vdcEndpoint),
+	Exists: resourceExists("virtualdatacenter"),
+	Update: resourceUpdate(vdcNew, vdcUpdate, "virtualdatacenter"),
+	Read:   resourceRead(vdcNew, vdcRead, "virtualdatacenter"),
+}

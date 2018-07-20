@@ -23,3 +23,8 @@ func scopeDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(scope.URL())
 	return
 }
+
+var dataScope = &schema.Resource{
+	Schema: scopeDataSchema,
+	Read:   scopeDataRead,
+}

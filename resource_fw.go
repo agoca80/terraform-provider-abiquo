@@ -87,3 +87,12 @@ func fwRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("rules", value)
 	return
 }
+
+var resourceFw = &schema.Resource{
+	Schema: firewallSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("firewallpolicy"),
+	Update: resourceUpdate(fwNew, fwUpdate, "firewallpolicy"),
+	Create: resourceCreate(fwNew, fwCreate, fwRead, fwEndpoint),
+	Read:   resourceRead(fwNew, fwRead, "firewallpolicy"),
+}

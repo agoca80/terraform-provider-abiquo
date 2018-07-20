@@ -61,3 +61,8 @@ func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 	d.Set("definition", string(bytes))
 	return
 }
+
+var dataMachine = &schema.Resource{
+	Schema: machineDataSchema,
+	Read:   machineDataRead,
+}

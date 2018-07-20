@@ -60,3 +60,12 @@ func rackRead(d *resourceData, resource core.Resource) (err error) {
 
 	return
 }
+
+var resourceRack = &schema.Resource{
+	Schema: rackSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("rack"),
+	Create: resourceCreate(rackNew, nil, rackRead, rackEndpoint),
+	Update: resourceUpdate(rackNew, nil, "rack"),
+	Read:   resourceRead(rackNew, rackRead, "rack"),
+}

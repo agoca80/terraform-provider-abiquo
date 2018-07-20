@@ -23,3 +23,8 @@ func roleDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(resource.URL())
 	return
 }
+
+var dataRole = &schema.Resource{
+	Schema: roleDataSchema,
+	Read:   roleDataRead,
+}

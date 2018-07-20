@@ -36,3 +36,12 @@ func dstierRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("datacenter", dstier.Rel("datacenter").URL())
 	return
 }
+
+var resourceDstier = &schema.Resource{
+	Schema: dstierSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("datastoretier"),
+	Create: resourceCreate(dstierDTO, nil, dstierRead, dstierEndpoint),
+	Update: resourceUpdate(dstierDTO, nil, "datastoretier"),
+	Read:   resourceRead(dstierDTO, dstierRead, "datastoretier"),
+}

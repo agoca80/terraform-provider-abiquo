@@ -22,3 +22,8 @@ func enterpriseDataRead(d *schema.ResourceData, p interface{}) (err error) {
 	d.SetId(enterprise.URL())
 	return
 }
+
+var dataEnterprise = &schema.Resource{
+	Schema: enterpriseDataSchema,
+	Read:   enterpriseDataRead,
+}

@@ -38,3 +38,8 @@ func ipDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(ip.URL())
 	return
 }
+
+var dataIp = &schema.Resource{
+	Schema: ipDataSchema,
+	Read:   ipDataRead,
+}

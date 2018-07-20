@@ -36,3 +36,11 @@ func privateRead(d *resourceData, resource core.Resource) (e error) {
 	d.Set("virtualdatacenter", network.Rel("virtualdatacenter").URL())
 	return
 }
+
+var resourcePrivate = &schema.Resource{
+	Schema: privateSchema,
+	Delete: resourceDelete,
+	Update: resourceUpdate(privateNew, nil, "vlan"),
+	Create: resourceCreate(privateNew, nil, privateRead, privateEndpoint),
+	Read:   resourceRead(privateNew, privateRead, "vlan"),
+}

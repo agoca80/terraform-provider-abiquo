@@ -43,3 +43,12 @@ func externalRead(d *resourceData, resource core.Resource) (e error) {
 	// d.Set("datacenter", network.Rel("datacenter").URL())
 	return
 }
+
+var resourceExternal = &schema.Resource{
+	Schema: externalSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("vlan"),
+	Update: resourceUpdate(externalNew, nil, "vlan"),
+	Create: resourceCreate(externalNew, nil, externalRead, externalEndpoint),
+	Read:   resourceRead(externalNew, externalRead, "vlan"),
+}

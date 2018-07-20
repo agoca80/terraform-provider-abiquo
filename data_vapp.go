@@ -35,3 +35,8 @@ func vappDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(vapp.URL())
 	return
 }
+
+var dataVapp = &schema.Resource{
+	Schema: vappDataSchema,
+	Read:   vappDataRead,
+}

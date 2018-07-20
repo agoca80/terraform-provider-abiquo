@@ -123,3 +123,12 @@ func limitRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("vlanhard", limit.VLANHard)
 	return
 }
+
+var resourceLimit = &schema.Resource{
+	Schema: limitSchema,
+	Exists: resourceExists("limit"),
+	Read:   resourceRead(limitNew, limitRead, "limit"),
+	Update: resourceUpdate(limitNew, nil, "limit"),
+	Create: resourceCreate(limitNew, nil, limitRead, limitEndpoint),
+	Delete: resourceDelete,
+}

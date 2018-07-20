@@ -63,3 +63,12 @@ func deviceRead(d *resourceData, resource core.Resource) (err error) {
 
 	return
 }
+
+var resourceDevice = &schema.Resource{
+	Schema: deviceSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("device"),
+	Create: resourceCreate(deviceDTO, nil, deviceRead, deviceEndpoint),
+	Update: resourceUpdate(deviceDTO, nil, "device"),
+	Read:   resourceRead(deviceDTO, deviceRead, "device"),
+}

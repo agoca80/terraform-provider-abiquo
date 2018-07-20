@@ -165,3 +165,12 @@ func pricingRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("name", pricing.Name)
 	return
 }
+
+var resourcePricing = &schema.Resource{
+	Schema: pricingSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("pricingtemplate"),
+	Update: resourceUpdate(pricingNew, nil, "pricingtemplate"),
+	Create: resourceCreate(pricingNew, nil, pricingRead, pricingEndpoint),
+	Read:   resourceRead(pricingNew, pricingRead, "pricingtemplate"),
+}

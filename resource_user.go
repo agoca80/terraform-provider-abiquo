@@ -47,3 +47,12 @@ func userRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("surname", user.Surname)
 	return
 }
+
+var resourceUser = &schema.Resource{
+	Schema: userSchema,
+	Read:   resourceRead(userNew, userRead, "user"),
+	Create: resourceCreate(userNew, nil, userRead, userEndpoint),
+	Update: resourceUpdate(userNew, nil, "user"),
+	Exists: resourceExists("user"),
+	Delete: resourceDelete,
+}

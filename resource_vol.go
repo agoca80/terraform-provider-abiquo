@@ -6,6 +6,14 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+var resourceVolume = &schema.Resource{
+	Schema: volumeSchema,
+	Delete: resourceDelete,
+	Update: resourceUpdate(volNew, nil, "volume"),
+	Create: resourceCreate(volNew, nil, volRead, volEndpoint),
+	Read:   resourceRead(volNew, volRead, "volume"),
+}
+
 var volumeSchema = map[string]*schema.Schema{
 	"virtualdatacenter": endpoint("virtualdatacenter"),
 	"size":              attribute(required, positive),

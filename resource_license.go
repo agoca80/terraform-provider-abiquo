@@ -32,3 +32,11 @@ func licenseRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("sgenabled", license.ScalingGroupsEnabled)
 	return
 }
+
+var resourceLicense = &schema.Resource{
+	Schema: licenseSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("license"),
+	Create: resourceCreate(licenseNew, nil, licenseRead, licenseEndpoint),
+	Read:   resourceRead(licenseNew, licenseRead, "license"),
+}

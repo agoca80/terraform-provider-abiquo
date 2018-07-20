@@ -87,3 +87,12 @@ func scopeRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("enterprises", enterprises)
 	return
 }
+
+var resourceScope = &schema.Resource{
+	Schema: scopeSchema,
+	Delete: resourceDelete,
+	Read:   resourceRead(scopeNew, scopeRead, "scope"),
+	Create: resourceCreate(scopeNew, nil, scopeRead, scopeEndpoint),
+	Exists: resourceExists("scope"),
+	Update: resourceUpdate(scopeNew, nil, "scope"),
+}

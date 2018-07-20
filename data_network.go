@@ -30,3 +30,8 @@ func networkDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.Set("ips", network.Rel("ips").Href)
 	return
 }
+
+var dataNetwork = &schema.Resource{
+	Schema: networkDataSchema,
+	Read:   networkDataRead,
+}

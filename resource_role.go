@@ -62,3 +62,12 @@ func rolePrivileges(d *resourceData, resource core.Resource) (err error) {
 	}
 	return core.Update(role, role)
 }
+
+var resourceRole = &schema.Resource{
+	Schema: roleSchema,
+	Delete: resourceDelete,
+	Read:   resourceRead(roleNew, roleRead, "role"),
+	Create: resourceCreate(roleNew, rolePrivileges, roleRead, roleEndpoint),
+	Exists: resourceExists("role"),
+	Update: resourceUpdate(roleNew, rolePrivileges, "role"),
+}

@@ -48,3 +48,12 @@ func costCodeRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("currency", currency)
 	return
 }
+
+var resourceCostcode = &schema.Resource{
+	Schema: costCodeSchema,
+	Read:   resourceRead(costCodeNew, costCodeRead, "costcode"),
+	Update: resourceUpdate(costCodeNew, nil, "costcode"),
+	Exists: resourceExists("costcode"),
+	Delete: resourceDelete,
+	Create: resourceCreate(costCodeNew, nil, costCodeRead, costCodeEndpoint),
+}

@@ -53,3 +53,12 @@ func alarmRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("threshold", alarm.Threshold)
 	return
 }
+
+var resourceAlarm = &schema.Resource{
+	Schema: alarmSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("alarm"),
+	Update: resourceUpdate(alarmNew, nil, "alarm"),
+	Create: resourceCreate(alarmNew, nil, alarmRead, alarmEndpoint),
+	Read:   resourceRead(alarmNew, alarmRead, "alarm"),
+}

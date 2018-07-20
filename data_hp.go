@@ -27,3 +27,8 @@ func hpDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(hardwareprofile.URL())
 	return
 }
+
+var dataHp = &schema.Resource{
+	Schema: hpDataSchema,
+	Read:   hpDataRead,
+}

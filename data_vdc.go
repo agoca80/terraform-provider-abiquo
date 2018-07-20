@@ -45,3 +45,8 @@ func dataVDCRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.Set("templates", vdc.Rel("templates").Href)
 	return
 }
+
+var dataVdc = &schema.Resource{
+	Schema: vdcDataSchema,
+	Read:   dataVDCRead,
+}

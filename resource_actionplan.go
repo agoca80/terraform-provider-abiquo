@@ -69,3 +69,12 @@ func actionPlanCreate(d *resourceData, resource core.Resource) (err error) {
 	}
 	return
 }
+
+var resourcePlan = &schema.Resource{
+	Schema: actionPlanSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("virtualmachineactionplan"),
+	Update: resourceUpdate(actionPlanNew, nil, "virtualmachineactionplan"),
+	Create: resourceCreate(actionPlanNew, actionPlanCreate, actionPlanRead, actionPlanEndpoint),
+	Read:   resourceRead(actionPlanNew, actionPlanRead, "virtualmachineactionplan"),
+}

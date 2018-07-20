@@ -28,3 +28,8 @@ func tierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(tier.URL())
 	return
 }
+
+var dataTier = &schema.Resource{
+	Schema: tierDataSchema,
+	Read:   tierDataRead,
+}

@@ -62,3 +62,12 @@ func datacenterRead(d *resourceData, resource core.Resource) (err error) {
 	}
 	return
 }
+
+var resourceDatacenter = &schema.Resource{
+	Schema: datacenterSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("datacenter"),
+	Create: resourceCreate(datacenterNew, nil, datacenterRead, datacenterEndpoint),
+	Update: resourceUpdate(datacenterNew, nil, "datacenter"),
+	Read:   resourceRead(datacenterNew, datacenterRead, "datacenter"),
+}

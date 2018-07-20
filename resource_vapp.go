@@ -29,3 +29,12 @@ func vappRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("name", vapp.Name)
 	return
 }
+
+var resourceVapp = &schema.Resource{
+	Schema: vappSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("virtualappliance"),
+	Create: resourceCreate(vappNew, nil, vappRead, vappEndpoint),
+	Update: resourceUpdate(vappNew, nil, "virtualappliance"),
+	Read:   resourceRead(vappNew, vappRead, "virtualappliance"),
+}

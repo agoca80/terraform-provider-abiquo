@@ -31,3 +31,12 @@ func currencyRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("symbol", currency.Symbol)
 	return
 }
+
+var resourceCurrency = &schema.Resource{
+	Schema: currencySchema,
+	Read:   resourceRead(currencyNew, currencyRead, "currency"),
+	Update: resourceUpdate(currencyNew, nil, "currency"),
+	Exists: resourceExists("currency"),
+	Delete: resourceDelete,
+	Create: resourceCreate(currencyNew, nil, currencyRead, currencyEndpoint),
+}

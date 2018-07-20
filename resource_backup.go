@@ -65,3 +65,12 @@ func backupRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("name", backup.Name)
 	return
 }
+
+var resourceBackup = &schema.Resource{
+	Schema: backupSchema,
+	Read:   resourceRead(backupDTO, backupRead, "backuppolicy"),
+	Update: resourceUpdate(backupDTO, nil, "backuppolicy"),
+	Exists: resourceExists("backuppolicy"),
+	Delete: resourceDelete,
+	Create: resourceCreate(backupDTO, nil, backupRead, backupEndpoint),
+}

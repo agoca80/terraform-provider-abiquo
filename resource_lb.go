@@ -6,33 +6,32 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var algorithms = []string{"Default", "ROUND_ROBIN", "LEAST_CONNECTIONS", "SOURCE_IP"}
-
-var lbRuleResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"protocolin":  attribute(required, protocol),
-		"protocolout": attribute(required, protocol),
-		"portout":     attribute(required, port),
-		"portin":      attribute(required, port),
-	},
-}
+var lbAlgorithms = []string{"Default", "ROUND_ROBIN", "LEAST_CONNECTIONS", "SOURCE_IP"}
 
 var lbSchema = map[string]*schema.Schema{
 	"virtualdatacenter":   endpoint("virtualdatacenter"),
 	"name":                attribute(required, text),
-	"algorithm":           attribute(required, label(algorithms)),
+	"algorithm":           attribute(required, label(lbAlgorithms)),
 	"internal":            attribute(optional, boolean),
-	"routingrules":        attribute(required, list(lbRuleResource), min(1)),
-	"privatenetwork":      attribute(optional, forceNew, link("privatenetwork")),
+	"privatenetwork":      attribute(optional, link("privatenetwork"), forceNew),
 	"loadbalanceraddress": attribute(computed, text),
 	"virtualmachines":     attribute(computed, list(text)),
+	"routingrules": attribute(required, min(1), list(&schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"protocolin":  attribute(required, protocol),
+			"protocolout": attribute(required, protocol),
+			"portout":     attribute(required, port),
+			"portin":      attribute(required, port),
+		},
+	})),
 }
 
-func lbRules(d *resourceData) (rules []abiquo.LoadBalancerRule) {
+func lbRules(d *resourceData) (rules *abiquo.LoadBalancerRules) {
+	rules = new(abiquo.LoadBalancerRules)
 	for _, r := range d.slice("routingrules") {
 		rule := abiquo.LoadBalancerRule{}
 		mapDecoder(r, &rule)
-		rules = append(rules, rule)
+		rules.Collection = append(rules.Collection, rule)
 	}
 	return
 }
@@ -41,14 +40,12 @@ func lbNew(d *resourceData) core.Resource {
 	return &abiquo.LoadBalancer{
 		Name:      d.string("name"),
 		Algorithm: d.string("algorithm"),
-		LoadBalancerAddresses: abiquo.LoadBalancerAddresses{
+		Addresses: &abiquo.LoadBalancerAddresses{
 			Collection: []abiquo.LoadBalancerAddress{
 				abiquo.LoadBalancerAddress{Internal: d.boolean("internal")},
 			},
 		},
-		RoutingRules: abiquo.LoadBalancerRules{
-			Collection: lbRules(d),
-		},
+		Rules: lbRules(d),
 		DTO: core.NewDTO(
 			d.link("virtualdatacenter"),
 			d.link("privatenetwork").SetType("vlan"),
@@ -75,10 +72,8 @@ func lbRead(d *resourceData, resource core.Resource) (err error) {
 
 func lbUpdate(d *resourceData, resource core.Resource) (err error) {
 	if d.HasChange("routingrules") {
-		loadBalancerRules := abiquo.LoadBalancerRules{
-			Collection: lbRules(d),
-		}
-		if err = core.Update(resource.Rel("rules"), loadBalancerRules); err != nil {
+		err = core.Update(resource.Rel("rules"), lbRules(d))
+		if err != nil {
 			return
 		}
 	}
@@ -90,4 +85,13 @@ func lbEndpoint(d *resourceData) (link *core.Link) {
 		link = device.Rel("loadbalancers").SetType("loadbalancer")
 	}
 	return
+}
+
+var resourceLb = &schema.Resource{
+	Schema: lbSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("loadbalancer"),
+	Create: resourceCreate(lbNew, nil, lbRead, lbEndpoint),
+	Update: resourceUpdate(lbNew, lbUpdate, "loadbalancer"),
+	Read:   resourceRead(lbNew, lbRead, "loadbalancer"),
 }

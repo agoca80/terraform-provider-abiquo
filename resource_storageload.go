@@ -51,3 +51,12 @@ func storageLoadRead(d *resourceData, resource core.Resource) (err error) {
 	}
 	return
 }
+
+var resourceStorageLoad = &schema.Resource{
+	Schema: storageLoadSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("datastoreloadrule"),
+	Create: resourceCreate(storageLoadDTO, nil, storageLoadRead, storageLoadEndpoint),
+	Update: resourceUpdate(storageLoadDTO, nil, "datastoreloadrule"),
+	Read:   resourceRead(storageLoadDTO, storageLoadRead, "datastoreloadrule"),
+}

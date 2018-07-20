@@ -40,3 +40,11 @@ func publicRead(d *resourceData, resource core.Resource) (e error) {
 	d.Set("networkservicetype", network.Rel("networkservicetype").URL())
 	return
 }
+
+var resourcePublic = &schema.Resource{
+	Schema: publicSchema,
+	Delete: resourceDelete,
+	Update: resourceUpdate(publicNew, nil, "vlan"),
+	Create: resourceCreate(publicNew, nil, publicRead, publicEndpoint),
+	Read:   resourceRead(publicNew, publicRead, "vlan"),
+}

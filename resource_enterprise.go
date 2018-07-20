@@ -100,3 +100,12 @@ func enterpriseProperties(d *resourceData) *abiquo.EnterpriseProperties {
 	}
 	return properties
 }
+
+var resourceEnterprise = &schema.Resource{
+	Schema: enterpriseSchema,
+	Delete: resourceDelete,
+	Read:   resourceRead(enterpriseDTO, enterpriseRead, "enterprise"),
+	Create: resourceCreate(enterpriseDTO, enterpriseCreate, enterpriseRead, enterpriseEndpoint),
+	Exists: resourceExists("enterprise"),
+	Update: resourceUpdate(enterpriseDTO, enterpriseUpdate, "enterprise"),
+}

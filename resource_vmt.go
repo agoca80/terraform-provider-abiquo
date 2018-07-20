@@ -8,6 +8,15 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+var resourceVmt = &schema.Resource{
+	Schema: vmtSchema,
+	Create: vmtCreate,
+	Delete: resourceDelete,
+	Update: resourceUpdate(vmtNew, nil, "virtualmachinetemplate"),
+	Read:   resourceRead(vmtNew, vmtRead, "virtualmachinetemplate"),
+	Exists: resourceExists("virtualmachinetemplate"),
+}
+
 var vmtSchema = map[string]*schema.Schema{
 	"repo":        endpoint("dcrepository"),
 	"cpu":         attribute(required, natural),

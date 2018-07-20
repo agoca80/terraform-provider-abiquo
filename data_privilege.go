@@ -44,3 +44,8 @@ func privilegeID(name interface{}) (id int) {
 	}
 	return
 }
+
+var dataPrivilege = &schema.Resource{
+	Schema: privilegeDataSchema,
+	Read:   privilegeRead,
+}

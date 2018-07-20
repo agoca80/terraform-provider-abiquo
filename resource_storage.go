@@ -35,3 +35,12 @@ func storageDeviceRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("name", storageDevice.Name)
 	return
 }
+
+var resourceStorage = &schema.Resource{
+	Schema: storageDeviceSchema,
+	Delete: resourceDelete,
+	Exists: resourceExists("virtualappliance"),
+	Create: resourceCreate(storageDeviceNew, nil, storageDeviceRead, storageDeviceEndpoint),
+	Update: resourceUpdate(storageDeviceNew, nil, "storagedevice"),
+	Read:   resourceRead(storageDeviceNew, storageDeviceRead, "storagedevice"),
+}

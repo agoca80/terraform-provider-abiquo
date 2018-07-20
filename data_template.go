@@ -27,3 +27,8 @@ func templateRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(template.URL())
 	return
 }
+
+var dataTemplate = &schema.Resource{
+	Schema: templateDataSchema,
+	Read:   templateRead,
+}
