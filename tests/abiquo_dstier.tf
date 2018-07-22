@@ -1,8 +1,8 @@
-resource "abiquo_dstier" "test" {
+resource "abiquo_datastoretier" "test" {
   datacenter  = "${data.abiquo_datacenter.test.id}"
   description = "required description"
   enabled     = true
-  name        = "testAccDSTierBasic"
+  name        = "test dstier"
   policy      = "PERFORMANCE"
 }
 

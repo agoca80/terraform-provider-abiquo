@@ -10,11 +10,16 @@ type resourceData struct {
 	*schema.ResourceData
 }
 
-func newResourceData(d *schema.ResourceData, media string) *resourceData {
+func newData(rd *schema.ResourceData) (d *resourceData) {
 	return &resourceData{
-		Link:         core.NewLinkType(d.Id(), media),
-		ResourceData: d,
+		ResourceData: rd,
 	}
+}
+
+func newDataType(rd *schema.ResourceData, media string) (d *resourceData) {
+	d = newData(rd)
+	d.Link = core.NewLinkType(rd.Id(), media)
+	return
 }
 
 func (d *resourceData) slice(name string) (slice []interface{}) {
@@ -38,6 +43,12 @@ func (d *resourceData) set(name string) (s *schema.Set) {
 	return
 }
 
+func (d *resourceData) SetOk(name string, value interface{}) {
+	if _, ok := d.GetOk(name); ok {
+		d.Set(name, value)
+	}
+}
+
 func (d *resourceData) link(name string) (link *core.Link) {
 	if _, ok := d.GetOk(name); ok {
 		link = core.NewLinkType(d.string(name), name).SetRel(name)
@@ -46,12 +57,19 @@ func (d *resourceData) link(name string) (link *core.Link) {
 }
 
 func (d *resourceData) string(name string) string {
-	return d.ResourceData.Get(name).(string)
+	return d.Get(name).(string)
 }
 
 func (d *resourceData) integer(name string) (val int) {
 	if i, ok := d.GetOk(name); ok {
 		val = i.(int)
+	}
+	return
+}
+
+func (d *resourceData) float(name string) (val float64) {
+	if i, ok := d.GetOk(name); ok {
+		val = i.(float64)
 	}
 	return
 }

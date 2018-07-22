@@ -9,7 +9,7 @@ import (
 var lbAlgorithms = []string{"Default", "ROUND_ROBIN", "LEAST_CONNECTIONS", "SOURCE_IP"}
 
 var lbSchema = map[string]*schema.Schema{
-	"virtualdatacenter":   endpoint("virtualdatacenter"),
+	"device":              endpoint("device"),
 	"name":                attribute(required, text),
 	"algorithm":           attribute(required, label(lbAlgorithms)),
 	"internal":            attribute(optional, boolean),
@@ -80,18 +80,11 @@ func lbUpdate(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-func lbEndpoint(d *resourceData) (link *core.Link) {
-	if device := vdcDevice(d.link("virtualdatacenter")); device != nil {
-		link = device.Rel("loadbalancers").SetType("loadbalancer")
-	}
-	return
-}
-
-var resourceLb = &schema.Resource{
-	Schema: lbSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("loadbalancer"),
-	Create: resourceCreate(lbNew, nil, lbRead, lbEndpoint),
-	Update: resourceUpdate(lbNew, lbUpdate, "loadbalancer"),
-	Read:   resourceRead(lbNew, lbRead, "loadbalancer"),
+var loadbalancer = &description{
+	media:    "loadbalancer",
+	dto:      lbNew,
+	endpoint: endpointPath("device", "/loadbalancers"),
+	read:     lbRead,
+	update:   lbUpdate,
+	Resource: &schema.Resource{Schema: lbSchema},
 }

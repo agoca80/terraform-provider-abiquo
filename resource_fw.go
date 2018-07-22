@@ -6,24 +6,23 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var fwRulesResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"protocol": attribute(required, protocol),
-		"fromport": attribute(required, port),
-		"toport":   attribute(required, port),
-		"targets":  attribute(optional, list(text), min(1)),
-		"sources":  attribute(optional, list(text), min(1)),
-	},
-}
-
 var firewallSchema = map[string]*schema.Schema{
-	"virtualdatacenter": endpoint("virtualdatacenter"),
+	"device":            endpoint("device"),
+	"virtualdatacenter": attribute(required, link("virtualdatacenter"), forceNew),
 	"name":              attribute(required, text),
 	"description":       attribute(required, text),
-	"rules":             attribute(required, list(fwRulesResource), min(1)),
+	"rules": attribute(required, min(1), list(&schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"protocol": attribute(required, protocol),
+			"fromport": attribute(required, port),
+			"toport":   attribute(required, port),
+			"targets":  attribute(optional, list(text), min(1)),
+			"sources":  attribute(optional, list(text), min(1)),
+		},
+	})),
 }
 
-func fwNew(d *resourceData) core.Resource {
+func firewallpolicyNew(d *resourceData) core.Resource {
 	return &abiquo.Firewall{
 		Name:        d.string("name"),
 		Description: d.string("description"),
@@ -33,7 +32,7 @@ func fwNew(d *resourceData) core.Resource {
 	}
 }
 
-func fwRules(d *resourceData) *abiquo.FirewallRules {
+func firewallpolicyRules(d *resourceData) *abiquo.FirewallRules {
 	slice := d.slice("rules")
 	rules := make([]abiquo.FirewallRule, len(slice))
 	for i, r := range slice {
@@ -44,33 +43,23 @@ func fwRules(d *resourceData) *abiquo.FirewallRules {
 	}
 }
 
-func fwEndpoint(d *resourceData) (link *core.Link) {
-	if device := vdcDevice(d.link("virtualdatacenter")); device != nil {
-		link = device.Rel("firewalls").SetType("firewallpolicy")
-	}
-	return
-}
-
-func fwCreate(d *resourceData, r core.Resource) error { return fwUpdateRules(d, r) }
-func fwUpdate(d *resourceData, r core.Resource) error { return fwUpdateRules(d, r) }
-
-func fwUpdateRules(d *resourceData, resource core.Resource) (err error) {
-	fw := resource.(*abiquo.Firewall)
+func firewallpolicyUpdateRules(d *resourceData, resource core.Resource) (err error) {
+	firewallpolicy := resource.(*abiquo.Firewall)
 	if d.HasChange("rules") {
-		err = core.Update(fw.Rel("rules"), fwRules(d))
+		err = core.Update(firewallpolicy.Rel("rules"), firewallpolicyRules(d))
 	}
 	return
 }
 
-func fwRead(d *resourceData, resource core.Resource) (err error) {
+func firewallpolicyRead(d *resourceData, resource core.Resource) (err error) {
 	// Read the firewall
-	fw := resource.(*abiquo.Firewall)
-	d.Set("name", fw.Name)
-	d.Set("description", fw.Description)
+	firewallpolicy := resource.(*abiquo.Firewall)
+	d.Set("name", firewallpolicy.Name)
+	d.Set("description", firewallpolicy.Description)
 
 	// Read the firewall rules
 	rules := new(abiquo.FirewallRules)
-	if err = core.Read(fw.Rel("rules"), rules); err != nil {
+	if err = core.Read(firewallpolicy.Rel("rules"), rules); err != nil {
 		return
 	}
 
@@ -88,11 +77,12 @@ func fwRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceFw = &schema.Resource{
-	Schema: firewallSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("firewallpolicy"),
-	Update: resourceUpdate(fwNew, fwUpdate, "firewallpolicy"),
-	Create: resourceCreate(fwNew, fwCreate, fwRead, fwEndpoint),
-	Read:   resourceRead(fwNew, fwRead, "firewallpolicy"),
+var firewallpolicy = &description{
+	media:    "firewallpolicy",
+	dto:      firewallpolicyNew,
+	read:     firewallpolicyRead,
+	create:   firewallpolicyUpdateRules,
+	update:   firewallpolicyUpdateRules,
+	endpoint: endpointPath("device", "/firewalls"),
+	Resource: &schema.Resource{Schema: firewallSchema},
 }

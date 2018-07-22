@@ -1,14 +1,14 @@
-resource "abiquo_vm" "test" {
-  deploy                 = false
-  backups                = [ "${data.abiquo_backup.test.id}" ]
-  cpu                    = 1
-  ram                    = 64
-  label                  = "testVM"
-  virtualappliance       = "${abiquo_vapp.test.id}"
+resource "abiquo_virtualmachine" "test" {
+  virtualappliance       = "${abiquo_virtualappliance.test.id}"
   virtualmachinetemplate = "${data.abiquo_template.test.id}"
 
-  lbs = [ "${abiquo_lb.test.id}" ]
-  fws = [ "${abiquo_fw.test.id}" ]
+  deploy  = false
+  cpu     = 1
+  ram     = 64
+# label   = "test vm"
+  backups = [ "${data.abiquo_backup.test.id}" ]
+  lbs     = [ "${abiquo_loadbalancer.test.id}" ]
+  fws     = [ "${abiquo_firewallpolicy.test.id}" ]
 
   variables = {
     name1 = "value1"
@@ -36,16 +36,16 @@ data "abiquo_nst"        "test"        {
   name       = "Service Network"
 }
 
-data "abiquo_template" "test" { 
-  templates = "${abiquo_vdc.test.templates}"
+data "abiquo_template" "test" {
+  templates = "${abiquo_virtualdatacenter.test.templates}"
   name = "tests"
 }
 
-resource "abiquo_backup" "test" {
+resource "abiquo_backuppolicy" "test" {
   datacenter     = "${data.abiquo_datacenter.test.id}"
-  code           = "testVM"
-  name           = "testVM"
-  description    = "testVM"
+  code           = "test vm"
+  name           = "test vm"
+  description    = "test vm"
   configurations = [
     { type = "COMPLETE", subtype = "HOURLY", time = "2" }
   ]
@@ -54,24 +54,22 @@ resource "abiquo_backup" "test" {
 resource "abiquo_public" "public" {
   datacenter         = "${data.abiquo_datacenter.test.id}"
   networkservicetype = "${data.abiquo_nst.test.id}"
-
   tag     = 2553
   mask    = 24
   address = "17.12.17.0"
   gateway = "17.12.17.1"
-  name    = "testVM-public"
+  name    = "test vm public"
 }
 
 resource "abiquo_external" "external" {
   enterprise         = "${data.abiquo_enterprise.test.id}"
   datacenter         = "${data.abiquo_datacenter.test.id}"
   networkservicetype = "${data.abiquo_nst.test.id}"
-
   tag     = 2443
   mask    = 24
   address = "172.16.6.0"
   gateway = "172.16.6.1"
-  name    = "testVM-external"
+  name    = "test vm external"
 }
 
 resource "abiquo_ip" "external" {
@@ -84,22 +82,21 @@ resource "abiquo_ip" "public" {
   ip        = "17.12.17.30"
 }
 
-resource "abiquo_vdc" "test" {
+resource "abiquo_virtualdatacenter" "test" {
   enterprise = "${data.abiquo_enterprise.test.id}"
   location   = "${data.abiquo_location.test.id}"
-  name       = "testVM"
+  name       = "test vm"
   type       = "KVM"
   publicips  = [
     "${abiquo_ip.public.ip}"
   ]
 }
 
-resource "abiquo_fw" "test" {
-  virtualdatacenter = "${abiquo_vdc.test.id}"
-
-  description = "testVM"
-  name        = "testVM"
-
+resource "abiquo_firewallpolicy" "test" {
+  device            = "${abiquo_virtualdatacenter.test.device}"
+  virtualdatacenter = "${abiquo_virtualdatacenter.test.id}"
+  description       = "test vm"
+  name              = "test vm"
   # XXX workaround ABICLOUDPREMIUM-9668
   rules = [
     { protocol = "TCP", fromport = 22, toport = 22, sources = ["0.0.0.0/0"] }
@@ -107,11 +104,11 @@ resource "abiquo_fw" "test" {
 }
 
 resource "abiquo_private" "test" {
-  virtualdatacenter = "${abiquo_vdc.test.id}"
+  virtualdatacenter = "${abiquo_virtualdatacenter.test.id}"
   mask    = 24
   address = "172.16.37.0"
   gateway = "172.16.37.1"
-  name    = "testVM-private"
+  name    = "test vm private"
 }
 
 resource "abiquo_ip" "private" {
@@ -119,33 +116,33 @@ resource "abiquo_ip" "private" {
   ip      = "172.16.37.30"
 }
 
-resource "abiquo_lb" "test" {
-  virtualdatacenter = "${abiquo_vdc.test.id}"
+resource "abiquo_loadbalancer" "test" {
+  device            = "${abiquo_virtualdatacenter.test.device}"
   privatenetwork    = "${abiquo_private.test.id}"
-
-  name         = "testVM"
-  algorithm    = "ROUND_ROBIN"
-  routingrules = [
+  name              = "test vm"
+  internal          = true
+  algorithm         = "ROUND_ROBIN"
+  routingrules      = [
     { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
   ]
 }
 
-resource "abiquo_vapp" "test" {
-  virtualdatacenter = "${abiquo_vdc.test.id}"
-  name              = "testVM"
+resource "abiquo_virtualappliance" "test" {
+  virtualdatacenter = "${abiquo_virtualdatacenter.test.id}"
+  name              = "test vm"
 }
 
 data "abiquo_backup" "test" {
-  code     = "${abiquo_backup.test.code}"
+  code     = "${abiquo_backuppolicy.test.code}"
   location = "${data.abiquo_location.test.id}"
 }
 
 data "abiquo_ip" "public" {
-  pool = "${abiquo_vdc.test.purchased}"
+  pool = "${abiquo_virtualdatacenter.test.purchased}"
   ip   = "${abiquo_ip.public.ip}"
 }
 
 data "abiquo_ip" "external" {
-  pool = "${abiquo_vdc.test.externalips}"
+  pool = "${abiquo_virtualdatacenter.test.externalips}"
   ip   = "${abiquo_ip.external.ip}"
 }

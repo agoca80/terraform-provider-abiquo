@@ -34,10 +34,6 @@ func userNew(d *resourceData) core.Resource {
 	}
 }
 
-func userEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("enterprise")+"/users", "user")
-}
-
 func userRead(d *resourceData, resource core.Resource) (err error) {
 	user := resource.(*abiquo.User)
 	d.Set("active", user.Active)
@@ -48,11 +44,10 @@ func userRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceUser = &schema.Resource{
-	Schema: userSchema,
-	Read:   resourceRead(userNew, userRead, "user"),
-	Create: resourceCreate(userNew, nil, userRead, userEndpoint),
-	Update: resourceUpdate(userNew, nil, "user"),
-	Exists: resourceExists("user"),
-	Delete: resourceDelete,
+var user = &description{
+	Resource: &schema.Resource{Schema: userSchema},
+	dto:      userNew,
+	endpoint: endpointPath("enterprise", "/users"),
+	media:    "user",
+	read:     userRead,
 }

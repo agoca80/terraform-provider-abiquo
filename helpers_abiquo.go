@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/hilmapstructure"
+	"github.com/hashicorp/terraform/helper/schema"
 )
 
 func mapDecoder(m interface{}, i interface{}) interface{} {
@@ -17,4 +18,15 @@ func mapHrefs(links core.Links) (hrefs []interface{}) {
 		hrefs = append(hrefs, l.Href)
 	}
 	return
+}
+
+type method func(*resourceData) error
+
+func dataSource(s map[string]*schema.Schema, find method) *schema.Resource {
+	return &schema.Resource{
+		Schema: s,
+		Read: func(rd *schema.ResourceData, _ interface{}) error {
+			return find(newData(rd))
+		},
+	}
 }

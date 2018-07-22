@@ -43,10 +43,6 @@ func computeLoadDTO(d *resourceData) core.Resource {
 	return machineLoadRule
 }
 
-func computeLoadEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType("admin/rules/machineLoadLevel", "machineloadrule")
-}
-
 func computeLoadRead(d *resourceData, resource core.Resource) (err error) {
 	rule := resource.(*abiquo.MachineLoadRule)
 	d.Set("aggregated", rule.Aggregated)
@@ -60,11 +56,10 @@ func computeLoadRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceComputeLoad = &schema.Resource{
-	Schema: computeLoadSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("machineloadrule"),
-	Create: resourceCreate(computeLoadDTO, nil, computeLoadRead, computeLoadEndpoint),
-	Update: resourceUpdate(computeLoadDTO, nil, "machineloadrule"),
-	Read:   resourceRead(computeLoadDTO, computeLoadRead, "machineloadrule"),
+var machineloadrule = &description{
+	media:    "machineloadrule",
+	dto:      computeLoadDTO,
+	read:     computeLoadRead,
+	endpoint: endpointConst("admin/rules/machineLoadLevel"),
+	Resource: &schema.Resource{Schema: computeLoadSchema},
 }

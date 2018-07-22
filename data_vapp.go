@@ -15,14 +15,14 @@ var vappDataSchema = map[string]*schema.Schema{
 	"virtualdatacenter": attribute(required, link("virtualdatacenter")),
 }
 
-func vappDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	href := d.Get("virtualdatacenter").(string)
+func vappFind(d *resourceData) (err error) {
+	href := d.string("virtualdatacenter")
 	vdc := core.NewLinker(href, "virtualdatacenter").Walk()
 	if vdc == nil {
 		return fmt.Errorf("virtualdatacenter %q not found", href)
 	}
 
-	name := d.Get("name").(string)
+	name := d.string("name")
 	query := url.Values{"has": {name}}
 	vapps := vdc.Rel("virtualappliances").Collection(query)
 	vapp := vapps.Find(func(r core.Resource) bool {
@@ -34,9 +34,4 @@ func vappDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	d.SetId(vapp.URL())
 	return
-}
-
-var dataVapp = &schema.Resource{
-	Schema: vappDataSchema,
-	Read:   vappDataRead,
 }

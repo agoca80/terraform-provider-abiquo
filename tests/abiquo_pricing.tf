@@ -1,4 +1,4 @@
-resource "abiquo_pricing" "test" {
+resource "abiquo_pricingtemplate" "test" {
   currency               = "${abiquo_currency.test.id}"
   charging_period        = "DAY"
   deploy_message         = "test pricing"
@@ -15,7 +15,7 @@ resource "abiquo_pricing" "test" {
 
   datacenter {
     href = "${data.abiquo_datacenter.test.id}"
-    datastore_tier { href  = "${data.abiquo_dstier.test.id}", price = 2.3 }
+    datastore_tier { href  = "${data.abiquo_datastoretier.test.id}", price = 2.3 }
     tier           { href  = "${data.abiquo_tier.test.id}",   price = 4.5 }
     firewall = 1.2
   }
@@ -25,7 +25,7 @@ data "abiquo_datacenter" "test" {
   name = "datacenter 1"
 }
 
-data "abiquo_dstier" "test" {
+data "abiquo_datastoretier" "test" {
   datacenter = "${data.abiquo_datacenter.test.id}"
   name       = "Default Tier"
 }

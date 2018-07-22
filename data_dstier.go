@@ -14,14 +14,14 @@ var dstierDataSchema = map[string]*schema.Schema{
 	"datacenter": attribute(required, link("datacenter")),
 }
 
-func dstierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	href := d.Get("datacenter").(string)
+func dstierFind(d *resourceData) (err error) {
+	href := d.string("datacenter")
 	datacenter := core.NewLinker(href, "datacenter").Walk()
 	if datacenter == nil {
 		return fmt.Errorf("datacenter not found: %q", href)
 	}
 
-	name := d.Get("name").(string)
+	name := d.string("name")
 	dstiers := datacenter.Rel("datastoretiers").Collection(nil)
 	dstier := dstiers.Find(func(r core.Resource) bool {
 		return r.(*abiquo.DatastoreTier).Name == name
@@ -32,9 +32,4 @@ func dstierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	d.SetId(dstier.URL())
 	return
-}
-
-var dataDstier = &schema.Resource{
-	Schema: dstierDataSchema,
-	Read:   dstierDataRead,
 }

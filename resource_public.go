@@ -29,10 +29,6 @@ func publicNew(d *resourceData) core.Resource {
 	return public
 }
 
-func publicEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("datacenter")+"/network", "vlan")
-}
-
 // PENDING: Public networks are not supossed to change, but ...
 func publicRead(d *resourceData, resource core.Resource) (e error) {
 	network := resource.(*abiquo.Network)
@@ -41,10 +37,11 @@ func publicRead(d *resourceData, resource core.Resource) (e error) {
 	return
 }
 
-var resourcePublic = &schema.Resource{
-	Schema: publicSchema,
-	Delete: resourceDelete,
-	Update: resourceUpdate(publicNew, nil, "vlan"),
-	Create: resourceCreate(publicNew, nil, publicRead, publicEndpoint),
-	Read:   resourceRead(publicNew, publicRead, "vlan"),
+var public = &description{
+	name:     "public",
+	Resource: &schema.Resource{Schema: publicSchema},
+	dto:      publicNew,
+	endpoint: endpointPath("datacenter", "/network"),
+	media:    "vlan",
+	read:     publicRead,
 }

@@ -1,10 +1,10 @@
-resource "abiquo_vmt" "test" {
+resource "abiquo_virtualmachinetemplate" "test" {
   cpu         = 1
   ram         = 64
   repo        = "${data.abiquo_repo.repo.id}"
   file        = "${var.test_ova}"
-  name        = "test vmt"
-  description = "test vmt"
+  name        = "test virtualmachinetemplate"
+  description = "test virtualmachinetemplate"
 }
 
 variable "test_ova" {  }

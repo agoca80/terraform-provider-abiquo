@@ -1,21 +1,20 @@
-resource "abiquo_lb" "test" {
-  virtualdatacenter = "${data.abiquo_vdc.test.id}"
-  privatenetwork    = "${abiquo_private.test.id}"
-
-  name         = "test lb"
-  internal     = false
-  algorithm    = "ROUND_ROBIN"
-  routingrules = [
+resource "abiquo_loadbalancer" "test" {
+  device         = "${data.abiquo_virtualdatacenter.test.device}"
+  privatenetwork = "${abiquo_private.test.id}"
+  name           = "test lb"
+  internal       = false
+  algorithm      = "ROUND_ROBIN"
+  routingrules   = [
     { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
   ]
 }
 
 data "abiquo_location"   "test" { name = "datacenter 1" }
 data "abiquo_enterprise" "test" { name = "Abiquo" }
-data "abiquo_vdc"        "test"   { name = "tests" }
+data "abiquo_virtualdatacenter"        "test"   { name = "tests" }
 
 resource "abiquo_private" "test" {
-  virtualdatacenter = "${data.abiquo_vdc.test.id}"
+  virtualdatacenter = "${data.abiquo_virtualdatacenter.test.id}"
 
   # XXX workaround ABICLOUDPREMIUM-9660
   lifecycle = { ignore_changes = [ "dns1", "dns2" ] }

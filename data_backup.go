@@ -14,15 +14,15 @@ var backupDataSchema = map[string]*schema.Schema{
 	"location": attribute(required, link("location")),
 }
 
-func backupDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	location := d.Get("location").(string)
+func backupFind(d *resourceData) (err error) {
+	location := d.string("location")
 	endpoint := core.NewLinkType(location, "datacenter")
 	resource := endpoint.Walk()
 	if resource == nil {
 		return fmt.Errorf("location %q does not exist", location)
 	}
 
-	code := d.Get("code").(string)
+	code := d.string("code")
 	backups := resource.Rel("backuppolicies").Collection(nil)
 	backup := backups.Find(func(r core.Resource) bool {
 		return r.(*abiquo.BackupPolicy).Code == code
@@ -33,9 +33,4 @@ func backupDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(backup.URL())
 
 	return
-}
-
-var dataBackup = &schema.Resource{
-	Schema: backupDataSchema,
-	Read:   backupDataRead,
 }

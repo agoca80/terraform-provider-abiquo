@@ -7,68 +7,121 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-type (
-	factory        func(*resourceData) core.Resource
-	resourceMethod func(*resourceData, core.Resource) error
-)
-
-func resourceDelete(d *schema.ResourceData, m interface{}) (err error) {
-	return core.Remove(newResourceData(d, ""))
+type description struct {
+	media    string
+	name     string
+	dto      func(*resourceData) core.Resource
+	endpoint func(*resourceData) string
+	create   func(*resourceData, core.Resource) error
+	read     func(*resourceData, core.Resource) error
+	update   func(*resourceData, core.Resource) error
+	*schema.Resource
 }
 
-func resourceExists(media string) schema.ExistsFunc {
-	return func(d *schema.ResourceData, m interface{}) (ok bool, err error) {
-		return core.Read(newResourceData(d, media), nil) == nil, nil
+func (d *description) readFn() schema.ReadFunc {
+	return func(rd *schema.ResourceData, _ interface{}) (err error) {
+		data := newDataType(rd, d.media)
+		resource := core.Factory(d.media)
+		err = core.Read(data, resource)
+		if err != nil {
+			return fmt.Errorf("readFn: %v", err)
+		}
+		return d.read(data, resource)
 	}
 }
 
-func resourceCreate(factory factory, create resourceMethod, read resourceMethod, endpoint func(*resourceData) *core.Link) schema.CreateFunc {
-	return func(rd *schema.ResourceData, m interface{}) (err error) {
-		d := newResourceData(rd, "")
+func (d *description) existsFn() schema.ExistsFunc {
+	return func(rd *schema.ResourceData, _ interface{}) (ok bool, err error) {
+		return core.Read(newDataType(rd, d.media), nil) == nil, nil
+	}
+}
 
-		resource := factory(d)
+func (d *description) updateFn() schema.UpdateFunc {
+	return func(rd *schema.ResourceData, m interface{}) (err error) {
+		data := newDataType(rd, d.media)
+		resource := d.dto(data)
+		err = core.Update(data, resource)
+		if err == nil && d.update != nil {
+			err = d.update(data, resource)
+		}
+		return
+	}
+}
+
+func (d *description) createFn() schema.CreateFunc {
+	return func(rd *schema.ResourceData, _ interface{}) (err error) {
+		data := newData(rd)
+		resource := d.dto(data)
 		if resource == nil {
-			return fmt.Errorf("resourceCreate: resource could not be created")
+			return fmt.Errorf("createFn: resource could not be created")
 		}
 
-		if err = core.Create(endpoint(d), resource); err != nil {
+		endpoint := core.NewLinker(d.endpoint(data), d.media)
+		if err = core.Create(endpoint, resource); err != nil {
 			return
 		}
-		d.SetId(resource.URL())
-		if create != nil {
-			err = create(d, resource)
+		data.SetId(resource.URL())
+		if d.create != nil {
+			err = d.create(data, resource)
 		}
 
-		if err == nil && read != nil {
-			err = read(d, resource)
-		}
-
-		return
-	}
-}
-
-func resourceUpdate(factory factory, update resourceMethod, media string) schema.UpdateFunc {
-	return func(rd *schema.ResourceData, m interface{}) (err error) {
-		d := newResourceData(rd, media)
-		resource := factory(d)
-
-		if err = core.Update(d, resource); err == nil && update != nil {
-			err = update(d, resource)
+		if err == nil {
+			err = d.read(data, resource)
 		}
 
 		return
 	}
 }
 
-func resourceRead(factory factory, read resourceMethod, media string) schema.ReadFunc {
-	return func(rd *schema.ResourceData, m interface{}) (err error) {
-		d := newResourceData(rd, media)
-		resource := factory(d)
-		if resource == nil {
-			err = fmt.Errorf("resourceRead: could not create %v resource", media)
-		} else if err = core.Read(d, resource); err == nil {
-			err = read(d, resource)
-		}
-		return
+func resourceDelete(d *schema.ResourceData, m interface{}) (err error) {
+	return core.Remove(newDataType(d, ""))
+}
+
+func endpointConst(href string) func(*resourceData) string {
+	return func(data *resourceData) string {
+		return href
 	}
+}
+
+func endpointPath(base, path string) func(*resourceData) string {
+	return func(data *resourceData) string {
+		return data.string(base) + path
+	}
+}
+
+func (d *description) resource() (r *schema.Resource) {
+	r = d.Resource
+
+	if r.Create == nil {
+		r.Create = d.createFn()
+	}
+
+	if r.Exists == nil {
+		r.Exists = d.existsFn()
+	}
+
+	if r.Read == nil {
+		r.Read = d.readFn()
+	}
+
+	if r.Delete == nil {
+		r.Delete = resourceDelete
+	}
+
+	if r.Update == nil {
+		for _, s := range r.Schema {
+			if s.ForceNew == false && (s.Computed == false || s.Optional == true) {
+				r.Update = d.updateFn()
+				break
+			}
+		}
+	}
+	return
+}
+
+func (d *description) Name() string {
+	if d.name == "" {
+		return "abiquo_" + d.media
+	}
+	return "abiquo_" + d.name
 }

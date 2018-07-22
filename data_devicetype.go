@@ -13,8 +13,8 @@ var deviceTypeDataSchema = map[string]*schema.Schema{
 	"name": attribute(required, text),
 }
 
-func deviceTypeDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	name := d.Get("name").(string)
+func deviceTypeFind(d *resourceData) (err error) {
+	name := d.string("name")
 	resource := abiquo.DeviceTypes(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.DeviceType).Name == name
 	})
@@ -23,9 +23,4 @@ func deviceTypeDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	}
 	d.SetId(resource.URL())
 	return
-}
-
-var dataDeviceType = &schema.Resource{
-	Schema: deviceTypeDataSchema,
-	Read:   deviceTypeDataRead,
 }

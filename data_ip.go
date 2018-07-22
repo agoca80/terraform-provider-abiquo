@@ -26,9 +26,9 @@ func ipsMedia(pool string) (media string) {
 	return
 }
 
-func ipDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	address := d.Get("ip").(string)
-	pool := d.Get("pool").(string)
+func ipFind(d *resourceData) (err error) {
+	address := d.string("ip")
+	pool := d.string("pool")
 	query := url.Values{"hasIP": {address}}
 	ip := core.NewLinkType(pool, ipsMedia(pool)).Collection(query).First()
 	if ip == nil {
@@ -37,9 +37,4 @@ func ipDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	d.SetId(ip.URL())
 	return
-}
-
-var dataIp = &schema.Resource{
-	Schema: ipDataSchema,
-	Read:   ipDataRead,
 }

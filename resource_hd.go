@@ -48,15 +48,14 @@ func hdRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-func hdEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("virtualdatacenter")+"/disks", "harddisk")
-}
-
-var resourceHd = &schema.Resource{
-	Schema: hdSchema,
-	Update: schema.Noop,
-	Delete: schema.Noop,
-	Create: resourceCreate(hdNew, nil, hdRead, hdEndpoint),
-	Exists: resourceExists("harddisk"),
-	Read:   resourceRead(hdNew, hdRead, "harddisk"),
+var harddisk = &description{
+	dto:      hdNew,
+	endpoint: endpointPath("virtualdatacenter", "/disks"),
+	media:    "harddisk",
+	read:     hdRead,
+	Resource: &schema.Resource{
+		Schema: hdSchema,
+		Update: schema.Noop,
+		Delete: schema.Noop,
+	},
 }

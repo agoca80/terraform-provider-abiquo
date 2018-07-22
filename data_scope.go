@@ -12,9 +12,9 @@ var scopeDataSchema = map[string]*schema.Schema{
 	"name": attribute(required, text),
 }
 
-func scopeDataRead(d *schema.ResourceData, meta interface{}) (err error) {
+func scopeFind(d *resourceData) (err error) {
 	scope := abiquo.Scopes(nil).Find(func(r core.Resource) bool {
-		return r.(*abiquo.Scope).Name == d.Get("name").(string)
+		return r.(*abiquo.Scope).Name == d.string("name")
 	})
 	if scope == nil {
 		return fmt.Errorf("scope %q was not found", d.Get("name"))
@@ -22,9 +22,4 @@ func scopeDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	d.SetId(scope.URL())
 	return
-}
-
-var dataScope = &schema.Resource{
-	Schema: scopeDataSchema,
-	Read:   scopeDataRead,
 }

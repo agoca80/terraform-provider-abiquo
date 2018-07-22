@@ -20,21 +20,16 @@ func vappNew(d *resourceData) core.Resource {
 	}
 }
 
-func vappEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("virtualdatacenter")+"/virtualappliances", "virtualappliance")
-}
-
 func vappRead(d *resourceData, resource core.Resource) (err error) {
 	vapp := resource.(*abiquo.VirtualAppliance)
 	d.Set("name", vapp.Name)
 	return
 }
 
-var resourceVapp = &schema.Resource{
-	Schema: vappSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("virtualappliance"),
-	Create: resourceCreate(vappNew, nil, vappRead, vappEndpoint),
-	Update: resourceUpdate(vappNew, nil, "virtualappliance"),
-	Read:   resourceRead(vappNew, vappRead, "virtualappliance"),
+var virtualappliance = &description{
+	Resource: &schema.Resource{Schema: vappSchema},
+	dto:      vappNew,
+	endpoint: endpointPath("virtualdatacenter", "/virtualappliances"),
+	media:    "virtualappliance",
+	read:     vappRead,
 }

@@ -13,9 +13,9 @@ var templateDataSchema = map[string]*schema.Schema{
 	"name":      attribute(required, text),
 }
 
-func templateRead(d *schema.ResourceData, meta interface{}) (err error) {
-	name := d.Get("name").(string)
-	templates := d.Get("templates").(string)
+func templateFind(d *resourceData) (err error) {
+	name := d.string("name")
+	templates := d.string("templates")
 	endpoint := core.NewLinker(templates, "virtualmachinetemplates")
 	template := endpoint.Collection(nil).Find(func(r core.Resource) bool {
 		t := r.(*abiquo.VirtualMachineTemplate)
@@ -26,9 +26,4 @@ func templateRead(d *schema.ResourceData, meta interface{}) (err error) {
 	}
 	d.SetId(template.URL())
 	return
-}
-
-var dataTemplate = &schema.Resource{
-	Schema: templateDataSchema,
-	Read:   templateRead,
 }

@@ -66,10 +66,12 @@ func ipExists(rd *schema.ResourceData, meta interface{}) (ok bool, err error) {
 	return err == nil, err
 }
 
-var resourceIp = &schema.Resource{
-	Schema: ipSchema,
-	Delete: resourceDelete,
-	Exists: ipExists,
-	Create: ipCreate,
-	Read:   ipRead,
+var ipAddress = &description{
+	name: "ip",
+	Resource: &schema.Resource{
+		Schema: ipSchema,
+		Exists: ipExists,
+		Create: ipCreate,
+		Read:   ipRead,
+	},
 }

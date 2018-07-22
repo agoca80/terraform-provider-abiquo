@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var dstierSchema = map[string]*schema.Schema{
+var datastoretierSchema = map[string]*schema.Schema{
 	"datacenter":  endpoint("datacenter"),
 	"description": attribute(required, text),
 	"enabled":     attribute(required, boolean),
@@ -14,7 +14,7 @@ var dstierSchema = map[string]*schema.Schema{
 	"policy":      attribute(required, label([]string{"PERFORMANCE", "PROGRESSIVE"})),
 }
 
-func dstierDTO(d *resourceData) core.Resource {
+func datastoretierDTO(d *resourceData) core.Resource {
 	return &abiquo.DatastoreTier{
 		Description: d.string("description"),
 		Enabled:     d.boolean("enabled"),
@@ -23,25 +23,20 @@ func dstierDTO(d *resourceData) core.Resource {
 	}
 }
 
-func dstierEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("datacenter")+"/datastoretiers", "datastoretier")
-}
-
-func dstierRead(d *resourceData, resource core.Resource) (err error) {
-	dstier := resource.(*abiquo.DatastoreTier)
-	d.Set("description", dstier.Description)
-	d.Set("enabled", dstier.Enabled)
-	d.Set("name", dstier.Name)
-	d.Set("policy", dstier.Policy)
-	d.Set("datacenter", dstier.Rel("datacenter").URL())
+func datastoretierRead(d *resourceData, resource core.Resource) (err error) {
+	datastoretier := resource.(*abiquo.DatastoreTier)
+	d.Set("description", datastoretier.Description)
+	d.Set("enabled", datastoretier.Enabled)
+	d.Set("name", datastoretier.Name)
+	d.Set("policy", datastoretier.Policy)
+	d.Set("datacenter", datastoretier.Rel("datacenter").URL())
 	return
 }
 
-var resourceDstier = &schema.Resource{
-	Schema: dstierSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("datastoretier"),
-	Create: resourceCreate(dstierDTO, nil, dstierRead, dstierEndpoint),
-	Update: resourceUpdate(dstierDTO, nil, "datastoretier"),
-	Read:   resourceRead(dstierDTO, dstierRead, "datastoretier"),
+var datastoretier = &description{
+	media:    "datastoretier",
+	dto:      datastoretierDTO,
+	read:     datastoretierRead,
+	endpoint: endpointPath("datacenter", "/datastoretiers"),
+	Resource: &schema.Resource{Schema: datastoretierSchema},
 }

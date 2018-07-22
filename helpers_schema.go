@@ -19,6 +19,7 @@ func sensitive(s *schema.Schema) { s.Sensitive = true }
 func text(s *schema.Schema)    { s.Type = schema.TypeString }
 func integer(s *schema.Schema) { s.Type = schema.TypeInt }
 func boolean(s *schema.Schema) { s.Type = schema.TypeBool }
+func float(s *schema.Schema)   { s.Type = schema.TypeFloat }
 
 func aggregate(e interface{}, t schema.ValueType, f schema.SchemaSetFunc) func(*schema.Schema) {
 	return func(s *schema.Schema) {
@@ -75,8 +76,8 @@ func email(s *schema.Schema) {
 }
 
 func price(s *schema.Schema) {
-	s.Type = schema.TypeFloat
-	s.Optional = true
+	float(s)
+	optional(s)
 	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {
 		if 0 > d.(float64) {
 			errs = append(errs, fmt.Errorf("price should be 0 or greater"))

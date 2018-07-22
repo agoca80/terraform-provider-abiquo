@@ -6,20 +6,18 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var actionPlanEntryResource = &schema.Resource{
-	Schema: map[string]*schema.Schema{
-		"parameter":     attribute(optional, text),
-		"parametertype": attribute(optional, text),
-		"type":          attribute(required, text),
-	},
-}
-
 var actionPlanSchema = map[string]*schema.Schema{
 	"virtualmachine": endpoint("virtualmachine"),
 	"name":           attribute(required, text),
 	"description":    attribute(required, text),
 	"triggers":       attribute(optional, list(link("alarm"))),
-	"entries":        attribute(required, min(1), list(actionPlanEntryResource)),
+	"entries": attribute(required, min(1), list(&schema.Resource{
+		Schema: map[string]*schema.Schema{
+			"parameter":     attribute(optional, text),
+			"parametertype": attribute(optional, text),
+			"type":          attribute(required, text),
+		},
+	})),
 }
 
 func actionPlanNew(d *resourceData) core.Resource {
@@ -35,10 +33,6 @@ func actionPlanNew(d *resourceData) core.Resource {
 		Description: d.string("description"),
 		Entries:     entries,
 	}
-}
-
-func actionPlanEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("virtualmachine")+"/actionplans", "virtualmachineactionplan")
 }
 
 func actionPlanRead(d *resourceData, resource core.Resource) (err error) {
@@ -70,11 +64,10 @@ func actionPlanCreate(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourcePlan = &schema.Resource{
-	Schema: actionPlanSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("virtualmachineactionplan"),
-	Update: resourceUpdate(actionPlanNew, nil, "virtualmachineactionplan"),
-	Create: resourceCreate(actionPlanNew, actionPlanCreate, actionPlanRead, actionPlanEndpoint),
-	Read:   resourceRead(actionPlanNew, actionPlanRead, "virtualmachineactionplan"),
+var virtualmachineactionplan = &description{
+	media:    "virtualmachineactionplan",
+	dto:      actionPlanNew,
+	read:     actionPlanRead,
+	endpoint: endpointPath("virtualmachine", "/actionplans"),
+	Resource: &schema.Resource{Schema: actionPlanSchema},
 }

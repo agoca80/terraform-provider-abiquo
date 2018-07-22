@@ -30,10 +30,6 @@ func costCodeNew(d *resourceData) core.Resource {
 	}
 }
 
-func costCodeEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType("config/costcodes", "costcode")
-}
-
 func costCodeRead(d *resourceData, resource core.Resource) (err error) {
 	costCode := resource.(*abiquo.CostCode)
 	currency := []interface{}{}
@@ -49,11 +45,10 @@ func costCodeRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceCostcode = &schema.Resource{
-	Schema: costCodeSchema,
-	Read:   resourceRead(costCodeNew, costCodeRead, "costcode"),
-	Update: resourceUpdate(costCodeNew, nil, "costcode"),
-	Exists: resourceExists("costcode"),
-	Delete: resourceDelete,
-	Create: resourceCreate(costCodeNew, nil, costCodeRead, costCodeEndpoint),
+var costcode = &description{
+	Resource: &schema.Resource{Schema: costCodeSchema},
+	dto:      costCodeNew,
+	endpoint: endpointConst("config/costcodes"),
+	media:    "costcode",
+	read:     costCodeRead,
 }

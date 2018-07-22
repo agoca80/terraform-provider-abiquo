@@ -9,7 +9,7 @@ resource "abiquo_machine" "test" {
 
   datastore {
     uuid   = "${var.test_kvm_datastore}"
-    dstier = "${data.abiquo_dstier.test.id}"
+    dstier = "${data.abiquo_datastoretier.test.id}"
   }
 
   lifecycle = {
@@ -32,7 +32,7 @@ data "abiquo_nst" "test" {
   name       = "Service Network"
 }
 
-data "abiquo_dstier" "test" {
+data "abiquo_datastoretier" "test" {
   datacenter = "${data.abiquo_datacenter.test.id}"
   name       = "Default Tier"
 }

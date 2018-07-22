@@ -48,10 +48,6 @@ func datacenterNew(d *resourceData) core.Resource {
 	return datacenter
 }
 
-func datacenterEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType("admin/datacenters", "datacenter")
-}
-
 func datacenterRead(d *resourceData, resource core.Resource) (err error) {
 	datacenter := resource.(*abiquo.Datacenter)
 	d.Set("name", datacenter.Name)
@@ -63,11 +59,15 @@ func datacenterRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceDatacenter = &schema.Resource{
-	Schema: datacenterSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("datacenter"),
-	Create: resourceCreate(datacenterNew, nil, datacenterRead, datacenterEndpoint),
-	Update: resourceUpdate(datacenterNew, nil, "datacenter"),
-	Read:   resourceRead(datacenterNew, datacenterRead, "datacenter"),
+// Pending
+// - It is not possible to create datacenters with already existing rss
+// - It is not possible to create datacenters without rss
+// - Test is pending
+
+var datacenter = &description{
+	Resource: &schema.Resource{Schema: datacenterSchema},
+	dto:      datacenterNew,
+	endpoint: endpointConst("admin/datacenters"),
+	media:    "datacenter",
+	read:     datacenterRead,
 }

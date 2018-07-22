@@ -28,6 +28,7 @@ var vdcSchema = map[string]*schema.Schema{
 	"location":   attribute(required, forceNew, link("location")),
 	"publicips":  attribute(optional, set(ip)),
 	// Computed links
+	"device":           attribute(computed, text),
 	"externalips":      attribute(computed, text),
 	"externalnetworks": attribute(computed, text),
 	"network":          attribute(computed, text),
@@ -98,14 +99,10 @@ func vdcNew(d *resourceData) core.Resource {
 	}
 }
 
-func vdcEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType("cloud/virtualdatacenters", "virtualdatacenter")
-}
-
 func vdcCreate(d *resourceData, resource core.Resource) (err error) {
-	// Computed links
-	d.Set("externalips", resource.Rel("externalips").Href)
-	d.Set("externalnetworks", resource.Rel("externalnetworks").Href)
+	d.Set("device", resource.Rel("device").URL())
+	d.Set("externalips", resource.Rel("externalips").URL())
+	d.Set("externalnetworks", resource.Rel("externalnetworks").URL())
 	d.Set("network", vdcNetwork(resource))
 	d.Set("privatenetworks", resource.Rel("privatenetworks").Href)
 	d.Set("topurchase", resource.Rel("topurchase").Href)
@@ -117,53 +114,45 @@ func vdcCreate(d *resourceData, resource core.Resource) (err error) {
 }
 
 func vdcUpdate(d *resourceData, resource core.Resource) (err error) {
-	if err = purchaseIPs(resource, d.set("publicips")); err == nil {
-		err = releaseIPs(resource, d.set("publicips"))
+	if d.HasChange("publicips") {
+		if err = purchaseIPs(resource, d.set("publicips")); err == nil {
+			err = releaseIPs(resource, d.set("publicips"))
+		}
 	}
 	return
 }
 
 func vdcRead(d *resourceData, resource core.Resource) (err error) {
-	vdc := resource.(*abiquo.VirtualDatacenter)
-	d.Set("name", vdc.Name)
-	// Soft limits
-	d.Set("cpusoft", vdc.CPUSoft)
-	d.Set("disksoft", vdc.DiskSoft)
-	d.Set("publicsoft", vdc.PublicHard)
-	d.Set("ramsoft", vdc.RAMSoft)
-	d.Set("storagesoft", vdc.StorageHard)
-	d.Set("vlansoft", vdc.VLANSoft)
-	// Hard limits
-	d.Set("cpuhard", vdc.CPUHard)
-	d.Set("diskhard", vdc.DiskHard)
-	d.Set("publichard", vdc.PublicHard)
-	d.Set("ramhard", vdc.RAMSoft)
-	d.Set("storagehard", vdc.StorageHard)
-	d.Set("vlanhard", vdc.VLANSoft)
+	virtualdatacenter := resource.(*abiquo.VirtualDatacenter)
 	// publicips
 	publicips := schema.NewSet(schema.HashString, nil)
-	purchased := vdc.Rel("purchased").Collection(nil).List()
-	for _, resource := range purchased {
-		debug.Println("vdcRead: purchased ", resource.(*abiquo.IP).IP)
-		publicips.Add(resource.(*abiquo.IP).IP)
-	}
+	virtualdatacenter.Rel("purchased").Collection(nil).List().Map(func(resource core.Resource) {
+		publicips.Add(resource.Link().Title)
+	})
+
+	d.Set("name", virtualdatacenter.Name)
 	d.Set("publicips", publicips)
-
+	d.Set("cpuhard", virtualdatacenter.CPUHard)
+	d.Set("cpusoft", virtualdatacenter.CPUSoft)
+	d.Set("diskhard", virtualdatacenter.DiskHard)
+	d.Set("disksoft", virtualdatacenter.DiskSoft)
+	d.Set("publichard", virtualdatacenter.PublicHard)
+	d.Set("publicsoft", virtualdatacenter.PublicSoft)
+	d.Set("ramhard", virtualdatacenter.RAMHard)
+	d.Set("ramsoft", virtualdatacenter.RAMSoft)
+	d.Set("storagehard", virtualdatacenter.StorageHard)
+	d.Set("storagesoft", virtualdatacenter.StorageSoft)
+	d.Set("vlansoft", virtualdatacenter.VLANSoft)
+	d.Set("vlanhard", virtualdatacenter.VLANHard)
 	return
 }
 
-func vdcDevice(link *core.Link) (device core.Resource) {
-	if vdc := link.Walk(); vdc != nil {
-		device = vdc.Walk("device")
-	}
-	return
-}
-
-var resourceVdc = &schema.Resource{
-	Schema: vdcSchema,
-	Delete: resourceDelete,
-	Create: resourceCreate(vdcNew, vdcCreate, vdcRead, vdcEndpoint),
-	Exists: resourceExists("virtualdatacenter"),
-	Update: resourceUpdate(vdcNew, vdcUpdate, "virtualdatacenter"),
-	Read:   resourceRead(vdcNew, vdcRead, "virtualdatacenter"),
+var virtualdatacenter = &description{
+	media:    "virtualdatacenter",
+	dto:      vdcNew,
+	read:     vdcRead,
+	update:   vdcUpdate,
+	create:   vdcCreate,
+	endpoint: endpointConst("cloud/virtualdatacenters"),
+	Resource: &schema.Resource{Schema: vdcSchema},
 }

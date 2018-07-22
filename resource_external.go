@@ -9,8 +9,8 @@ import (
 var externalSchema = map[string]*schema.Schema{
 	"datacenter":         endpoint("datacenter"),
 	"address":            attribute(required, forceNew, ip),
-	"tag":                attribute(required, forceNew, natural),
-	"mask":               attribute(required, forceNew, natural),
+	"tag":                attribute(required, forceNew, positive),
+	"mask":               attribute(required, forceNew, positive),
 	"name":               attribute(required, text),
 	"gateway":            attribute(required, ip),
 	"dns1":               attribute(optional, ip),
@@ -31,10 +31,6 @@ func externalNew(d *resourceData) core.Resource {
 	return network
 }
 
-func externalEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("datacenter")+"/network", "vlan")
-}
-
 func externalRead(d *resourceData, resource core.Resource) (e error) {
 	network := resource.(*abiquo.Network)
 	networkRead(d, network)
@@ -44,11 +40,11 @@ func externalRead(d *resourceData, resource core.Resource) (e error) {
 	return
 }
 
-var resourceExternal = &schema.Resource{
-	Schema: externalSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("vlan"),
-	Update: resourceUpdate(externalNew, nil, "vlan"),
-	Create: resourceCreate(externalNew, nil, externalRead, externalEndpoint),
-	Read:   resourceRead(externalNew, externalRead, "vlan"),
+var external = &description{
+	name:     "external",
+	Resource: &schema.Resource{Schema: externalSchema},
+	dto:      externalNew,
+	endpoint: endpointPath("datacenter", "/network"),
+	media:    "vlan",
+	read:     externalRead,
 }

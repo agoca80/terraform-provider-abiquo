@@ -14,8 +14,8 @@ var datacenterDataSchema = map[string]*schema.Schema{
 	"tiers":   attribute(computed, text),
 }
 
-func datacenterDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	name := d.Get("name").(string)
+func datacenterFind(d *resourceData) (err error) {
+	name := d.string("name")
 	datacenter := abiquo.Datacenters(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.Datacenter).Name == name
 	})
@@ -26,9 +26,4 @@ func datacenterDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.Set("network", datacenter.Rel("network").Href)
 	d.Set("tiers", datacenter.Rel("tiers").Href)
 	return
-}
-
-var dataDatacenter = &schema.Resource{
-	Schema: datacenterDataSchema,
-	Read:   datacenterDataRead,
 }

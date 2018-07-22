@@ -1,10 +1,8 @@
-resource "abiquo_backup" "test" {
-  # endpoint
+resource "abiquo_backuppolicy" "test" {
   datacenter     = "${data.abiquo_datacenter.test.id}"
-
-  code           = "testAccBackupBasic (required)"
-  name           = "testAccBackupBasic (required)"
-  description    = "testAccBackupBasic (optional)"
+  code           = "test backuppolicy"
+# description    = "test backuppolicy"
+  name           = "test backuppolicy"
   configurations = [
     { type = "COMPLETE", subtype = "HOURLY", time = "2" }
   ]

@@ -45,7 +45,7 @@ var machineSchema = map[string]*schema.Schema{
 }
 
 func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
-	d := newResourceData(rd, "machine")
+	d := newDataType(rd, "machine")
 	definition := d.string("definition")
 	machine := new(abiquo.Machine)
 	if err = json.Unmarshal([]byte(definition), machine); err != nil {
@@ -93,14 +93,12 @@ func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
 	return
 }
 
-func machineUpdate(rd *schema.ResourceData, _ interface{}) (err error) { return }
-func machineRead(rd *schema.ResourceData, _ interface{}) (err error)   { return }
-
-var resourceMachine = &schema.Resource{
-	Schema: machineSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("machine"),
-	Create: machineCreate,
-	Update: machineUpdate,
-	Read:   machineRead,
+var machine = &description{
+	media: "machine",
+	Resource: &schema.Resource{
+		Schema: machineSchema,
+		Create: machineCreate,
+		Update: schema.Noop,
+		Read:   schema.Noop,
+	},
 }

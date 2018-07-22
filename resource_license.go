@@ -19,10 +19,6 @@ func licenseNew(d *resourceData) core.Resource {
 	}
 }
 
-func licenseEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType("config/licenses", "license")
-}
-
 func licenseRead(d *resourceData, resource core.Resource) (err error) {
 	license := resource.(*abiquo.License)
 	d.Set("id", license.ID)
@@ -33,10 +29,12 @@ func licenseRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceLicense = &schema.Resource{
-	Schema: licenseSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("license"),
-	Create: resourceCreate(licenseNew, nil, licenseRead, licenseEndpoint),
-	Read:   resourceRead(licenseNew, licenseRead, "license"),
+var license = &description{
+	dto:      licenseNew,
+	endpoint: endpointConst("config/licenses"),
+	media:    "license",
+	read:     licenseRead,
+	Resource: &schema.Resource{
+		Schema: licenseSchema,
+	},
 }

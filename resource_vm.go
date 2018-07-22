@@ -45,10 +45,6 @@ func vmNew(d *resourceData) core.Resource {
 	}
 }
 
-func vmEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("virtualappliance")+"/virtualmachines", "virtualmachine")
-}
-
 func vmReconfigure(vm *abiquo.VirtualMachine, d *resourceData) (err error) {
 	// Update metadata
 	if bootstrap, ok := d.GetOk("bootstrap"); ok {
@@ -148,13 +144,13 @@ func vmRead(d *resourceData, resource core.Resource) (err error) {
 }
 
 func vmUpdate(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "virtualmachine")
+	d := newDataType(rd, "virtualmachine")
 	vm := vmNew(d).(*abiquo.VirtualMachine)
 	return vm.Reconfigure()
 }
 
 func vmDelete(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "virtualmachine")
+	d := newDataType(rd, "virtualmachine")
 	resource := d.Walk()
 	if resource == nil {
 		return
@@ -178,10 +174,13 @@ func vmDelete(rd *schema.ResourceData, m interface{}) (err error) {
 	return core.Remove(vm)
 }
 
-var resourceVm = &schema.Resource{
-	Schema: vmSchema,
-	Read:   resourceRead(vmNew, vmRead, "virtualmachine"),
-	Exists: resourceExists("virtualmachine"),
-	Delete: vmDelete,
-	Create: resourceCreate(vmNew, vmCreate, vmRead, vmEndpoint),
+var virtualmachine = &description{
+	dto:      vmNew,
+	endpoint: endpointPath("virtualappliance", "/virtualmachines"),
+	media:    "virtualmachine",
+	read:     vmRead,
+	Resource: &schema.Resource{
+		Schema: vmSchema,
+		Delete: vmDelete,
+	},
 }

@@ -37,10 +37,6 @@ func storageLoadDTO(d *resourceData) core.Resource {
 	return storageLoadRule
 }
 
-func storageLoadEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType("admin/rules/datastoreloadlevel", "datastoreloadrule")
-}
-
 func storageLoadRead(d *resourceData, resource core.Resource) (err error) {
 	rule := resource.(*abiquo.DatastoreLoadRule)
 	d.Set("load", rule.StorageLoadPercentage)
@@ -52,11 +48,10 @@ func storageLoadRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceStorageLoad = &schema.Resource{
-	Schema: storageLoadSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("datastoreloadrule"),
-	Create: resourceCreate(storageLoadDTO, nil, storageLoadRead, storageLoadEndpoint),
-	Update: resourceUpdate(storageLoadDTO, nil, "datastoreloadrule"),
-	Read:   resourceRead(storageLoadDTO, storageLoadRead, "datastoreloadrule"),
+var datastoreloadrule = &description{
+	Resource: &schema.Resource{Schema: storageLoadSchema},
+	dto:      storageLoadDTO,
+	endpoint: endpointConst("admin/rules/datastoreloadlevel"),
+	media:    "datastoreloadrule",
+	read:     storageLoadRead,
 }

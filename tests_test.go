@@ -10,168 +10,83 @@ import (
 	"github.com/hashicorp/terraform/terraform"
 )
 
-func checkDestroy(name, media string) resource.TestCheckFunc {
+func checkDestroy(d *description) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
 		for _, rs := range s.RootModule().Resources {
-			if rs.Type != name {
+			if rs.Type != d.Name() {
 				continue
 			}
 			href := rs.Primary.Attributes["id"]
-			endpoint := core.NewLinkType(href, media)
+			endpoint := core.NewLinkType(href, d.media)
 			if err := core.Read(endpoint, nil); err == nil {
-				return fmt.Errorf("%s.test still exists: %s", name, endpoint)
+				return fmt.Errorf("%s.test still exists: %s", d.Name(), endpoint)
 			}
 		}
 		return nil
 	}
 }
 
-func checkExists(name, media string) resource.TestCheckFunc {
+func checkExists(d *description) resource.TestCheckFunc {
 	return func(s *terraform.State) error {
-		rs, ok := s.RootModule().Resources[name+".test"]
+		rs, ok := s.RootModule().Resources[d.Name()+".test"]
 		if !ok {
-			return fmt.Errorf("%s.test not found", name)
+			return fmt.Errorf("%s.test not found", d.Name())
 		}
 
 		href := rs.Primary.Attributes["id"]
-		endpoint := core.NewLinkType(href, media)
+		endpoint := core.NewLinkType(href, d.media)
 		return core.Read(endpoint, nil)
 	}
 }
 
-func updateCase(t *testing.T, name, media string) resource.TestCase {
-	file := "tests/" + name + ".tf"
+func basicTest(t *testing.T, d *description) {
+	file := "tests/" + d.Name() + ".tf"
 	config, err := ioutil.ReadFile(file)
 	if err != nil {
 		t.Error("updateCase:", file, "could not be read:", err)
 	}
-	return resource.TestCase{
+	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
 		Providers:    testAccProviders,
-		CheckDestroy: checkDestroy(name, media),
+		CheckDestroy: checkDestroy(d),
 		Steps: []resource.TestStep{
 			resource.TestStep{
 				Config: string(config),
 				Check: resource.ComposeTestCheckFunc(
-					checkExists(name, media),
+					checkExists(d),
 				),
 			},
 		},
-	}
+	})
 }
 
-func TestAlarm_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_alarm", "alarm"))
-}
-
-func TestAlert_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_alert", "alert"))
-}
-
-func TestBackup_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_backup", "backuppolicy"))
-}
-
-func TestCompute_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_computeload", "machineloadrule"))
-}
-
-func TestCostCode_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_costcode", "costcode"))
-}
-
-func TestCurrency_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_currency", "currency"))
-}
-
-func TestDatastoreTier_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_dstier", "datastoretier"))
-}
-
-func TestDevice_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_device", "device"))
-}
-
-func TestEnterprise_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_enterprise", "enterprise"))
-}
-
-func TestExternal_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_external", "vlan"))
-}
-
-func TestFW_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_fw", "firewallpolicy"))
-}
-
-func TestHP_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_hp", "hardwareprofile"))
-}
-
-func TestLB_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_lb", "loadbalancer"))
-}
-
-func TestLimit_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_limit", "limit"))
-}
-
-func TestMachine_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_machine", "machine"))
-}
-
-func TestPlan_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_plan", "virtualmachineactionplan"))
-}
-
-func TestPricing_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_pricing", "pricingtemplate"))
-}
-
-func TestPublic_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_public", "vlan"))
-}
-
-func TestRack_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_rack", "rack"))
-}
-
-func TestRole_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_role", "role"))
-}
-
-func TestScope_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_scope", "scope"))
-}
-
-func TestSG_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_sg", "scalinggroup"))
-}
-
-func TestStorageLoad_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_storageload", "datastoreloadrule"))
-}
-
-func TestUser_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_user", "user"))
-}
-
-func TestVapp_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_vapp", "virtualappliance"))
-}
-
-func TestVdc_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_vdc", "virtualdatacenter"))
-}
-
-func TestVM_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_vm", "virtualmachine"))
-}
-
-func TestVMT_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_vmt", "virtualmachinetemplate"))
-}
-
-func TestVolume_update(t *testing.T) {
-	resource.Test(t, updateCase(t, "abiquo_vol", "volume"))
-}
+func TestAlarm(t *testing.T)           { basicTest(t, alarm) }
+func TestAlert(t *testing.T)           { basicTest(t, alert) }
+func TestBackuppolicy(t *testing.T)    { basicTest(t, backuppolicy) }
+func TestCostcode(t *testing.T)        { basicTest(t, costcode) }
+func TestCurrency(t *testing.T)        { basicTest(t, currency) }
+func TestDatastorerule(t *testing.T)   { basicTest(t, datastoreloadrule) }
+func TestDatastoretier(t *testing.T)   { basicTest(t, datastoretier) }
+func TestDevice(t *testing.T)          { basicTest(t, device) }
+func TestEnterprise(t *testing.T)      { basicTest(t, enterprise) }
+func TestExternal(t *testing.T)        { basicTest(t, external) }
+func TestFirewallpolicy(t *testing.T)  { basicTest(t, firewallpolicy) }
+func TestHardwareprofile(t *testing.T) { basicTest(t, hardwareprofile) }
+func TestLoadbalancer(t *testing.T)    { basicTest(t, loadbalancer) }
+func TestLimit(t *testing.T)           { basicTest(t, limit) }
+func TestMachine(t *testing.T)         { basicTest(t, machine) }
+func TestMachinerule(t *testing.T)     { basicTest(t, machineloadrule) }
+func TestPlan(t *testing.T)            { basicTest(t, virtualmachineactionplan) }
+func TestPricing(t *testing.T)         { basicTest(t, pricingtemplate) }
+func TestPrivate(t *testing.T)         { basicTest(t, private) }
+func TestPublic(t *testing.T)          { basicTest(t, public) }
+func TestRack(t *testing.T)            { basicTest(t, rack) }
+func TestRole(t *testing.T)            { basicTest(t, role) }
+func TestScope(t *testing.T)           { basicTest(t, scope) }
+func TestScalinggroup(t *testing.T)    { basicTest(t, scalinggroup) }
+func TestTemplate(t *testing.T)        { basicTest(t, virtualmachinetemplate) }
+func TestUser(t *testing.T)            { basicTest(t, user) }
+func TestVAPP(t *testing.T)            { basicTest(t, virtualappliance) }
+func TestVDC(t *testing.T)             { basicTest(t, virtualdatacenter) }
+func TestVM(t *testing.T)              { basicTest(t, virtualmachine) }
+func TestVolume(t *testing.T)          { basicTest(t, volume) }

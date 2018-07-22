@@ -17,11 +17,7 @@ var privateSchema = map[string]*schema.Schema{
 	"suffix":            attribute(optional, text),
 }
 
-func privateEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("virtualdatacenter")+"/privatenetworks", "vlan")
-}
-
-func privateNew(d *resourceData) core.Resource {
+func privateDTO(d *resourceData) core.Resource {
 	private := networkNew(d)
 	private.Type = "INTERNAL"
 	private.DTO = core.NewDTO(
@@ -37,10 +33,11 @@ func privateRead(d *resourceData, resource core.Resource) (e error) {
 	return
 }
 
-var resourcePrivate = &schema.Resource{
-	Schema: privateSchema,
-	Delete: resourceDelete,
-	Update: resourceUpdate(privateNew, nil, "vlan"),
-	Create: resourceCreate(privateNew, nil, privateRead, privateEndpoint),
-	Read:   resourceRead(privateNew, privateRead, "vlan"),
+var private = &description{
+	name:     "private",
+	dto:      privateDTO,
+	endpoint: endpointPath("virtualdatacenter", "/privatenetworks"),
+	media:    "vlan",
+	read:     privateRead,
+	Resource: &schema.Resource{Schema: privateSchema},
 }

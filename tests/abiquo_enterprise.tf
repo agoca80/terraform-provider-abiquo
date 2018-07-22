@@ -1,6 +1,6 @@
 resource "abiquo_enterprise" "test" {
     name            = "test enterprise"
-    pricingtemplate = "${abiquo_pricing.test.id}"
+    pricingtemplate = "${abiquo_pricingtemplate.test.id}"
     properties = {
       "property0" = "value0"
       "property1" = "value1"
@@ -15,7 +15,7 @@ resource "abiquo_currency" "test" {
   name   = "test enterprise"
 }
 
-resource "abiquo_pricing" "test" {
+resource "abiquo_pricingtemplate" "test" {
   currency               = "${abiquo_currency.test.id}"
   charging_period        = "DAY"
   deploy_message         = "test enterprise"

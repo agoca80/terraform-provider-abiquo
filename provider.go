@@ -53,6 +53,11 @@ func Provider() *schema.Provider {
 	basicAuthOptions := []string{"username", "password"}
 	oAuthOptions := []string{"tokensecret", "token", "consumerkey", "consumersecret"}
 
+	resourceMap := make(map[string]*schema.Resource)
+	for _, d := range resources {
+		resourceMap[d.Name()] = d.resource()
+	}
+
 	return &schema.Provider{
 		ConfigureFunc: configureProvider,
 
@@ -66,65 +71,38 @@ func Provider() *schema.Provider {
 			"consumersecret": attribute(optional, text, conflicts(basicAuthOptions)),
 		},
 
-		ResourcesMap: map[string]*schema.Resource{
-			"abiquo_alarm":       resourceAlarm,
-			"abiquo_alert":       resourceAlert,
-			"abiquo_backup":      resourceBackup,
-			"abiquo_computeload": resourceComputeLoad,
-			"abiquo_costcode":    resourceCostcode,
-			"abiquo_currency":    resourceCurrency,
-			"abiquo_datacenter":  resourceDatacenter,
-			"abiquo_device":      resourceDevice,
-			"abiquo_dstier":      resourceDstier,
-			"abiquo_enterprise":  resourceEnterprise,
-			"abiquo_external":    resourceExternal,
-			"abiquo_fitpolicy":   resourceFitPolicy,
-			"abiquo_fw":          resourceFw,
-			"abiquo_hd":          resourceHd,
-			"abiquo_hp":          resourceHp,
-			"abiquo_ip":          resourceIp,
-			"abiquo_lb":          resourceLb,
-			"abiquo_license":     resourceLicense,
-			"abiquo_limit":       resourceLimit,
-			"abiquo_machine":     resourceMachine,
-			"abiquo_plan":        resourcePlan,
-			"abiquo_pricing":     resourcePricing,
-			"abiquo_private":     resourcePrivate,
-			"abiquo_public":      resourcePublic,
-			"abiquo_rack":        resourceRack,
-			"abiquo_role":        resourceRole,
-			"abiquo_scope":       resourceScope,
-			"abiquo_sg":          resourceSg,
-			"abiquo_storageload": resourceStorageLoad,
-			"abiquo_storage":     resourceStorage,
-			"abiquo_user":        resourceUser,
-			"abiquo_vapp":        resourceVapp,
-			"abiquo_vdc":         resourceVdc,
-			"abiquo_vm":          resourceVm,
-			"abiquo_vmt":         resourceVmt,
-			"abiquo_vol":         resourceVolume,
-		},
+		ResourcesMap: resourceMap,
 
 		DataSourcesMap: map[string]*schema.Resource{
-			"abiquo_backup":     dataBackup,
-			"abiquo_datacenter": dataDatacenter,
-			"abiquo_devicetype": dataDeviceType,
-			"abiquo_dstier":     dataDstier,
-			"abiquo_enterprise": dataEnterprise,
-			"abiquo_hp":         dataHp,
-			"abiquo_ip":         dataIp,
-			"abiquo_location":   dataLocation,
-			"abiquo_machine":    dataMachine,
-			"abiquo_network":    dataNetwork,
-			"abiquo_nst":        dataNst,
-			"abiquo_privilege":  dataPrivilege,
-			"abiquo_repo":       dataRepo,
-			"abiquo_role":       dataRole,
-			"abiquo_scope":      dataScope,
-			"abiquo_tier":       dataTier,
-			"abiquo_vdc":        dataVdc,
-			"abiquo_vapp":       dataVapp,
-			"abiquo_template":   dataTemplate,
+			"abiquo_backup":            dataSource(backupDataSchema, backupFind),
+			"abiquo_datacenter":        dataSource(datacenterDataSchema, datacenterFind),
+			"abiquo_devicetype":        dataSource(deviceTypeDataSchema, deviceTypeFind),
+			"abiquo_datastoretier":     dataSource(dstierDataSchema, dstierFind),
+			"abiquo_enterprise":        dataSource(enterpriseDataSchema, enterpriseFind),
+			"abiquo_hardwareprofile":   dataSource(hpDataSchema, hpFind),
+			"abiquo_ip":                dataSource(ipDataSchema, ipFind),
+			"abiquo_location":          dataSource(locationDataSchema, locationFind),
+			"abiquo_machine":           dataSource(machineDataSchema, machineFind),
+			"abiquo_network":           dataSource(networkDataSchema, networkFind),
+			"abiquo_nst":               dataSource(nstDataSchema, nstFind),
+			"abiquo_privilege":         dataSource(privilegeDataSchema, privilegeFind),
+			"abiquo_repo":              dataSource(repoDataSchema, repoFind),
+			"abiquo_role":              dataSource(roleDataSchema, roleFind),
+			"abiquo_scope":             dataSource(scopeDataSchema, scopeFind),
+			"abiquo_tier":              dataSource(tierDataSchema, tierFind),
+			"abiquo_virtualappliance":  dataSource(vappDataSchema, vappFind),
+			"abiquo_virtualdatacenter": dataSource(vdcDataSchema, virtualdatacenterFind),
+			"abiquo_template":          dataSource(templateDataSchema, templateFind),
 		},
 	}
+}
+
+var resources = []*description{
+	alarm, alert, backuppolicy, machineloadrule, costcode, currency, datacenter,
+	device, datastoretier, enterprise, external, fitpolicyrule, firewallpolicy,
+	harddisk, hardwareprofile, ipAddress, loadbalancer, license, limit, machine,
+	virtualmachineactionplan, pricingtemplate, private, public, rack, role,
+	scope, scalinggroup, datastoreloadrule, storagedevice, user,
+	virtualappliance, virtualdatacenter, virtualmachine, virtualmachinetemplate,
+	volume,
 }

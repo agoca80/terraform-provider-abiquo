@@ -20,10 +20,6 @@ func fitPolicyDTO(d *resourceData) core.Resource {
 	}
 }
 
-func fitPolicyEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType("admin/rules/fitsPolicy", "fitpolicyrule")
-}
-
 func fitPolicyRead(d *resourceData, resource core.Resource) (err error) {
 	policy := resource.(*abiquo.FitPolicy)
 	d.Set("policy", policy.FitPolicy)
@@ -31,10 +27,10 @@ func fitPolicyRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceFitPolicy = &schema.Resource{
-	Schema: fitPolicySchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("fitpolicyrule"),
-	Create: resourceCreate(fitPolicyDTO, nil, fitPolicyRead, fitPolicyEndpoint),
-	Read:   resourceRead(fitPolicyDTO, fitPolicyRead, "fitpolicyrule"),
+var fitpolicyrule = &description{
+	Resource: &schema.Resource{Schema: fitPolicySchema},
+	dto:      fitPolicyDTO,
+	endpoint: endpointConst("admin/rules/fitsPolicy"),
+	media:    "fitpolicyrule",
+	read:     fitPolicyRead,
 }

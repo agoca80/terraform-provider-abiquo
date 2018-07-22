@@ -12,12 +12,7 @@ var roleSchema = map[string]*schema.Schema{
 	"blocked":    attribute(boolean, optional),
 	"name":       attribute(required, text),
 	"enterprise": attribute(optional, link("enterprise")),
-	"privileges": &schema.Schema{
-		Elem:     attribute(text),
-		Required: true,
-		Set:      privilegeID,
-		Type:     schema.TypeSet,
-	},
+	"privileges": attribute(optional, setFn(text, privilegeID)),
 }
 
 func roleNew(d *resourceData) core.Resource {
@@ -26,10 +21,6 @@ func roleNew(d *resourceData) core.Resource {
 		Blocked: d.boolean("blocked"),
 		DTO:     core.NewDTO(d.link("enterprise")),
 	}
-}
-
-func roleEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType("admin/roles", "role")
 }
 
 func roleRead(d *resourceData, resource core.Resource) (err error) {
@@ -63,11 +54,12 @@ func rolePrivileges(d *resourceData, resource core.Resource) (err error) {
 	return core.Update(role, role)
 }
 
-var resourceRole = &schema.Resource{
-	Schema: roleSchema,
-	Delete: resourceDelete,
-	Read:   resourceRead(roleNew, roleRead, "role"),
-	Create: resourceCreate(roleNew, rolePrivileges, roleRead, roleEndpoint),
-	Exists: resourceExists("role"),
-	Update: resourceUpdate(roleNew, rolePrivileges, "role"),
+var role = &description{
+	Resource: &schema.Resource{Schema: roleSchema},
+	dto:      roleNew,
+	endpoint: endpointConst("admin/roles"),
+	media:    "role",
+	create:   rolePrivileges,
+	read:     roleRead,
+	update:   rolePrivileges,
 }

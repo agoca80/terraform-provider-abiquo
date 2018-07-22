@@ -14,9 +14,9 @@ var tierDataSchema = map[string]*schema.Schema{
 	"location": attribute(required, href),
 }
 
-func tierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	name := d.Get("name").(string)
-	href := d.Get("location").(string)
+func tierFind(d *resourceData) (err error) {
+	name := d.string("name")
+	href := d.string("location")
 	endpoint := core.NewLinkType(href, "tiers")
 	tier := endpoint.Collection(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.Tier).Name == name
@@ -27,9 +27,4 @@ func tierDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	d.SetId(tier.URL())
 	return
-}
-
-var dataTier = &schema.Resource{
-	Schema: tierDataSchema,
-	Read:   tierDataRead,
 }

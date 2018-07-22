@@ -1,4 +1,4 @@
-resource "abiquo_storageload" "test" {
+resource "abiquo_datastoreloadrule" "test" {
   load   = "95"
   target = "${data.abiquo_datacenter.test.id}"
 }

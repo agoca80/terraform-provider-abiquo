@@ -9,7 +9,6 @@ import (
 )
 
 var machineDataSchema = map[string]*schema.Schema{
-	// Discover parameters
 	"hypervisor":  attribute(required, label(machineType)),
 	"datacenter":  attribute(required, link("datacenter")),
 	"ip":          attribute(required, ip),
@@ -20,9 +19,7 @@ var machineDataSchema = map[string]*schema.Schema{
 	"definition":  attribute(computed, text),
 }
 
-func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
-	d := newResourceData(rd, "")
-
+func machineFind(d *resourceData) (err error) {
 	var query url.Values
 	switch d.string("hypervisor") {
 	case "KVM":
@@ -60,9 +57,4 @@ func machineDataRead(rd *schema.ResourceData, _ interface{}) (err error) {
 	d.SetId(d.string("ip"))
 	d.Set("definition", string(bytes))
 	return
-}
-
-var dataMachine = &schema.Resource{
-	Schema: machineDataSchema,
-	Read:   machineDataRead,
 }

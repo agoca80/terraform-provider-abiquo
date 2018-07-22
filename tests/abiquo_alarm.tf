@@ -1,5 +1,5 @@
 resource "abiquo_alarm" "test" {
-  target      = "${abiquo_vm.test.id}"
+  target      = "${abiquo_virtualmachine.test.id}"
   name        = "test alarm"
   metric      = "cpu_time"
   timerange   = 3
@@ -8,22 +8,22 @@ resource "abiquo_alarm" "test" {
   threshold   = 10000
 }
 
-data "abiquo_vdc"        "test"   { name = "tests" }
+data "abiquo_virtualdatacenter"        "test"   { name = "tests" }
 data "abiquo_template"   "test"   {
-  templates = "${data.abiquo_vdc.test.templates}"
+  templates = "${data.abiquo_virtualdatacenter.test.templates}"
   name      = "tests"
 }
 
-resource "abiquo_vapp" "test" {
-  virtualdatacenter = "${data.abiquo_vdc.test.id}"
+resource "abiquo_virtualappliance" "test" {
+  virtualdatacenter = "${data.abiquo_virtualdatacenter.test.id}"
   name              = "test alarm"
 }
 
-resource "abiquo_vm" "test" {
+resource "abiquo_virtualmachine" "test" {
   cpu                    = 1
   deploy                 = false
   ram                    = 64
   label                  = "test alarm"
-  virtualappliance       = "${abiquo_vapp.test.id}"
+  virtualappliance       = "${abiquo_virtualappliance.test.id}"
   virtualmachinetemplate = "${data.abiquo_template.test.id}"
 }

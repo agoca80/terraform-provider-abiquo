@@ -8,16 +8,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var resourceVmt = &schema.Resource{
-	Schema: vmtSchema,
-	Create: vmtCreate,
-	Delete: resourceDelete,
-	Update: resourceUpdate(vmtNew, nil, "virtualmachinetemplate"),
-	Read:   resourceRead(vmtNew, vmtRead, "virtualmachinetemplate"),
-	Exists: resourceExists("virtualmachinetemplate"),
-}
-
-var vmtSchema = map[string]*schema.Schema{
+var virtualmachinetemplateSchema = map[string]*schema.Schema{
 	"repo":        endpoint("dcrepository"),
 	"cpu":         attribute(required, natural),
 	"name":        attribute(required, text),
@@ -27,7 +18,7 @@ var vmtSchema = map[string]*schema.Schema{
 	"icon":        attribute(optional, href),
 }
 
-func vmtNew(d *resourceData) core.Resource {
+func virtualmachinetemplateDTO(d *resourceData) core.Resource {
 	return &abiquo.VirtualMachineTemplate{
 		CPURequired: d.integer("cpu"),
 		Name:        d.string("name"),
@@ -37,8 +28,8 @@ func vmtNew(d *resourceData) core.Resource {
 	}
 }
 
-func vmtCreate(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "virtualmachinetemplate")
+func virtualmachinetemplateCreate(rd *schema.ResourceData, m interface{}) (err error) {
+	d := newDataType(rd, "virtualmachinetemplate")
 	endpoint := d.link("repo").SetType("datacenterrepository")
 	resource := endpoint.Walk()
 	if resource == nil {
@@ -46,27 +37,37 @@ func vmtCreate(rd *schema.ResourceData, m interface{}) (err error) {
 	}
 
 	dcrepo := resource.(*abiquo.DatacenterRepository)
-	vmt, err := dcrepo.Upload(d.string("file"))
+	virtualmachinetemplate, err := dcrepo.Upload(d.string("file"))
 	if err != nil {
 		return
 	}
 
-	d.SetId(vmt.URL())
-	vmt.Name = d.string("name")
-	vmt.IconURL = d.string("icon")
-	vmt.Description = d.string("description")
-	vmt.CPURequired = d.integer("cpu")
-	vmt.RAMRequired = d.integer("ram")
-	err = core.Update(vmt, vmt)
+	d.SetId(virtualmachinetemplate.URL())
+	virtualmachinetemplate.Name = d.string("name")
+	virtualmachinetemplate.IconURL = d.string("icon")
+	virtualmachinetemplate.Description = d.string("description")
+	virtualmachinetemplate.CPURequired = d.integer("cpu")
+	virtualmachinetemplate.RAMRequired = d.integer("ram")
+	err = core.Update(virtualmachinetemplate, virtualmachinetemplate)
 	return
 }
 
-func vmtRead(d *resourceData, resource core.Resource) (err error) {
-	vmt := resource.(*abiquo.VirtualMachineTemplate)
-	d.Set("name", vmt.Name)
-	d.Set("icon", vmt.IconURL)
-	d.Set("description", vmt.Description)
-	d.Set("cpu", vmt.CPURequired)
-	d.Set("ram", vmt.RAMRequired)
+func virtualmachinetemplateRead(d *resourceData, resource core.Resource) (err error) {
+	virtualmachinetemplate := resource.(*abiquo.VirtualMachineTemplate)
+	d.Set("name", virtualmachinetemplate.Name)
+	d.Set("icon", virtualmachinetemplate.IconURL)
+	d.Set("description", virtualmachinetemplate.Description)
+	d.Set("cpu", virtualmachinetemplate.CPURequired)
+	d.Set("ram", virtualmachinetemplate.RAMRequired)
 	return
+}
+
+var virtualmachinetemplate = &description{
+	dto:   virtualmachinetemplateDTO,
+	media: "virtualmachinetemplate",
+	read:  virtualmachinetemplateRead,
+	Resource: &schema.Resource{
+		Schema: virtualmachinetemplateSchema,
+		Create: virtualmachinetemplateCreate,
+	},
 }

@@ -16,6 +16,7 @@ var vdcDataSchema = map[string]*schema.Schema{
 	"location":  attribute(computed, text),
 	"network":   attribute(computed, text),
 	"templates": attribute(computed, text),
+	"device":    attribute(computed, text),
 }
 
 func vdcNetwork(r core.Resource) string {
@@ -26,27 +27,23 @@ func vdcNetwork(r core.Resource) string {
 	return network.URL()
 }
 
-func dataVDCRead(d *schema.ResourceData, meta interface{}) (err error) {
-	enterprise := meta.(*provider).Enterprise()
+func virtualdatacenterFind(d *resourceData) (err error) {
+	enterprise := abq.Enterprise()
 	id := path.Base(enterprise.URL())
 	query := url.Values{"enterprise": {id}}
 	vdcs := enterprise.Rel("cloud/virtualdatacenters").Collection(query)
 	vdc := vdcs.Find(func(r core.Resource) bool {
-		return r.(*abiquo.VirtualDatacenter).Name == d.Get("name").(string)
+		return r.(*abiquo.VirtualDatacenter).Name == d.string("name")
 	})
 	if vdc == nil {
-		return fmt.Errorf("vdc %q was not found", d.Get("name"))
+		return fmt.Errorf("vdc %q was not found", d.string("name"))
 	}
 
 	d.SetId(vdc.URL())
+	d.Set("device", vdc.Rel("device").Href)
 	d.Set("tiers", vdc.Rel("tiers").Href)
 	d.Set("network", vdcNetwork(vdc))
 	d.Set("location", vdc.Rel("location").Href)
 	d.Set("templates", vdc.Rel("templates").Href)
 	return
-}
-
-var dataVdc = &schema.Resource{
-	Schema: vdcDataSchema,
-	Read:   dataVDCRead,
 }

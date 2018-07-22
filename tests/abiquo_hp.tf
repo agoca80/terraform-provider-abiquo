@@ -1,4 +1,4 @@
-resource "abiquo_hp" "test" {
+resource "abiquo_hardwareprofile" "test" {
   active = true
   name = "test hp"
   cpu  = 16

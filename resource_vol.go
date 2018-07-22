@@ -6,14 +6,6 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var resourceVolume = &schema.Resource{
-	Schema: volumeSchema,
-	Delete: resourceDelete,
-	Update: resourceUpdate(volNew, nil, "volume"),
-	Create: resourceCreate(volNew, nil, volRead, volEndpoint),
-	Read:   resourceRead(volNew, volRead, "volume"),
-}
-
 var volumeSchema = map[string]*schema.Schema{
 	"virtualdatacenter": endpoint("virtualdatacenter"),
 	"size":              attribute(required, positive),
@@ -51,6 +43,10 @@ func volRead(d *resourceData, resource core.Resource) (e error) {
 	return
 }
 
-func volEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("virtualdatacenter")+"/volumes", "volume")
+var volume = &description{
+	media:    "volume",
+	endpoint: endpointPath("virtualdatacenter", "/volumes"),
+	read:     volRead,
+	dto:      volNew,
+	Resource: &schema.Resource{Schema: volumeSchema},
 }

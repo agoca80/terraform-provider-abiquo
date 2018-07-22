@@ -14,15 +14,15 @@ var nstDataSchema = map[string]*schema.Schema{
 	"datacenter": attribute(required, link("datacenter")),
 }
 
-func nstDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	href := d.Get("datacenter").(string)
+func nstFind(d *resourceData) (err error) {
+	href := d.string("datacenter")
 	endpoint := core.NewLinker(href, "datacenter")
 	resource := endpoint.Walk()
 	if resource == nil {
 		return fmt.Errorf("datacenter not found: %q", href)
 	}
 
-	name := d.Get("name").(string)
+	name := d.string("name")
 	datacenter := resource.(*abiquo.Datacenter)
 	nsts := datacenter.Rel("networkservicetypes").Collection(nil)
 	nst := nsts.Find(func(r core.Resource) bool {
@@ -34,9 +34,4 @@ func nstDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	d.SetId(nst.URL())
 	return
-}
-
-var dataNst = &schema.Resource{
-	Schema: nstDataSchema,
-	Read:   nstDataRead,
 }

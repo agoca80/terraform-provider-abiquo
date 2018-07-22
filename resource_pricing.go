@@ -119,10 +119,6 @@ func pricingNew(d *resourceData) core.Resource {
 	}
 }
 
-func pricingEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType("config/pricingtemplates", "pricingtemplate")
-}
-
 func resourcePricesRead(resources []abiquo.PricingResource, rel string) (set *schema.Set) {
 	set = schema.NewSet(resourceSet, nil)
 	for _, resource := range resources {
@@ -166,11 +162,10 @@ func pricingRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourcePricing = &schema.Resource{
-	Schema: pricingSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("pricingtemplate"),
-	Update: resourceUpdate(pricingNew, nil, "pricingtemplate"),
-	Create: resourceCreate(pricingNew, nil, pricingRead, pricingEndpoint),
-	Read:   resourceRead(pricingNew, pricingRead, "pricingtemplate"),
+var pricingtemplate = &description{
+	Resource: &schema.Resource{Schema: pricingSchema},
+	dto:      pricingNew,
+	endpoint: endpointConst("config/pricingtemplates"),
+	media:    "pricingtemplate",
+	read:     pricingRead,
 }

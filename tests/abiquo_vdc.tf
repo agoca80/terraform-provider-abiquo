@@ -1,4 +1,4 @@
-resource "abiquo_vdc" "test" {
+resource "abiquo_virtualdatacenter" "test" {
   enterprise = "${data.abiquo_enterprise.enterprise.id}"
   location   = "${data.abiquo_location.location.id}"
   name       = "testAccAbiquoVDCBasic"

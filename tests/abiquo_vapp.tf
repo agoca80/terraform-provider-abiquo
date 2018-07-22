@@ -1,10 +1,10 @@
-resource "abiquo_vapp" "test" {
-  virtualdatacenter = "${data.abiquo_vdc.test.id}"
+resource "abiquo_virtualappliance" "test" {
+  virtualdatacenter = "${data.abiquo_virtualdatacenter.test.id}"
   name              = "test vapp"
 }
 
-data "abiquo_vdc"  "test" { name = "tests" }
-data "abiquo_vapp" "test" {
-  virtualdatacenter = "${data.abiquo_vdc.test.id}"
-  name              = "${abiquo_vapp.test.name}"
+data "abiquo_virtualdatacenter"  "test" { name = "tests" }
+data "abiquo_virtualappliance" "test" {
+  virtualdatacenter = "${data.abiquo_virtualdatacenter.test.id}"
+  name              = "${abiquo_virtualappliance.test.name}"
 }

@@ -15,9 +15,9 @@ var networkDataSchema = map[string]*schema.Schema{
 	"location": attribute(required, link("location")),
 }
 
-func networkDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	name := d.Get("name").(string)
-	href := d.Get("location").(string)
+func networkFind(d *resourceData) (err error) {
+	name := d.string("name")
+	href := d.string("location")
 	networks := core.NewLinkType(href, "vlans").Collection(nil)
 	network := networks.Find(func(r core.Resource) bool {
 		return r.(*abiquo.Network).Name == name
@@ -29,9 +29,4 @@ func networkDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	d.SetId(network.URL())
 	d.Set("ips", network.Rel("ips").Href)
 	return
-}
-
-var dataNetwork = &schema.Resource{
-	Schema: networkDataSchema,
-	Read:   networkDataRead,
 }

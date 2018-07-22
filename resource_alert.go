@@ -35,10 +35,6 @@ func alertNew(d *resourceData) core.Resource {
 	}
 }
 
-func alertEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("virtualappliance")+"/alerts", "alert")
-}
-
 func alertRead(d *resourceData, resource core.Resource) (err error) {
 	alert := resource.(*abiquo.Alert)
 	alarms := []interface{}{}
@@ -53,11 +49,10 @@ func alertRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceAlert = &schema.Resource{
-	Schema: alertSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("alert"),
-	Update: resourceUpdate(alertNew, nil, "alert"),
-	Create: resourceCreate(alertNew, nil, alertRead, alertEndpoint),
-	Read:   resourceRead(alertNew, alertRead, "alert"),
+var alert = &description{
+	Resource: &schema.Resource{Schema: alertSchema},
+	dto:      alertNew,
+	endpoint: endpointPath("virtualappliance", "/alerts"),
+	media:    "alert",
+	read:     alertRead,
 }

@@ -3,8 +3,8 @@ resource "abiquo_device"     "test" {
   devicetype = "${data.abiquo_devicetype.test.id}"
   endpoint   = "https://logical:35353/api"
   name       = "test device"
-  username   = "username"
-  password   = "password"
+# username   = "username"
+# password   = "password"
   datacenter = "${data.abiquo_datacenter.test.id}"
 }
 

@@ -6,7 +6,7 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
-var hpSchema = map[string]*schema.Schema{
+var hardwareprofileSchema = map[string]*schema.Schema{
 	"datacenter": endpoint("datacenter"),
 	"active":     attribute(required, boolean),
 	"name":       attribute(required, text),
@@ -14,7 +14,7 @@ var hpSchema = map[string]*schema.Schema{
 	"ram":        attribute(required, natural),
 }
 
-func hpNew(d *resourceData) core.Resource {
+func hardwareprofileNew(d *resourceData) core.Resource {
 	return &abiquo.HardwareProfile{
 		Active:  d.boolean("active"),
 		Name:    d.string("name"),
@@ -23,25 +23,20 @@ func hpNew(d *resourceData) core.Resource {
 	}
 }
 
-func hpEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("datacenter")+"/hardwareprofiles", "hardwareprofile")
-}
-
-func hpRead(d *resourceData, resource core.Resource) (err error) {
-	hp := resource.(*abiquo.HardwareProfile)
-	d.Set("active", hp.Active)
-	d.Set("name", hp.Name)
-	d.Set("cpu", hp.CPU)
-	d.Set("ram", hp.RAMInMB)
-	d.Set("datacenter", hp.Rel("datacenter").URL())
+func hardwareprofileRead(d *resourceData, resource core.Resource) (err error) {
+	hardwareprofile := resource.(*abiquo.HardwareProfile)
+	d.Set("active", hardwareprofile.Active)
+	d.Set("name", hardwareprofile.Name)
+	d.Set("cpu", hardwareprofile.CPU)
+	d.Set("ram", hardwareprofile.RAMInMB)
+	d.Set("datacenter", hardwareprofile.Rel("datacenter").URL())
 	return
 }
 
-var resourceHp = &schema.Resource{
-	Schema: hpSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("hardwareprofile"),
-	Create: resourceCreate(hpNew, nil, hpRead, hpEndpoint),
-	Update: resourceUpdate(hpNew, nil, "hardwareprofile"),
-	Read:   resourceRead(hpNew, hpRead, "hardwareprofile"),
+var hardwareprofile = &description{
+	media:    "hardwareprofile",
+	dto:      hardwareprofileNew,
+	read:     hardwareprofileRead,
+	endpoint: endpointPath("datacenter", "/hardwareprofiles"),
+	Resource: &schema.Resource{Schema: hardwareprofileSchema},
 }

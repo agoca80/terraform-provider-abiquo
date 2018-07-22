@@ -60,10 +60,6 @@ func scopeNew(d *resourceData) core.Resource {
 		)}
 }
 
-func scopeEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType("admin/scopes", "scope")
-}
-
 func scopeRead(d *resourceData, resource core.Resource) (err error) {
 	scope := resource.(*abiquo.Scope)
 	datacenters := []string{}
@@ -88,11 +84,10 @@ func scopeRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceScope = &schema.Resource{
-	Schema: scopeSchema,
-	Delete: resourceDelete,
-	Read:   resourceRead(scopeNew, scopeRead, "scope"),
-	Create: resourceCreate(scopeNew, nil, scopeRead, scopeEndpoint),
-	Exists: resourceExists("scope"),
-	Update: resourceUpdate(scopeNew, nil, "scope"),
+var scope = &description{
+	Resource: &schema.Resource{Schema: scopeSchema},
+	dto:      scopeNew,
+	endpoint: endpointConst("admin/scopes"),
+	media:    "scope",
+	read:     scopeRead,
 }

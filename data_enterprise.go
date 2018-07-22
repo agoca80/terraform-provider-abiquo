@@ -12,8 +12,8 @@ var enterpriseDataSchema = map[string]*schema.Schema{
 	"name": attribute(required, text),
 }
 
-func enterpriseDataRead(d *schema.ResourceData, p interface{}) (err error) {
-	query := url.Values{"has": {d.Get("name").(string)}}
+func enterpriseFind(d *resourceData) (err error) {
+	query := url.Values{"has": {d.string("name")}}
 	enterprise := abiquo.Enterprises(query).First()
 	if enterprise == nil {
 		return fmt.Errorf("enterprise %q was not found", d.Get("name"))
@@ -21,9 +21,4 @@ func enterpriseDataRead(d *schema.ResourceData, p interface{}) (err error) {
 
 	d.SetId(enterprise.URL())
 	return
-}
-
-var dataEnterprise = &schema.Resource{
-	Schema: enterpriseDataSchema,
-	Read:   enterpriseDataRead,
 }

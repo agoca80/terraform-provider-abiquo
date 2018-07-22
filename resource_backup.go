@@ -46,10 +46,6 @@ func backupDTO(d *resourceData) core.Resource {
 	}
 }
 
-func backupEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("datacenter")+"/backuppolicies", "backuppolicy")
-}
-
 func backupRead(d *resourceData, resource core.Resource) (err error) {
 	backup := resource.(*abiquo.BackupPolicy)
 	confs := make([]interface{}, len(backup.Configurations))
@@ -66,11 +62,10 @@ func backupRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceBackup = &schema.Resource{
-	Schema: backupSchema,
-	Read:   resourceRead(backupDTO, backupRead, "backuppolicy"),
-	Update: resourceUpdate(backupDTO, nil, "backuppolicy"),
-	Exists: resourceExists("backuppolicy"),
-	Delete: resourceDelete,
-	Create: resourceCreate(backupDTO, nil, backupRead, backupEndpoint),
+var backuppolicy = &description{
+	media:    "backuppolicy",
+	dto:      backupDTO,
+	read:     backupRead,
+	endpoint: endpointPath("datacenter", "/backuppolicies"),
+	Resource: &schema.Resource{Schema: backupSchema},
 }

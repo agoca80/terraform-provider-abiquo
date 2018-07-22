@@ -7,24 +7,15 @@ import (
 )
 
 var deviceSchema = map[string]*schema.Schema{
+	"datacenter":  endpoint("datacenter"),
 	"description": attribute(optional, text),
 	"endpoint":    attribute(required, forceNew, href),
 	"name":        attribute(required, text),
-	"password":    attribute(required, text, sensitive),
-	"username":    attribute(required, text),
+	"password":    attribute(optional, text, sensitive),
+	"username":    attribute(optional, text),
 	"default":     attribute(optional, boolean),
-	"devicetype":  attribute(required, forceNew, href),
+	"devicetype":  attribute(required, forceNew, link("devicetype")),
 	"enterprise":  attribute(optional, forceNew, link("enterprise")),
-	"datacenter":  attribute(optional, forceNew, link("datacenter")),
-}
-
-var deviceResource = &schema.Resource{
-	Schema: deviceSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("device"),
-	Create: resourceCreate(deviceDTO, nil, deviceRead, deviceEndpoint),
-	Update: resourceUpdate(deviceDTO, nil, "device"),
-	Read:   resourceRead(deviceDTO, deviceRead, "device"),
 }
 
 func deviceDTO(d *resourceData) core.Resource {
@@ -42,33 +33,21 @@ func deviceDTO(d *resourceData) core.Resource {
 	}
 }
 
-func deviceEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("datacenter")+"/devices", "device")
-}
-
 func deviceRead(d *resourceData, resource core.Resource) (err error) {
 	device := resource.(*abiquo.Device)
 	d.Set("endpoint", device.Endpoint)
 	d.Set("name", device.Name)
-	d.Set("password", device.Password)
-	d.Set("username", device.Username)
-
-	if _, ok := d.GetOk("description"); ok {
-		d.Set("description", device.Description)
-	}
-
-	if _, ok := d.GetOk("enterprise"); ok {
-		d.Set("enterprise", device.Rel("enterprise").URL())
-	}
-
+	d.SetOk("password", device.Password)
+	d.SetOk("username", device.Username)
+	d.SetOk("description", device.Description)
+	d.SetOk("enterprise", device.Rel("enterprise").URL())
 	return
 }
 
-var resourceDevice = &schema.Resource{
-	Schema: deviceSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("device"),
-	Create: resourceCreate(deviceDTO, nil, deviceRead, deviceEndpoint),
-	Update: resourceUpdate(deviceDTO, nil, "device"),
-	Read:   resourceRead(deviceDTO, deviceRead, "device"),
+var device = &description{
+	Resource: &schema.Resource{Schema: deviceSchema},
+	dto:      deviceDTO,
+	endpoint: endpointPath("datacenter", "/devices"),
+	media:    "device",
+	read:     deviceRead,
 }

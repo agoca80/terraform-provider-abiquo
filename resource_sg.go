@@ -62,10 +62,6 @@ func sgNew(d *resourceData) core.Resource {
 	}
 }
 
-func sgEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("virtualappliance")+"/scalinggroups", "scalinggroup")
-}
-
 func sgRead(d *resourceData, resource core.Resource) (e error) {
 	sg := resource.(*abiquo.ScalingGroup)
 	d.Set("name", sg.Name)
@@ -75,8 +71,8 @@ func sgRead(d *resourceData, resource core.Resource) (e error) {
 	return
 }
 
-func sgUpdate(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "scalinggroup")
+func sgUpdate(rd *schema.ResourceData, _ interface{}) (err error) {
+	d := newDataType(rd, "scalinggroup")
 	resource := d.Link.Walk()
 	if resource == nil {
 		return fmt.Errorf("scaling group %q was not found", d.Id())
@@ -101,7 +97,7 @@ func sgUpdate(rd *schema.ResourceData, m interface{}) (err error) {
 }
 
 func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
-	d := newResourceData(rd, "scalinggroup")
+	d := newDataType(rd, "scalinggroup")
 	resource := d.Link.Walk()
 	if resource == nil {
 		return fmt.Errorf("scaling group %q was not found", d.Id())
@@ -132,10 +128,14 @@ func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
 	return
 }
 
-var resourceSg = &schema.Resource{
-	Schema: sgSchema,
-	Delete: sgDelete,
-	Update: sgUpdate,
-	Create: resourceCreate(sgNew, nil, sgRead, sgEndpoint),
-	Read:   resourceRead(sgNew, sgRead, "scalinggroup"),
+var scalinggroup = &description{
+	dto:      sgNew,
+	endpoint: endpointPath("virtualappliance", "/scalinggroups"),
+	media:    "scalinggroup",
+	read:     sgRead,
+	Resource: &schema.Resource{
+		Schema: sgSchema,
+		Delete: sgDelete,
+		Update: sgUpdate,
+	},
 }

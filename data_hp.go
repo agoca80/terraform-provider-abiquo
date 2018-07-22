@@ -13,9 +13,9 @@ var hpDataSchema = map[string]*schema.Schema{
 	"location": attribute(required, link("location")),
 }
 
-func hpDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	name := d.Get("name").(string)
-	href := d.Get("location").(string) + "/hardwareprofiles"
+func hpFind(d *resourceData) (err error) {
+	name := d.string("name")
+	href := d.string("location") + "/hardwareprofiles"
 	hardwareprofiles := core.NewLinker(href, "hardwareprofiles").Collection(nil)
 	hardwareprofile := hardwareprofiles.Find(func(r core.Resource) bool {
 		return r.(*abiquo.HardwareProfile).Name == name
@@ -26,9 +26,4 @@ func hpDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 
 	d.SetId(hardwareprofile.URL())
 	return
-}
-
-var dataHp = &schema.Resource{
-	Schema: hpDataSchema,
-	Read:   hpDataRead,
 }

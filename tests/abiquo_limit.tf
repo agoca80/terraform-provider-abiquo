@@ -1,18 +1,18 @@
 resource "abiquo_limit" "test" {
   enterprise = "${abiquo_enterprise.test.id}"
   location   = "${data.abiquo_datacenter.test.id}"
-  dstiers    = ["${data.abiquo_dstier.test.id}"]
-  backups    = ["${abiquo_backup.test.id}"]
-  hwprofiles = ["${abiquo_hp.test.id}"]
+  dstiers    = [ "${data.abiquo_datastoretier.test.id}" ]
+  backups    = [ "${abiquo_backuppolicy.test.id}" ]
+  hwprofiles = [ "${abiquo_hardwareprofile.test.id}" ]
 }
 
 data "abiquo_datacenter" "test" { name = "datacenter 1" }
-data "abiquo_dstier"     "test" {
+data "abiquo_datastoretier"     "test" {
   name       = "Default Tier"
   datacenter = "${data.abiquo_datacenter.test.id}"
 }
 
-resource "abiquo_hp" "test" {
+resource "abiquo_hardwareprofile" "test" {
   active     = true
   name       = "test limit"
   cpu        = 16
@@ -20,12 +20,10 @@ resource "abiquo_hp" "test" {
   datacenter = "${data.abiquo_datacenter.test.id}"
 }
 
-resource "abiquo_backup" "test" {
+resource "abiquo_backuppolicy" "test" {
   datacenter  = "${data.abiquo_datacenter.test.id}"
   code        = "test limit"
   name        = "test limit"
-  description = "test limit"
-
   configurations = [
     {
       type    = "COMPLETE"

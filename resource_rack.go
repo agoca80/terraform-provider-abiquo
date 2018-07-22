@@ -36,10 +36,6 @@ func rackNew(d *resourceData) core.Resource {
 	return rack
 }
 
-func rackEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("datacenter")+"/racks", "rack")
-}
-
 func rackRead(d *resourceData, resource core.Resource) (err error) {
 	rack := resource.(*abiquo.Rack)
 
@@ -61,11 +57,10 @@ func rackRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceRack = &schema.Resource{
-	Schema: rackSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("rack"),
-	Create: resourceCreate(rackNew, nil, rackRead, rackEndpoint),
-	Update: resourceUpdate(rackNew, nil, "rack"),
-	Read:   resourceRead(rackNew, rackRead, "rack"),
+var rack = &description{
+	Resource: &schema.Resource{Schema: rackSchema},
+	dto:      rackNew,
+	endpoint: endpointPath("datacenter", "/racks"),
+	media:    "rack",
+	read:     rackRead,
 }

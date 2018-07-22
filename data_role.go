@@ -12,8 +12,8 @@ var roleDataSchema = map[string]*schema.Schema{
 	"name": attribute(required, text),
 }
 
-func roleDataRead(d *schema.ResourceData, meta interface{}) (err error) {
-	name := d.Get("name").(string)
+func roleFind(d *resourceData) (err error) {
+	name := d.string("name")
 	resource := abiquo.Roles(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.Role).Name == name
 	})
@@ -22,9 +22,4 @@ func roleDataRead(d *schema.ResourceData, meta interface{}) (err error) {
 	}
 	d.SetId(resource.URL())
 	return
-}
-
-var dataRole = &schema.Resource{
-	Schema: roleDataSchema,
-	Read:   roleDataRead,
 }

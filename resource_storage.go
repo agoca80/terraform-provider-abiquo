@@ -26,21 +26,16 @@ func storageDeviceNew(d *resourceData) core.Resource {
 	}
 }
 
-func storageDeviceEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("datacenter")+"/storage/devices", "storagedevice")
-}
-
 func storageDeviceRead(d *resourceData, resource core.Resource) (err error) {
 	storageDevice := resource.(*abiquo.StorageDevice)
 	d.Set("name", storageDevice.Name)
 	return
 }
 
-var resourceStorage = &schema.Resource{
-	Schema: storageDeviceSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("virtualappliance"),
-	Create: resourceCreate(storageDeviceNew, nil, storageDeviceRead, storageDeviceEndpoint),
-	Update: resourceUpdate(storageDeviceNew, nil, "storagedevice"),
-	Read:   resourceRead(storageDeviceNew, storageDeviceRead, "storagedevice"),
+var storagedevice = &description{
+	Resource: &schema.Resource{Schema: storageDeviceSchema},
+	dto:      storageDeviceNew,
+	endpoint: endpointPath("datacenter", "/storage/devices"),
+	media:    "storagedevice",
+	read:     storageDeviceRead,
 }

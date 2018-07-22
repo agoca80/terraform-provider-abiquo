@@ -16,14 +16,13 @@ var alarmSchema = map[string]*schema.Schema{
 	"timerange":  attribute(required, natural),
 	"datapoints": attribute(optional, natural),
 	"statistic":  attribute(required, text),
-	"threshold":  attribute(required, integer),
+	"threshold":  attribute(required, float),
 }
 
-func alarmEndpoint(d *resourceData) *core.Link {
+func alarmEndpoint(d *resourceData) string {
 	target := d.string("target")
 	metric := d.string("metric")
-	alarms := fmt.Sprintf("%v/metrics/%v/alarms", target, metric)
-	return core.NewLinkType(alarms, "alarm")
+	return fmt.Sprintf("%v/metrics/%v/alarms", target, metric)
 }
 
 func alarmNew(d *resourceData) core.Resource {
@@ -36,7 +35,7 @@ func alarmNew(d *resourceData) core.Resource {
 		Name:             d.string("name"),
 		Formula:          d.string("formula"),
 		Statistic:        d.string("statistic"),
-		Threshold:        d.integer("threshold"),
+		Threshold:        d.float("threshold"),
 		DTO: core.NewDTO(
 			core.NewLinkType(href, "metric").SetRel("metric"),
 		),
@@ -54,11 +53,10 @@ func alarmRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceAlarm = &schema.Resource{
-	Schema: alarmSchema,
-	Delete: resourceDelete,
-	Exists: resourceExists("alarm"),
-	Update: resourceUpdate(alarmNew, nil, "alarm"),
-	Create: resourceCreate(alarmNew, nil, alarmRead, alarmEndpoint),
-	Read:   resourceRead(alarmNew, alarmRead, "alarm"),
+var alarm = &description{
+	media:    "alarm",
+	dto:      alarmNew,
+	read:     alarmRead,
+	endpoint: alarmEndpoint,
+	Resource: &schema.Resource{Schema: alarmSchema},
 }

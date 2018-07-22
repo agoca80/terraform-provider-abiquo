@@ -17,8 +17,8 @@ var privilegeDataSchema = map[string]*schema.Schema{
 	"name": attribute(required, text),
 }
 
-func privilegeRead(d *schema.ResourceData, meta interface{}) (err error) {
-	privilege := privilegeGet(d.Get("name").(string))
+func privilegeFind(d *resourceData) (err error) {
+	privilege := privilegeGet(d.string("name"))
 	if privilege == nil {
 		return fmt.Errorf("Privilege %v does not exist", d.Get("name"))
 	}
@@ -43,9 +43,4 @@ func privilegeID(name interface{}) (id int) {
 		id = p.ID
 	}
 	return
-}
-
-var dataPrivilege = &schema.Resource{
-	Schema: privilegeDataSchema,
-	Read:   privilegeRead,
 }

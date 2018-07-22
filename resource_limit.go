@@ -83,28 +83,11 @@ func limitNew(d *resourceData) core.Resource {
 	return limit
 }
 
-func limitEndpoint(d *resourceData) *core.Link {
-	return core.NewLinkType(d.string("enterprise")+"/limits", "limit")
-}
-
 func limitRead(d *resourceData, resource core.Resource) (err error) {
 	limit := resource.(*abiquo.Limit)
-
-	backups := mapHrefs(limit.Links.Filter(func(l *core.Link) bool {
-		return l.IsMedia("backuppolicy")
-	}))
-
-	hwprofiles := mapHrefs(limit.Links.Filter(func(l *core.Link) bool {
-		return l.IsMedia("hardwareprofile")
-	}))
-
-	dstiers := mapHrefs(limit.Links.Filter(func(l *core.Link) bool {
-		return l.IsMedia("datastoretier")
-	}))
-
-	d.Set("backups", backups)
-	d.Set("hwprofiles", hwprofiles)
-	d.Set("dstiers", dstiers)
+	d.Set("backups", limitResources(limit, "backuppolicy"))
+	d.Set("hwprofiles", limitResources(limit, "hardwareprofile"))
+	d.Set("dstiers", limitResources(limit, "datastoretier"))
 	// Soft limits
 	d.Set("cpusoft", limit.CPUSoft)
 	d.Set("hdsoft", limit.HDSoft)
@@ -124,11 +107,16 @@ func limitRead(d *resourceData, resource core.Resource) (err error) {
 	return
 }
 
-var resourceLimit = &schema.Resource{
-	Schema: limitSchema,
-	Exists: resourceExists("limit"),
-	Read:   resourceRead(limitNew, limitRead, "limit"),
-	Update: resourceUpdate(limitNew, nil, "limit"),
-	Create: resourceCreate(limitNew, nil, limitRead, limitEndpoint),
-	Delete: resourceDelete,
+func limitResources(limit *abiquo.Limit, media string) []interface{} {
+	return mapHrefs(limit.Links.Filter(func(l *core.Link) bool {
+		return l.IsMedia(media)
+	}))
+}
+
+var limit = &description{
+	Resource: &schema.Resource{Schema: limitSchema},
+	dto:      limitNew,
+	endpoint: endpointPath("enterprise", "/limits"),
+	media:    "limit",
+	read:     limitRead,
 }

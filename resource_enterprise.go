@@ -49,18 +49,6 @@ func enterpriseDTO(d *resourceData) core.Resource {
 	}
 }
 
-func enterpriseEndpoint(_ *resourceData) *core.Link {
-	return core.NewLinkType("admin/enterprises", "enterprise")
-}
-
-func enterpriseCreate(d *resourceData, enterprise core.Resource) (err error) {
-	properties := enterpriseProperties(d)
-	if len(properties.Properties) > 0 {
-		err = core.Update(enterprise.Rel("properties"), properties)
-	}
-	return
-}
-
 func enterpriseRead(d *resourceData, resource core.Resource) (err error) {
 	e := resource.(*abiquo.Enterprise)
 	properties := e.Rel("properties").Walk().(*abiquo.EnterpriseProperties)
@@ -88,7 +76,6 @@ func enterpriseUpdate(d *resourceData, enterprise core.Resource) (err error) {
 	if d.HasChange("properties") {
 		err = core.Update(enterprise.Rel("properties"), enterpriseProperties(d))
 	}
-
 	return
 }
 
@@ -101,11 +88,12 @@ func enterpriseProperties(d *resourceData) *abiquo.EnterpriseProperties {
 	return properties
 }
 
-var resourceEnterprise = &schema.Resource{
-	Schema: enterpriseSchema,
-	Delete: resourceDelete,
-	Read:   resourceRead(enterpriseDTO, enterpriseRead, "enterprise"),
-	Create: resourceCreate(enterpriseDTO, enterpriseCreate, enterpriseRead, enterpriseEndpoint),
-	Exists: resourceExists("enterprise"),
-	Update: resourceUpdate(enterpriseDTO, enterpriseUpdate, "enterprise"),
+var enterprise = &description{
+	Resource: &schema.Resource{Schema: enterpriseSchema},
+	dto:      enterpriseDTO,
+	endpoint: endpointConst("admin/enterprises"),
+	media:    "enterprise",
+	create:   enterpriseUpdate,
+	update:   enterpriseUpdate,
+	read:     enterpriseRead,
 }
