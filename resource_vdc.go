@@ -12,6 +12,13 @@ var vdcSchema = map[string]*schema.Schema{
 	"diskhard":    attribute(optional, natural),
 	"disksoft":    attribute(optional, natural),
 	"name":        attribute(required, text),
+	"net_address": attribute(optional, ip, byDefault("172.16.0.0")),
+	"net_gateway": attribute(optional, ip, byDefault("172.16.0.1")),
+	"net_dns1":    attribute(optional, ip),
+	"net_dns2":    attribute(optional, ip),
+	"net_name":    attribute(optional, text, byDefault("private_network")),
+	"net_mask":    attribute(optional, positive, byDefault(16)),
+	"net_suffix":  attribute(optional, text),
 	"publichard":  attribute(optional, natural),
 	"publicsoft":  attribute(optional, natural),
 	"ramhard":     attribute(optional, natural),
@@ -72,10 +79,13 @@ func vdcNew(d *resourceData) core.Resource {
 		Name:   d.string("name"),
 		HVType: d.string("type"),
 		Network: &abiquo.Network{
-			Mask:    24,
-			Address: "192.168.0.0",
-			Gateway: "192.168.0.1",
-			Name:    "default",
+			Address: d.string("net_address"),
+			DNS1:    d.string("net_dns1"),
+			DNS2:    d.string("net_dns2"),
+			Gateway: d.string("net_gateway"),
+			Mask:    d.integer("net_mask"),
+			Name:    d.string("net_name"),
+			Suffix:  d.string("net_suffix"),
 			Type:    "INTERNAL",
 		},
 		// Soft limits
@@ -110,6 +120,14 @@ func vdcCreate(d *resourceData, resource core.Resource) (err error) {
 	d.Set("templates", resource.Rel("templates").Href)
 	d.Set("tiers", resource.Rel("tiers").Href)
 	purchaseIPs(resource, d.set("publicips"))
+	// Default private network
+	vdc := resource.(*abiquo.VirtualDatacenter)
+	d.Set("net_name", vdc.Network.Name)
+	d.Set("net_mask", vdc.Network.Mask)
+	d.Set("net_gateway", vdc.Network.Gateway)
+	d.Set("net_dns1", vdc.Network.DNS1)
+	d.Set("net_dns2", vdc.Network.DNS2)
+	d.Set("net_suffix", vdc.Network.Suffix)
 	return
 }
 

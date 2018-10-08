@@ -89,7 +89,7 @@ func endpointPath(base, path string) func(*resourceData) string {
 	}
 }
 
-func (d *description) resource() (r *schema.Resource) {
+func resourceDefinition(d *description) (r *schema.Resource) {
 	r = d.Resource
 
 	if r.Create == nil {

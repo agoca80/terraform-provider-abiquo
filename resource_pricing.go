@@ -105,7 +105,7 @@ func pricingNew(d *resourceData) core.Resource {
 		}
 	}
 
-	return &abiquo.Pricing{
+	return &abiquo.PricingTemplate{
 		AbstractDCPrices:    datacentersPrices,
 		ChargingPeriod:      pricingPeriod[d.string("charging_period")],
 		CostCodes:           resourcePrices(d.Get("costcode"), "costcode"),
@@ -131,7 +131,7 @@ func resourcePricesRead(resources []abiquo.PricingResource, rel string) (set *sc
 }
 
 func pricingRead(d *resourceData, resource core.Resource) (err error) {
-	pricing := resource.(*abiquo.Pricing)
+	pricing := resource.(*abiquo.PricingTemplate)
 	datacenters := schema.NewSet(resourceSet, nil)
 	for _, dc := range pricing.AbstractDCPrices {
 		datacenters.Add(map[string]interface{}{

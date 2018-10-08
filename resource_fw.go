@@ -13,7 +13,7 @@ var firewallSchema = map[string]*schema.Schema{
 	"description":       attribute(required, text),
 	"rules": attribute(required, min(1), list(&schema.Resource{
 		Schema: map[string]*schema.Schema{
-			"protocol": attribute(required, protocol),
+			"protocol": attribute(required, label([]string{"TCP", "HTTP", "HTTPS"})),
 			"fromport": attribute(required, port),
 			"toport":   attribute(required, port),
 			"targets":  attribute(optional, list(text), min(1)),

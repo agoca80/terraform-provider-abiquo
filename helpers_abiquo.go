@@ -22,7 +22,7 @@ func mapHrefs(links core.Links) (hrefs []interface{}) {
 
 type method func(*resourceData) error
 
-func dataSource(s map[string]*schema.Schema, find method) *schema.Resource {
+func data(s map[string]*schema.Schema, find method) *schema.Resource {
 	return &schema.Resource{
 		Schema: s,
 		Read: func(rd *schema.ResourceData, _ interface{}) error {

@@ -59,11 +59,6 @@ func port(s *schema.Schema) {
 	}
 }
 
-func protocol(s *schema.Schema) {
-	text(s)
-	s.ValidateFunc = validation.StringInSlice([]string{"TCP", "HTTP", "HTTPS"}, false)
-}
-
 func email(s *schema.Schema) {
 	text(s)
 	s.ValidateFunc = func(d interface{}, key string) (strs []string, errs []error) {

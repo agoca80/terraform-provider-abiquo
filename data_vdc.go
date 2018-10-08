@@ -22,7 +22,7 @@ var vdcDataSchema = map[string]*schema.Schema{
 func vdcNetwork(r core.Resource) string {
 	vdc := r.(*abiquo.VirtualDatacenter)
 	network := vdc.Links.Find(func(l *core.Link) bool {
-		return l.Title == "default_private_network"
+		return l.Rel == "defaultvlan"
 	})
 	return network.URL()
 }

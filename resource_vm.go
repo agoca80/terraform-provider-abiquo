@@ -15,8 +15,10 @@ var vmSchema = map[string]*schema.Schema{
 	"deploy":                 attribute(optional, forceNew, boolean),
 	"disks":                  attribute(optional, forceNew, list(href)),
 	"fws":                    attribute(optional, forceNew, list(link("firewall"))),
+	"fqdn":                   attribute(computed, text),
 	"hardwareprofile":        attribute(optional, forceNew, link("hardwareprofile"), conflicts([]string{"cpu", "ram"})),
 	"label":                  attribute(optional, forceNew, text),
+	"layer":                  attribute(optional, forceNew, text),
 	"lbs":                    attribute(optional, forceNew, list(link("loadbalancer"))),
 	"ips":                    attribute(optional, forceNew, list(link("virtualmachine_ip"))),
 	"monitored":              attribute(optional, forceNew, boolean),
@@ -36,6 +38,7 @@ func vmNew(d *resourceData) core.Resource {
 		CPU:       d.integer("cpu"),
 		RAM:       d.integer("ram"),
 		Label:     d.string("label"),
+		Layer:     d.string("layer"),
 		Monitored: d.boolean("monitored"),
 		Variables: variables,
 		DTO: core.NewDTO(
@@ -125,6 +128,7 @@ func vmCreate(d *resourceData, resource core.Resource) (err error) {
 
 func vmRead(d *resourceData, resource core.Resource) (err error) {
 	vm := resource.(*abiquo.VirtualMachine)
+	d.Set("fqdn", vm.FQDN)
 	d.Set("label", vm.Label)
 	d.Set("name", vm.Name)
 	d.Set("variables", vm.Variables)
