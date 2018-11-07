@@ -60,6 +60,7 @@ func basicTest(t *testing.T, d *description) {
 	})
 }
 
+func TestActionPlan(t *testing.T)      { basicTest(t, actionplan) }
 func TestAlarm(t *testing.T)           { basicTest(t, alarm) }
 func TestAlert(t *testing.T)           { basicTest(t, alert) }
 func TestBackuppolicy(t *testing.T)    { basicTest(t, backuppolicy) }
@@ -76,7 +77,6 @@ func TestLoadbalancer(t *testing.T)    { basicTest(t, loadbalancer) }
 func TestLimit(t *testing.T)           { basicTest(t, limit) }
 func TestMachine(t *testing.T)         { basicTest(t, machine) }
 func TestMachinerule(t *testing.T)     { basicTest(t, machineloadrule) }
-func TestPlan(t *testing.T)            { basicTest(t, virtualmachineactionplan) }
 func TestPricing(t *testing.T)         { basicTest(t, pricingtemplate) }
 func TestPrivate(t *testing.T)         { basicTest(t, private) }
 func TestPublic(t *testing.T)          { basicTest(t, public) }

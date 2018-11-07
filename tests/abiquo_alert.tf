@@ -1,5 +1,4 @@
 resource "abiquo_alert" "test" {
-  virtualappliance = "${abiquo_virtualappliance.test.id}"
   name        = "test alert"
   description = "test alert"
 

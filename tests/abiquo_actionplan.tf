@@ -1,9 +1,15 @@
-resource "abiquo_virtualmachineactionplan" "test" {
-	virtualmachine = "${abiquo_virtualmachine.test.id}"
+resource "abiquo_actionplan" "test" {
 	description    = "test plan"
 	name           = "test plan"
 	entries        = [
-		{	parameter = "", parametertype = "None",	type = "UNDEPLOY" }
+		{
+			parameter = ""
+			parametertype = "None"
+			type = "UNDEPLOY"
+			links = [
+				"${abiquo_virtualmachine.test.id}"
+			]
+		}
 	]
 }
 

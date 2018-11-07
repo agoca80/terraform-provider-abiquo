@@ -7,17 +7,16 @@ import (
 )
 
 var alertSchema = map[string]*schema.Schema{
-	"virtualappliance": endpoint("virtualappliance"),
-	"name":             attribute(required, text),
-	"description":      attribute(optional, text),
-	"subscribers":      attribute(optional, set(email)),
-	"alarms":           attribute(required, set(href), min(1)),
+	"name":        attribute(required, text),
+	"description": attribute(optional, text),
+	"subscribers": attribute(optional, set(email)),
+	"alarms":      attribute(required, set(href), min(1)),
 }
 
 func alertNew(d *resourceData) core.Resource {
-	alarms := core.Links{}
+	alarms := core.NewDTO()
 	for _, a := range d.set("alarms").List() {
-		alarms = append(alarms, core.NewLinkType(a.(string), "alarm"))
+		alarms.Add(core.NewLinkType(a.(string), "alarm").SetRel("alarm"))
 	}
 
 	subscribers := []string{}
@@ -30,7 +29,7 @@ func alertNew(d *resourceData) core.Resource {
 	return &abiquo.Alert{
 		Name:        d.string("name"),
 		Description: d.string("description"),
-		Alarms:      alarms,
+		DTO:         alarms,
 		Subscribers: subscribers,
 	}
 }
@@ -38,8 +37,10 @@ func alertNew(d *resourceData) core.Resource {
 func alertRead(d *resourceData, resource core.Resource) (err error) {
 	alert := resource.(*abiquo.Alert)
 	alarms := []interface{}{}
-	alert.Alarms.Map(func(l *core.Link) {
-		alarms = append(alarms, l.URL())
+	alert.Map(func(l *core.Link) {
+		if l.Rel == "alarm" {
+			alarms = append(alarms, l.URL())
+		}
 	})
 
 	d.Set("subscribers", alert.Subscribers)
@@ -52,7 +53,7 @@ func alertRead(d *resourceData, resource core.Resource) (err error) {
 var alert = &description{
 	Resource: &schema.Resource{Schema: alertSchema},
 	dto:      alertNew,
-	endpoint: endpointPath("virtualappliance", "/alerts"),
+	endpoint: endpointConst("cloud/alerts"),
 	media:    "alert",
 	read:     alertRead,
 }

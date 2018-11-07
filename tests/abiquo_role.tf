@@ -4,6 +4,6 @@ resource "abiquo_role" "test" {
     "APPLIB_UPLOAD_IMAGE",
     "VAPP_CREATE_STATEFUL",
     "VDC_MANAGE_VAPP",
-    "VM_ACTION_PLAN_MANAGE",
+    "ACTION_PLAN_MANAGE"
   ]
 }
