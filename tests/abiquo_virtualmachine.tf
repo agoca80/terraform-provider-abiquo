@@ -5,9 +5,9 @@ resource "abiquo_virtualmachine" "test" {
   deploy  = false
   cpu     = 1
   ram     = 64
-# label   = "test vm"
+  # label   = "test vm"
   backups = [ "${data.abiquo_backup.test.id}" ]
-  lbs     = [ "${abiquo_loadbalancer.test.id}" ]
+  # lbs     = [ "${abiquo_loadbalancer.test.id}" ]
   fws     = [ "${abiquo_firewallpolicy.test.id}" ]
 
   variables = {
@@ -87,6 +87,10 @@ resource "abiquo_virtualdatacenter" "test" {
   location   = "${data.abiquo_location.test.id}"
   name       = "test vm"
   type       = "KVM"
+  net_mask   = "24"
+  net_name   = "test vm"
+  net_address = "192.168.0.0"
+  net_gateway = "192.168.0.1"
   publicips  = [
     "${abiquo_ip.public.ip}"
   ]
@@ -116,16 +120,16 @@ resource "abiquo_ip" "private" {
   ip      = "172.16.37.30"
 }
 
-resource "abiquo_loadbalancer" "test" {
-  device            = "${abiquo_virtualdatacenter.test.device}"
-  privatenetwork    = "${abiquo_private.test.id}"
-  name              = "test vm"
-  internal          = true
-  algorithm         = "ROUND_ROBIN"
-  routingrules      = [
-    { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
-  ]
-}
+# resource "abiquo_loadbalancer" "test" {
+#   device            = "${abiquo_virtualdatacenter.test.device}"
+#   privatenetwork    = "${abiquo_private.test.id}"
+#   name              = "test vm"
+#   internal          = true
+#   algorithm         = "ROUND_ROBIN"
+#   routingrules      = [
+#     { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
+#   ]
+# }
 
 resource "abiquo_virtualappliance" "test" {
   virtualdatacenter = "${abiquo_virtualdatacenter.test.id}"
