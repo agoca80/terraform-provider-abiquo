@@ -59,15 +59,15 @@ func actionPlanRead(d *resourceData, resource core.Resource) (err error) {
 	actionPlan := resource.(*abiquo.ActionPlan)
 	entries := make([]map[string]interface{}, len(actionPlan.Entries))
 	for i, e := range actionPlan.Entries {
-		links := []interface{}{}
-		for _, h := range e.Links {
-			links = append(links, h.URL())
+		hrefs := []interface{}{}
+		for _, l := range e.Links {
+			hrefs = append(hrefs, l.URL())
 		}
 		entries[i] = map[string]interface{}{
 			"parameter":     e.Parameter,
 			"parametertype": e.ParameterType,
 			"type":          e.Type,
-			"links":         links,
+			"links":         hrefs,
 		}
 	}
 	d.Set("name", actionPlan.Name)
