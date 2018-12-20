@@ -30,11 +30,12 @@ func vdcNetwork(r core.Resource) string {
 func virtualdatacenterFind(d *resourceData) (err error) {
 	enterprise := abq.Enterprise()
 	id := path.Base(enterprise.URL())
-	query := url.Values{"enterprise": {id}}
-	vdcs := enterprise.Rel("cloud/virtualdatacenters").Collection(query)
-	vdc := vdcs.Find(func(r core.Resource) bool {
-		return r.(*abiquo.VirtualDatacenter).Name == d.string("name")
+	vdcsLink := enterprise.Rel("cloud/virtualdatacenters")
+	vdcs := vdcsLink.Collection(url.Values{
+		"enterprise": {id},
+		"has":        {d.string("name")},
 	})
+	vdc := vdcs.First()
 	if vdc == nil {
 		return fmt.Errorf("vdc %q was not found", d.string("name"))
 	}
