@@ -1,5 +1,7 @@
 package main
 
+const uuidRegex = "........-....-....-....-............"
+
 var validateMedia = map[string][]string{
 	// admin
 	"role": []string{"/admin/roles/[0-9]+"},
@@ -20,6 +22,7 @@ var validateMedia = map[string][]string{
 	"backuppolicy_vdc": []string{"/cloud/locations/[0-9]+/backuppolicies/[0-9]+"},
 	"device":           []string{"/cloud/locations/[0-9]+/devices/[0-9]+"},
 	"firewall":         []string{"/cloud/locations/[0-9]+/devices/[0-9]+/firewalls/[0-9]+"},
+	"hardwareprofile":  []string{"/cloud/locations/[0-9]+/hardwareprofiles/[0-9]+"},
 	"loadbalancer":     []string{"/cloud/locations/[0-9]+/devices/[0-9]+/loadbalancers/[0-9]+"},
 	// cloud/virtualdatacenters
 	"privatenetwork":    []string{"/cloud/virtualdatacenters/[0-9]+/privatenetworks/[0-9]+"},
@@ -28,6 +31,7 @@ var validateMedia = map[string][]string{
 	"virtualdatacenter": []string{"/cloud/virtualdatacenters/[0-9]+"},
 	// Virtualmachine
 	"alarm":          []string{"/cloud/virtualdatacenters/[0-9]+/virtualappliances/[0-9]+/virtualmachines/[0-9]+/metrics/.+/alarms/.+"},
+	"alert":          []string{"/cloud/alerts/" + uuidRegex},
 	"virtualmachine": []string{"/cloud/virtualdatacenters/[0-9]+/virtualappliances/[0-9]+/virtualmachines/[0-9]+"},
 	"virtualmachine_ip": []string{
 		"/admin/enterprises/[0-9]+/limits/[0-9]+/externalnetworks/[0-9]+/ips/[0-9]+",

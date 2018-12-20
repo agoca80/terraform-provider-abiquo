@@ -20,8 +20,18 @@ var actionPlanEntryResource = &schema.Resource{
 var actionPlanSchema = map[string]*schema.Schema{
 	"name":        attribute(required, text),
 	"description": attribute(required, text),
-	"triggers":    attribute(optional, list(link("alarm"))),
+	"triggers":    attribute(optional, list(link("alert"))),
 	"entries":     attribute(required, min(1), list(actionPlanEntryResource)),
+}
+
+func entryLink(href string) (link *core.Link) {
+	switch {
+	case strings.Contains(href, "/virtualmachines/"):
+		link = core.NewLinkType(href, "virtualmachine").SetRel("virtualmachine")
+	case strings.Contains(href, "/scalinggroups/"):
+		link = core.NewLinkType(href, "scalinggroup").SetRel("scalinggroup")
+	}
+	return
 }
 
 func actionPlanEntries(d *resourceData) (entries []abiquo.ActionPlanEntry) {
@@ -29,12 +39,7 @@ func actionPlanEntries(d *resourceData) (entries []abiquo.ActionPlanEntry) {
 		dto := core.NewDTO()
 		entry := e.(map[string]interface{})
 		for _, h := range entry["links"].([]interface{}) {
-			href := h.(string)
-			if strings.Contains(href, "/virtualmachines/") {
-				dto.Add(core.NewLinkType(href, "virtualmachine").SetRel("virtualmachine"))
-			} else {
-				panic("Not implemented")
-			}
+			dto.Add(entryLink(h.(string)))
 		}
 		entries = append(entries, abiquo.ActionPlanEntry{
 			Sequence:      sequence,
