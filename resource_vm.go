@@ -183,6 +183,7 @@ var virtualmachine = &description{
 	endpoint: endpointPath("virtualappliance", "/virtualmachines"),
 	media:    "virtualmachine",
 	read:     vmRead,
+	create:   vmCreate,
 	Resource: &schema.Resource{
 		Schema: vmSchema,
 		Delete: vmDelete,
