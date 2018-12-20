@@ -32,7 +32,7 @@ func (d *description) readFn() schema.ReadFunc {
 
 func (d *description) existsFn() schema.ExistsFunc {
 	return func(rd *schema.ResourceData, _ interface{}) (ok bool, err error) {
-		return core.Read(newDataType(rd, d.media), nil) == nil, nil
+		return newDataType(rd, d.media).Link.Exists()
 	}
 }
 
