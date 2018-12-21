@@ -30,3 +30,10 @@ func data(s map[string]*schema.Schema, find method) *schema.Resource {
 		},
 	}
 }
+
+func title(link *core.Link) (str string) {
+	if link != nil {
+		str = link.Title
+	}
+	return
+}

@@ -15,7 +15,7 @@ func repoFind(d *resourceData) (err error) {
 	enterprise := abq.Enterprise()
 	repos := enterprise.Rel("datacenterrepositories").Collection(nil)
 	repo := repos.Find(func(r core.Resource) bool {
-		return r.Rel("datacenter").Title == d.string("datacenter")
+		return title(r.Rel("datacenter")) == d.string("datacenter")
 	})
 	if repo == nil {
 		return fmt.Errorf("datacenter repository for datacenter %q was not found", d.Get("datacenter"))
