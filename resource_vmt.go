@@ -13,7 +13,7 @@ var virtualmachinetemplateSchema = map[string]*schema.Schema{
 	"cpu":         attribute(required, natural),
 	"name":        attribute(required, text),
 	"description": attribute(optional, text),
-	"file":        attribute(required, text, forceNew),
+	"ova":         attribute(required, text, forceNew),
 	"ram":         attribute(required, natural),
 	"icon":        attribute(optional, href),
 }
@@ -37,7 +37,7 @@ func virtualmachinetemplateCreate(rd *schema.ResourceData, m interface{}) (err e
 	}
 
 	dcrepo := resource.(*abiquo.DatacenterRepository)
-	virtualmachinetemplate, err := dcrepo.Upload(d.string("file"))
+	virtualmachinetemplate, err := dcrepo.UploadOVA(d.string("ova"))
 	if err != nil {
 		return
 	}
