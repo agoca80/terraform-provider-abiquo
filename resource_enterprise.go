@@ -51,7 +51,11 @@ func enterpriseDTO(d *resourceData) core.Resource {
 
 func enterpriseRead(d *resourceData, resource core.Resource) (err error) {
 	e := resource.(*abiquo.Enterprise)
-	properties := e.Rel("properties").Walk().(*abiquo.EnterpriseProperties)
+	props, err := e.Rel("properties").Walk()
+	if err != nil {
+		return
+	}
+	properties := props.(*abiquo.EnterpriseProperties)
 	d.Set("properties", properties.Properties)
 	d.Set("name", e.Name)
 	d.Set("cpuhard", e.CPUHard)

@@ -37,9 +37,9 @@ func machineFind(d *resourceData) (err error) {
 		}
 	}
 
-	datacenter := d.link("datacenter").SetType("datacenter").Walk()
-	if datacenter == nil {
-		return fmt.Errorf("datacenter not found: %q", d.string("datacenter"))
+	datacenter, err := d.link("datacenter").SetType("datacenter").Walk()
+	if err != nil {
+		return
 	}
 
 	if port := d.string("port"); port != "" {

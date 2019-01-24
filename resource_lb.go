@@ -90,8 +90,13 @@ func lbNew(d *resourceData) core.Resource {
 func lbRead(d *resourceData, resource core.Resource) (err error) {
 	lb := resource.(*abiquo.LoadBalancer)
 	// Get lb virtualmachines hrefs
+	vms, err := lb.VMs()
+	if err != nil {
+		return
+	}
+	
 	virtualmachines := []interface{}{}
-	lb.VMs().Map(func(l *core.Link) {
+	vms.Map(func(l *core.Link) {
 		virtualmachines = append(virtualmachines, l.Href)
 	})
 

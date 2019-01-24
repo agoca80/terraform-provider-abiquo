@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/abiquo/ojal/abiquo"
@@ -73,9 +72,9 @@ func sgRead(d *resourceData, resource core.Resource) (e error) {
 
 func sgUpdate(rd *schema.ResourceData, _ interface{}) (err error) {
 	d := newDataType(rd, "scalinggroup")
-	resource := d.Link.Walk()
-	if resource == nil {
-		return fmt.Errorf("scaling group %q was not found", d.Id())
+	resource, err := d.Link.Walk()
+	if err  != nil {
+		return 
 	}
 
 	sg := resource.(*abiquo.ScalingGroup)
@@ -98,9 +97,9 @@ func sgUpdate(rd *schema.ResourceData, _ interface{}) (err error) {
 
 func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
 	d := newDataType(rd, "scalinggroup")
-	resource := d.Link.Walk()
-	if resource == nil {
-		return fmt.Errorf("scaling group %q was not found", d.Id())
+	resource, err := d.Link.Walk()
+	if err != nil {
+		return 
 	}
 
 	sg := resource.(*abiquo.ScalingGroup)

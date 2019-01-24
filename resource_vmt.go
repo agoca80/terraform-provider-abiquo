@@ -1,8 +1,6 @@
 package main
 
 import (
-	"fmt"
-
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
@@ -31,9 +29,9 @@ func virtualmachinetemplateDTO(d *resourceData) core.Resource {
 func virtualmachinetemplateCreate(rd *schema.ResourceData, m interface{}) (err error) {
 	d := newDataType(rd, "virtualmachinetemplate")
 	endpoint := d.link("repo").SetType("datacenterrepository")
-	resource := endpoint.Walk()
-	if resource == nil {
-		return fmt.Errorf("repository %q does not exist", d.string("repo"))
+	resource, err := endpoint.Walk()
+	if err != nil {
+		return
 	}
 
 	dcrepo := resource.(*abiquo.DatacenterRepository)

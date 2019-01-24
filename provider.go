@@ -41,8 +41,15 @@ func configureProvider(d *schema.ResourceData) (meta interface{}, err error) {
 		if abq.err = core.Init(endpoint, credentials); abq.err != nil {
 			return
 		}
-		abq.user = abiquo.Login()
-		resource := abq.user.Rel("enterprise").Walk()
+		abq.user, err = abiquo.Login()
+		if err != nil {
+			return
+		}
+
+		resource,err  := abq.user.Rel("enterprise").Walk()
+		if err != nil {
+			return
+		}
 		abq.enterprise = resource.(*abiquo.Enterprise)
 	})
 	return &abq, abq.err

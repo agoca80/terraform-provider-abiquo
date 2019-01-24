@@ -17,9 +17,9 @@ var nstDataSchema = map[string]*schema.Schema{
 func nstFind(d *resourceData) (err error) {
 	href := d.string("datacenter")
 	endpoint := core.NewLinker(href, "datacenter")
-	resource := endpoint.Walk()
-	if resource == nil {
-		return fmt.Errorf("datacenter not found: %q", href)
+	resource, err := endpoint.Walk()
+	if err != nil {
+		return
 	}
 
 	name := d.string("name")

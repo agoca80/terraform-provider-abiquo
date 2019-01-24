@@ -155,8 +155,8 @@ func vmUpdate(rd *schema.ResourceData, m interface{}) (err error) {
 
 func vmDelete(rd *schema.ResourceData, m interface{}) (err error) {
 	d := newDataType(rd, "virtualmachine")
-	resource := d.Walk()
-	if resource == nil {
+	resource, err := d.Walk()
+	if err != nil {
 		return
 	}
 
@@ -168,7 +168,11 @@ func vmDelete(rd *schema.ResourceData, m interface{}) (err error) {
 		if err = vm.Undeploy(); err != nil {
 			return
 		}
-		vm = d.Walk().(*abiquo.VirtualMachine)
+		resource, err = d.Walk()
+		if err != nil {
+			return
+		}
+		vm = resource.(*abiquo.VirtualMachine)
 	}
 
 	if vm.State != "NOT_ALLOCATED" {

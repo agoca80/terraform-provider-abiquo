@@ -17,9 +17,9 @@ var backupDataSchema = map[string]*schema.Schema{
 func backupFind(d *resourceData) (err error) {
 	location := d.string("location")
 	endpoint := core.NewLinkType(location, "datacenter")
-	resource := endpoint.Walk()
-	if resource == nil {
-		return fmt.Errorf("location %q does not exist", location)
+	resource, err := endpoint.Walk()
+	if err != nil {
+		return
 	}
 
 	code := d.string("code")
