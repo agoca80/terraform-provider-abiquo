@@ -51,7 +51,7 @@ func vmNew(d *resourceData) core.Resource {
 func vmReconfigure(vm *abiquo.VirtualMachine, d *resourceData) (err error) {
 	// Update metadata
 	if bootstrap, ok := d.GetOk("bootstrap"); ok {
-		if err = vm.SetMetadata(&abiquo.VirtualMachineMetadata{
+		if err = vm.SetVMMetadata(&abiquo.VirtualMachineMetadata{
 			Metadata: abiquo.VirtualMachineMetadataFields{
 				StartupScript: bootstrap.(string),
 			},
@@ -70,30 +70,27 @@ func vmReconfigure(vm *abiquo.VirtualMachine, d *resourceData) (err error) {
 		// CONFIGURE disks
 		for _, d := range hdsList {
 			disk := new(abiquo.HardDisk)
-			if err = core.Read(hdLink(d.(string)), disk); err != nil {
+			err = hdLink(d.(string)).Read(disk)
+			if err != nil {
 				return
 			}
-			if err = vm.AttachDisk(disk); err != nil {
-				return
-			}
+			vm.AttachDisk(disk)
 		}
 
 		// CONFIGURE nics
 		for _, ip := range ipsList {
-			if err = vm.AttachNIC(ipLink(ip.(string))); err != nil {
-				return
-			}
+			vm.AttachNIC(ipLink(ip.(string)))
 		}
 
 		// CONFIGURE fws
 		for _, fw := range fwsList {
-			fwLink := core.NewLinkType(fw.(string), "firewallpolicy")
+			fwLink := linkType(fw.(string), "firewallpolicy")
 			vm.Add(fwLink.SetRel("firewall"))
 		}
 
 		// CONFIGURE lbs
 		for _, lb := range lbsList {
-			lbLink := core.NewLinkType(lb.(string), "loadbalancer")
+			lbLink := linkType(lb.(string), "loadbalancer")
 			vm.Add(lbLink.SetRel("loadbalancer"))
 		}
 
@@ -101,7 +98,7 @@ func vmReconfigure(vm *abiquo.VirtualMachine, d *resourceData) (err error) {
 		for _, bck := range bckList {
 			vm.Backups = append(vm.Backups, abiquo.BackupPolicy{
 				DTO: core.NewDTO(
-					core.NewLinkType(bck.(string), "backuppolicy").SetRel("policy"),
+					linkType(bck.(string), "backuppolicy").SetRel("policy"),
 				),
 			})
 		}
@@ -165,7 +162,9 @@ func vmDelete(rd *schema.ResourceData, m interface{}) (err error) {
 	// once the VM is not allocated
 	vm := resource.(*abiquo.VirtualMachine)
 	if vm.State == "ON" || vm.State == "OFF" {
-		if err = vm.Undeploy(); err != nil {
+		if err = vm.Undeploy(&abiquo.VirtualMachineTask{
+			ForceUndeploy: true,
+		}); err != nil {
 			return
 		}
 		resource, err = d.Walk()
@@ -179,7 +178,7 @@ func vmDelete(rd *schema.ResourceData, m interface{}) (err error) {
 		return fmt.Errorf("the VM is %v. it will not be deleted", vm.State)
 	}
 
-	return core.Remove(vm)
+	return vm.Remove()
 }
 
 var virtualmachine = &description{

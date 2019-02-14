@@ -30,7 +30,7 @@ func privilegeFind(d *resourceData) (err error) {
 func privilegeGet(name string) *abiquo.Privilege {
 	privileges.Do(func() {
 		privileges.privilege = make(map[string]*abiquo.Privilege)
-		for _, p := range abiquo.Privileges(nil).List() {
+		for _, p := range abiquo.Privileges().Collection(nil).List() {
 			privilege := p.(*abiquo.Privilege)
 			privileges.privilege[privilege.Name] = privilege
 		}

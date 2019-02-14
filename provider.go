@@ -21,7 +21,7 @@ func (p *provider) User() *abiquo.User             { return p.user }
 func (p *provider) Enterprise() *abiquo.Enterprise { return p.enterprise }
 
 func configureProvider(d *schema.ResourceData) (meta interface{}, err error) {
-	var credentials interface{}
+	var credentials core.Authenticator
 	if _, ok := d.GetOk("username"); ok {
 		credentials = core.Basic{
 			Username: d.Get("username").(string),
@@ -46,7 +46,7 @@ func configureProvider(d *schema.ResourceData) (meta interface{}, err error) {
 			return
 		}
 
-		resource,err  := abq.user.Rel("enterprise").Walk()
+		resource, err := abq.user.Rel("enterprise").Walk()
 		if err != nil {
 			return
 		}

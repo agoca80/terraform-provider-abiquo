@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	"github.com/abiquo/ojal/abiquo"
-	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -66,7 +65,7 @@ func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
 
 	for _, i := range machine.Interfaces.Collection {
 		if href, ok := interfaces[i.Name]; ok {
-			nst := core.NewLinkType(href.(string), "networkservicetype")
+			nst := linkType(href.(string), "networkservicetype")
 			i.Add(nst.SetRel("networkservicetype"))
 		}
 	}
@@ -79,17 +78,19 @@ func machineCreate(rd *schema.ResourceData, _ interface{}) (err error) {
 
 	for _, d := range machine.Datastores.Collection {
 		if href, ok := datastores[d.UUID]; ok {
-			dstier := core.NewLinkType(href.(string), "datastoretier")
+			dstier := linkType(href.(string), "datastoretier")
 			d.Add(dstier.SetRel("datastoretier"))
 			d.Enabled = true
 		}
 	}
 
-	endpoint := core.NewLinkType(d.string("rack")+"/machines", "machine")
-	if err = core.Create(endpoint, machine); err == nil {
-		d.SetId(machine.URL())
-		d.Set("type", machine.Type)
+	endpoint := linkType(d.string("rack")+"/machines", "machine")
+	err = endpoint.Create(machine)
+	if err != nil {
+		return
 	}
+	d.SetId(machine.URL())
+	d.Set("type", machine.Type)
 	return
 }
 

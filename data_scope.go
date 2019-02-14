@@ -13,7 +13,7 @@ var scopeDataSchema = map[string]*schema.Schema{
 }
 
 func scopeFind(d *resourceData) (err error) {
-	scope := abiquo.Scopes(nil).Find(func(r core.Resource) bool {
+	scope := abiquo.Scopes().Collection(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.Scope).Name == d.string("name")
 	})
 	if scope == nil {

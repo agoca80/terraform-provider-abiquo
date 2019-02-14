@@ -23,7 +23,7 @@ func ipLink(href string) *core.Link {
 	} else {
 		media = "externalip"
 	}
-	return core.NewLinkType(href, media)
+	return linkType(href, media)
 }
 
 func ipCreate(rd *schema.ResourceData, meta interface{}) (err error) {
@@ -41,11 +41,13 @@ func ipCreate(rd *schema.ResourceData, meta interface{}) (err error) {
 		Available: true,
 	}
 
-	if err = core.Create(core.NewLinkType(href, media), ip); err == nil {
-		rd.SetId(ip.URL())
-		rd.Set("type", ip.Media())
+	err = linkType(href, media).Create(ip)
+	if err != nil {
+		return
 	}
 
+	rd.SetId(ip.URL())
+	rd.Set("type", ip.Media())
 	return
 }
 
@@ -53,16 +55,16 @@ func ipCreate(rd *schema.ResourceData, meta interface{}) (err error) {
 func ipRead(rd *schema.ResourceData, meta interface{}) (err error) {
 	href := rd.Id()
 	media := rd.Get("type").(string)
-	endpoint := core.NewLinkType(href, media)
-	err = core.Read(endpoint, nil)
+	endpoint := linkType(href, media)
+	err = endpoint.Read(nil)
 	return
 }
 
 func ipExists(rd *schema.ResourceData, meta interface{}) (ok bool, err error) {
 	href := rd.Id()
 	media := rd.Get("type").(string)
-	endpoint := core.NewLinkType(href, media)
-	err = core.Read(endpoint, nil)
+	endpoint := linkType(href, media)
+	err = endpoint.Read(nil)
 	return err == nil, err
 }
 

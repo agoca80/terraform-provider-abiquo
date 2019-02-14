@@ -4,9 +4,6 @@ import (
 	"fmt"
 	"net/url"
 	"strings"
-
-	"github.com/abiquo/ojal/core"
-
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
@@ -30,7 +27,7 @@ func ipFind(d *resourceData) (err error) {
 	address := d.string("ip")
 	pool := d.string("pool")
 	query := url.Values{"hasIP": {address}}
-	ip := core.NewLinkType(pool, ipsMedia(pool)).Collection(query).First()
+	ip := linkType(pool, ipsMedia(pool)).Collection(query).First()
 	if ip == nil {
 		return fmt.Errorf("ip %q not found", address)
 	}

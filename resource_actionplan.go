@@ -27,9 +27,9 @@ var actionPlanSchema = map[string]*schema.Schema{
 func entryLink(href string) (link *core.Link) {
 	switch {
 	case strings.Contains(href, "/virtualmachines/"):
-		link = core.NewLinkType(href, "virtualmachine").SetRel("virtualmachine")
+		link = linkType(href, "virtualmachine").SetRel("virtualmachine")
 	case strings.Contains(href, "/scalinggroups/"):
-		link = core.NewLinkType(href, "scalinggroup").SetRel("scalinggroup")
+		link = linkType(href, "scalinggroup").SetRel("scalinggroup")
 	}
 	return
 }
@@ -86,10 +86,10 @@ func actionPlanCreate(d *resourceData, resource core.Resource) (err error) {
 	if d.HasChange("triggers") {
 		triggers := new(core.DTO)
 		for _, trigger := range d.slice("triggers") {
-			link := core.NewLinkType(trigger.(string), "alert").SetRel("alert")
+			link := linkType(trigger.(string), "alert").SetRel("alert")
 			triggers.Links = append(triggers.Links, link)
 		}
-		err = core.Create(a.Rel("alerttriggers"), triggers)
+		err = a.Rel("alerttriggers").Create(triggers)
 	}
 	return
 }

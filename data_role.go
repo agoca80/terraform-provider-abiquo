@@ -14,7 +14,7 @@ var roleDataSchema = map[string]*schema.Schema{
 
 func roleFind(d *resourceData) (err error) {
 	name := d.string("name")
-	resource := abiquo.Roles(nil).Find(func(r core.Resource) bool {
+	resource := abiquo.Roles().Collection(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.Role).Name == name
 	})
 	if resource == nil {

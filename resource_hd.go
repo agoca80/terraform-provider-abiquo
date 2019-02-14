@@ -24,7 +24,7 @@ func hdLink(href string) *core.Link {
 	} else {
 		media = "volume"
 	}
-	return core.NewLinkType(href, media)
+	return linkType(href, media)
 }
 
 func hdNew(d *resourceData) core.Resource {

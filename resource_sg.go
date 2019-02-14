@@ -73,8 +73,8 @@ func sgRead(d *resourceData, resource core.Resource) (e error) {
 func sgUpdate(rd *schema.ResourceData, _ interface{}) (err error) {
 	d := newDataType(rd, "scalinggroup")
 	resource, err := d.Link.Walk()
-	if err  != nil {
-		return 
+	if err != nil {
+		return
 	}
 
 	sg := resource.(*abiquo.ScalingGroup)
@@ -86,20 +86,19 @@ func sgUpdate(rd *schema.ResourceData, _ interface{}) (err error) {
 
 	// Update the SG
 	modify := sgNew(d).(*abiquo.ScalingGroup)
-	if err = core.Update(d, modify); err != nil {
+	err = d.Update(modify)
+	if err != nil {
 		return
 	}
 
-	err = modify.EndMaintenance()
-
-	return
+	return modify.EndMaintenance()
 }
 
 func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
 	d := newDataType(rd, "scalinggroup")
 	resource, err := d.Link.Walk()
 	if err != nil {
-		return 
+		return
 	}
 
 	sg := resource.(*abiquo.ScalingGroup)
@@ -110,7 +109,8 @@ func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
 	}
 
 	// Delete the SG
-	if err = core.Remove(sg); err != nil {
+	err = sg.Remove()
+	if err != nil {
 		return
 	}
 
@@ -119,7 +119,8 @@ func sgDelete(rd *schema.ResourceData, m interface{}) (err error) {
 		return l.Rel == "virtualmachine"
 	})
 	for _, vm := range vms {
-		if err = core.Remove(vm); err != nil {
+		err = vm.Remove()
+		if err != nil {
 			return
 		}
 	}

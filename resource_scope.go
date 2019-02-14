@@ -17,7 +17,7 @@ var scopeSchema = map[string]*schema.Schema{
 }
 
 func scopeNew(d *resourceData) core.Resource {
-	link := core.NewLinkType("admin/scopes/undefined", "scope").SetRel("scope").SetTitle(d.string("name"))
+	link := linkType("admin/scopes/undefined", "scope").SetRel("scope").SetTitle(d.string("name"))
 	entities := []abiquo.ScopeEntity{}
 	// Add datacenters to scope Entities
 	for i, href := range d.slice("datacenters") {

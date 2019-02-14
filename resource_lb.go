@@ -94,7 +94,7 @@ func lbRead(d *resourceData, resource core.Resource) (err error) {
 	if err != nil {
 		return
 	}
-	
+
 	virtualmachines := []interface{}{}
 	vms.Map(func(l *core.Link) {
 		virtualmachines = append(virtualmachines, l.Href)
@@ -105,7 +105,8 @@ func lbRead(d *resourceData, resource core.Resource) (err error) {
 	d.Set("virtualmachines", virtualmachines)
 
 	addresses := &abiquo.LoadBalancerAddresses{}
-	if err = core.Read(lb.Rel("addresses"), addresses); err != nil {
+	err = lb.Rel("addresses").Read(addresses)
+	if err != nil {
 		return
 	}
 	d.Set("externalips", addresses.Endpoints(false))
@@ -115,12 +116,14 @@ func lbRead(d *resourceData, resource core.Resource) (err error) {
 
 func lbUpdate(d *resourceData, resource core.Resource) (err error) {
 	if d.HasChange("healthchecks") {
-		if err = core.Update(resource.Rel("healtchecks"), lbHealthChecks(d)); err != nil {
+		err = resource.Rel("healtchecks").Update(lbHealthChecks(d))
+		if err != nil {
 			return
 		}
 	}
 	if d.HasChange("routingrules") {
-		if err = core.Update(resource.Rel("rules"), lbRules(d)); err != nil {
+		err = resource.Rel("rules").Update(lbRules(d))
+		if err != nil {
 			return
 		}
 	}

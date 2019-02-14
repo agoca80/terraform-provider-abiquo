@@ -51,7 +51,7 @@ func rolePrivileges(d *resourceData, resource core.Resource) (err error) {
 		}
 		role.AddPrivilege(privilege)
 	}
-	return core.Update(role, role)
+	return role.Update(role)
 }
 
 var role = &description{

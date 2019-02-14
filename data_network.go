@@ -18,7 +18,7 @@ var networkDataSchema = map[string]*schema.Schema{
 func networkFind(d *resourceData) (err error) {
 	name := d.string("name")
 	href := d.string("location")
-	networks := core.NewLinkType(href, "vlans").Collection(nil)
+	networks := linkType(href, "vlans").Collection(nil)
 	network := networks.Find(func(r core.Resource) bool {
 		return r.(*abiquo.Network).Name == name
 	})

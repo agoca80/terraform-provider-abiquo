@@ -54,7 +54,8 @@ func purchaseIPs(vdc core.Resource, ips *schema.Set) (err error) {
 	available := vdc.Rel("topurchase").Collection(nil).List()
 	for _, a := range available {
 		if ips.Contains(a.(*abiquo.IP).IP) {
-			if err = core.Update(a.Rel("purchase"), nil); err != nil {
+			err = a.Rel("purchase").Update(nil)
+			if err != nil {
 				break
 			}
 		}
@@ -66,7 +67,8 @@ func releaseIPs(resource core.Resource, ips *schema.Set) (err error) {
 	purchased := resource.Rel("purchased").Collection(nil).List()
 	for _, p := range purchased {
 		if ips == nil || !ips.Contains(p.(*abiquo.IP).IP) {
-			if err = core.Update(p.Rel("release"), nil); err != nil {
+			err = p.Rel("release").Update(nil)
+			if err != nil {
 				break
 			}
 		}

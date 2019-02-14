@@ -18,7 +18,7 @@ func newData(rd *schema.ResourceData) (d *resourceData) {
 
 func newDataType(rd *schema.ResourceData, media string) (d *resourceData) {
 	d = newData(rd)
-	d.Link = core.NewLinkType(rd.Id(), media)
+	d.Link = linkType(rd.Id(), media)
 	return
 }
 
@@ -51,7 +51,7 @@ func (d *resourceData) SetOk(name string, value interface{}) {
 
 func (d *resourceData) link(name string) (link *core.Link) {
 	if _, ok := d.GetOk(name); ok {
-		link = core.NewLinkType(d.string(name), name).SetRel(name)
+		link = linkType(d.string(name), name).SetRel(name)
 	}
 	return
 }

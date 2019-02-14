@@ -17,7 +17,7 @@ var tierDataSchema = map[string]*schema.Schema{
 func tierFind(d *resourceData) (err error) {
 	name := d.string("name")
 	href := d.string("location")
-	endpoint := core.NewLinkType(href, "tiers")
+	endpoint := linkType(href, "tiers")
 	tier := endpoint.Collection(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.Tier).Name == name
 	})

@@ -16,7 +16,7 @@ var dstierDataSchema = map[string]*schema.Schema{
 
 func dstierFind(d *resourceData) (err error) {
 	href := d.string("datacenter")
-	datacenter, err := core.NewLinker(href, "datacenter").Walk()
+	datacenter, err := linkType(href, "datacenter").Walk()
 	if err != nil {
 		return
 	}

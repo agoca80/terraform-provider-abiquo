@@ -16,7 +16,7 @@ var datacenterDataSchema = map[string]*schema.Schema{
 
 func datacenterFind(d *resourceData) (err error) {
 	name := d.string("name")
-	datacenter := abiquo.Datacenters(nil).Find(func(r core.Resource) bool {
+	datacenter := abiquo.Datacenters().Collection(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.Datacenter).Name == name
 	})
 	if datacenter == nil {

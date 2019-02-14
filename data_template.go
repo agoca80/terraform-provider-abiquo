@@ -16,7 +16,7 @@ var templateDataSchema = map[string]*schema.Schema{
 func templateFind(d *resourceData) (err error) {
 	name := d.string("name")
 	templates := d.string("templates")
-	endpoint := core.NewLinker(templates, "virtualmachinetemplates")
+	endpoint := linkType(templates, "virtualmachinetemplates")
 	template := endpoint.Collection(nil).Find(func(r core.Resource) bool {
 		t := r.(*abiquo.VirtualMachineTemplate)
 		return t.Name == name && t.State != "UNAVAILABLE"

@@ -16,7 +16,7 @@ var alertSchema = map[string]*schema.Schema{
 func alertNew(d *resourceData) core.Resource {
 	alarms := core.NewDTO()
 	for _, a := range d.set("alarms").List() {
-		alarms.Add(core.NewLinkType(a.(string), "alarm").SetRel("alarm"))
+		alarms.Add(linkType(a.(string), "alarm").SetRel("alarm"))
 	}
 
 	subscribers := []string{}

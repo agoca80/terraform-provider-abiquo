@@ -78,7 +78,7 @@ func enterpriseRead(d *resourceData, resource core.Resource) (err error) {
 
 func enterpriseUpdate(d *resourceData, enterprise core.Resource) (err error) {
 	if d.HasChange("properties") {
-		err = core.Update(enterprise.Rel("properties"), enterpriseProperties(d))
+		err = enterprise.Rel("properties").Update(enterpriseProperties(d))
 	}
 	return
 }

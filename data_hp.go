@@ -16,7 +16,7 @@ var hpDataSchema = map[string]*schema.Schema{
 func hpFind(d *resourceData) (err error) {
 	name := d.string("name")
 	href := d.string("location") + "/hardwareprofiles"
-	hardwareprofiles := core.NewLinker(href, "hardwareprofiles").Collection(nil)
+	hardwareprofiles := linkType(href, "hardwareprofiles").Collection(nil)
 	hardwareprofile := hardwareprofiles.Find(func(r core.Resource) bool {
 		return r.(*abiquo.HardwareProfile).Name == name
 	})

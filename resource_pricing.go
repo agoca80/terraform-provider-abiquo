@@ -66,7 +66,7 @@ func resourcePrices(r interface{}, media string) (rp []abiquo.PricingResource) {
 		href := resource["href"].(string)
 		rp = append(rp, abiquo.PricingResource{
 			Price: resource["price"].(float64),
-			DTO:   core.NewDTO(core.NewLinkType(href, media).SetRel(media)),
+			DTO:   core.NewDTO(linkType(href, media).SetRel(media)),
 		})
 	}
 	return
@@ -93,7 +93,7 @@ func datacenterPrices(dc interface{}) abiquo.PricingDatacenter {
 		VCPUOn:         datacenter["vcpu_on"].(float64),
 		VCPUOff:        datacenter["vcpu_off"].(float64),
 		VLAN:           datacenter["vlan"].(float64),
-		DTO:            core.NewDTO(core.NewLinkType(href, "datacenter").SetRel("datacenter")),
+		DTO:            core.NewDTO(linkType(href, "datacenter").SetRel("datacenter")),
 	}
 }
 

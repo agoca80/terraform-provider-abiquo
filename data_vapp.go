@@ -17,7 +17,7 @@ var vappDataSchema = map[string]*schema.Schema{
 
 func vappFind(d *resourceData) (err error) {
 	href := d.string("virtualdatacenter")
-	vdc, err := core.NewLinker(href, "virtualdatacenter").Walk()
+	vdc, err := linkType(href, "virtualdatacenter").Walk()
 	if err != nil {
 		return
 	}

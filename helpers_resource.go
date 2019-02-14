@@ -22,7 +22,7 @@ func (d *description) readFn() schema.ReadFunc {
 	return func(rd *schema.ResourceData, _ interface{}) (err error) {
 		data := newDataType(rd, d.media)
 		resource := core.Factory(d.media)
-		err = core.Read(data, resource)
+		err = data.Read(resource)
 		if err != nil {
 			return fmt.Errorf("readFn: %v", err)
 		}
@@ -40,7 +40,7 @@ func (d *description) updateFn() schema.UpdateFunc {
 	return func(rd *schema.ResourceData, m interface{}) (err error) {
 		data := newDataType(rd, d.media)
 		resource := d.dto(data)
-		err = core.Update(data, resource)
+		err = data.Update(resource)
 		if err == nil && d.update != nil {
 			err = d.update(data, resource)
 		}
@@ -56,8 +56,8 @@ func (d *description) createFn() schema.CreateFunc {
 			return fmt.Errorf("createFn: resource could not be created")
 		}
 
-		endpoint := core.NewLinker(d.endpoint(data), d.media)
-		if err = core.Create(endpoint, resource); err != nil {
+		endpoint := linkType(d.endpoint(data), d.media)
+		if err = endpoint.Create(resource); err != nil {
 			return
 		}
 		data.SetId(resource.URL())
@@ -74,7 +74,7 @@ func (d *description) createFn() schema.CreateFunc {
 }
 
 func resourceDelete(d *schema.ResourceData, m interface{}) (err error) {
-	return core.Remove(newDataType(d, ""))
+	return newDataType(d, "").Remove()
 }
 
 func endpointConst(href string) func(*resourceData) string {

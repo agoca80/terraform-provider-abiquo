@@ -57,7 +57,7 @@ func limitNew(d *resourceData) core.Resource {
 	if backups != nil && backups.Len() > 0 {
 		for _, entry := range backups.List() {
 			href := entry.(string)
-			limit.Add(core.NewLinkType(href, "backuppolicy").SetRel("backuppolicy"))
+			limit.Add(linkType(href, "backuppolicy").SetRel("backuppolicy"))
 		}
 	}
 
@@ -67,7 +67,7 @@ func limitNew(d *resourceData) core.Resource {
 		limit.EnableHPs = true
 		for _, entry := range hwprofiles.List() {
 			href := entry.(string)
-			limit.Add(core.NewLinkType(href, "hardwareprofile").SetRel("hardwareprofile"))
+			limit.Add(linkType(href, "hardwareprofile").SetRel("hardwareprofile"))
 		}
 	}
 
@@ -76,7 +76,7 @@ func limitNew(d *resourceData) core.Resource {
 	if dstiers != nil && dstiers.Len() > 0 {
 		for _, entry := range dstiers.List() {
 			href := entry.(string)
-			limit.Add(core.NewLinkType(href, "datastoretier").SetRel("datastoretier"))
+			limit.Add(linkType(href, "datastoretier").SetRel("datastoretier"))
 		}
 	}
 

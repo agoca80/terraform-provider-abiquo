@@ -37,7 +37,7 @@ func computeLoadDTO(d *resourceData) core.Resource {
 		default:
 			return nil
 		}
-		machineLoadRule.Add(core.NewLinkType(href, media).SetRel(media))
+		machineLoadRule.Add(linkType(href, media).SetRel(media))
 	}
 
 	return machineLoadRule

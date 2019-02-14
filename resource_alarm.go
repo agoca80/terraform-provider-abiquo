@@ -37,7 +37,7 @@ func alarmNew(d *resourceData) core.Resource {
 		Statistic:        d.string("statistic"),
 		Threshold:        d.float("threshold"),
 		DTO: core.NewDTO(
-			core.NewLinkType(href, "metric").SetRel("metric"),
+			linkType(href, "metric").SetRel("metric"),
 		),
 	}
 }

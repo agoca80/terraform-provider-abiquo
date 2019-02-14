@@ -15,7 +15,7 @@ var deviceTypeDataSchema = map[string]*schema.Schema{
 
 func deviceTypeFind(d *resourceData) (err error) {
 	name := d.string("name")
-	resource := abiquo.DeviceTypes(nil).Find(func(r core.Resource) bool {
+	resource := abiquo.DeviceTypes().Collection(nil).Find(func(r core.Resource) bool {
 		return r.(*abiquo.DeviceType).Name == name
 	})
 	if resource == nil {

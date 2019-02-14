@@ -46,7 +46,7 @@ func firewallpolicyRules(d *resourceData) *abiquo.FirewallRules {
 func firewallpolicyUpdateRules(d *resourceData, resource core.Resource) (err error) {
 	firewallpolicy := resource.(*abiquo.Firewall)
 	if d.HasChange("rules") {
-		err = core.Update(firewallpolicy.Rel("rules"), firewallpolicyRules(d))
+		err = firewallpolicy.Rel("rules").Update(firewallpolicyRules(d))
 	}
 	return
 }
@@ -59,7 +59,8 @@ func firewallpolicyRead(d *resourceData, resource core.Resource) (err error) {
 
 	// Read the firewall rules
 	rules := new(abiquo.FirewallRules)
-	if err = core.Read(firewallpolicy.Rel("rules"), rules); err != nil {
+	err = firewallpolicy.Rel("rules").Read(rules)
+	if err != nil {
 		return
 	}
 

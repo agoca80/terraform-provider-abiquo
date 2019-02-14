@@ -46,7 +46,7 @@ func virtualmachinetemplateCreate(rd *schema.ResourceData, m interface{}) (err e
 	virtualmachinetemplate.Description = d.string("description")
 	virtualmachinetemplate.CPURequired = d.integer("cpu")
 	virtualmachinetemplate.RAMRequired = d.integer("ram")
-	err = core.Update(virtualmachinetemplate, virtualmachinetemplate)
+	err = virtualmachinetemplate.Update(virtualmachinetemplate)
 	return
 }
 

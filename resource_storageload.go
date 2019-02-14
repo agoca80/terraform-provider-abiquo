@@ -31,7 +31,7 @@ func storageLoadDTO(d *resourceData) core.Resource {
 		default:
 			return nil
 		}
-		storageLoadRule.Add(core.NewLinkType(href, media).SetRel(media))
+		storageLoadRule.Add(linkType(href, media).SetRel(media))
 	}
 
 	return storageLoadRule

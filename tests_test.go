@@ -5,7 +5,6 @@ import (
 	"io/ioutil"
 	"testing"
 
-	"github.com/abiquo/ojal/core"
 	"github.com/hashicorp/terraform/helper/resource"
 	"github.com/hashicorp/terraform/terraform"
 )
@@ -17,9 +16,9 @@ func checkDestroy(d *description) resource.TestCheckFunc {
 				continue
 			}
 			href := rs.Primary.Attributes["id"]
-			endpoint := core.NewLinkType(href, d.media)
-			if err := core.Read(endpoint, nil); err == nil {
-				return fmt.Errorf("%s.test still exists: %s", d.Name(), endpoint)
+			endpoint := linkType(href, d.media)
+			if err := endpoint.Read(nil); err == nil {
+				return fmt.Errorf("%s.test still exists: %s", d.Name(), endpoint.URL())
 			}
 		}
 		return nil
@@ -34,8 +33,9 @@ func checkExists(d *description) resource.TestCheckFunc {
 		}
 
 		href := rs.Primary.Attributes["id"]
-		endpoint := core.NewLinkType(href, d.media)
-		return core.Read(endpoint, nil)
+		endpoint := linkType(href, d.media)
+		_, err := endpoint.Exists()
+		return err
 	}
 }
 

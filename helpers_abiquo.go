@@ -6,6 +6,10 @@ import (
 	"github.com/hashicorp/terraform/helper/schema"
 )
 
+func linkType(href, media string) *core.Link {
+	return core.NewLink(href).SetType(media)
+}
+
 func mapDecoder(m interface{}, i interface{}) interface{} {
 	if err := hilmapstructure.WeakDecode(m.(map[string]interface{}), i); err != nil {
 		panic("mapDecoder: error decoding map")
