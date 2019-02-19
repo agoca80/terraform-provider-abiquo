@@ -41,10 +41,10 @@ func virtualdatacenterFind(d *resourceData) (err error) {
 	}
 
 	d.SetId(vdc.URL())
-	d.Set("device", vdc.Rel("device").Href)
-	d.Set("tiers", vdc.Rel("tiers").Href)
+	d.Set("device", vdc.Rel("device").URL())
+	d.Set("tiers", vdc.Rel("tiers").URL())
 	d.Set("network", vdcNetwork(vdc))
-	d.Set("location", vdc.Rel("location").Href)
-	d.Set("templates", vdc.Rel("templates").Href)
+	d.Set("location", vdc.Rel("location").URL())
+	d.Set("templates", vdc.Rel("templates").URL())
 	return
 }
