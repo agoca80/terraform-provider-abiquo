@@ -9,5 +9,5 @@ resource "abiquo_virtualdatacenter" "test" {
   type       = "KVM"
 }
 
-data "abiquo_location"   "location"   { name = "datacenter 1" }
+data "abiquo_location"   "location"   { name = "${var.datacenter}" }
 data "abiquo_enterprise" "enterprise" { name = "Abiquo" }

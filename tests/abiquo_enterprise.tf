@@ -7,7 +7,7 @@ resource "abiquo_enterprise" "test" {
     }
 }
 
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
+data "abiquo_datacenter" "test" { name = "${var.datacenter}" }
 
 resource "abiquo_currency" "test" {
   digits = 2

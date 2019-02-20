@@ -18,7 +18,7 @@ resource "abiquo_machine" "test" {
 }
 
 data "abiquo_datacenter" "test" {
-  name = "datacenter 1"
+  name = "${var.datacenter}"
 }
 
 resource "abiquo_rack" "test" {

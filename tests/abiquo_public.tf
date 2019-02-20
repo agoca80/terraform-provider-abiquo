@@ -15,8 +15,8 @@ resource "abiquo_public" "test" {
   suffix  = "public.com"
 }
 
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
+data "abiquo_datacenter" "test" { name = "${var.datacenter}" }
 data "abiquo_nst"        "test" {
   datacenter = "${data.abiquo_datacenter.test.id}"
-  name       = "Service Network"
+  name       = "${var.nst}"
 }

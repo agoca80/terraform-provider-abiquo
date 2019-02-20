@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"net/url"
-	"path"
 
 	"github.com/abiquo/ojal/abiquo"
 	"github.com/abiquo/ojal/core"
@@ -28,14 +27,9 @@ func vdcNetwork(r core.Resource) string {
 }
 
 func virtualdatacenterFind(d *resourceData) (err error) {
-	enterprise := abq.Enterprise()
-	id := path.Base(enterprise.URL())
-	vdcsLink := enterprise.Rel("cloud/virtualdatacenters")
-	vdcs := vdcsLink.Collection(url.Values{
-		"enterprise": {id},
-		"has":        {d.string("name")},
-	})
-	vdc := vdcs.First()
+	vdc := abiquo.VirtualDatacenters().Collection(url.Values{
+		"has": {d.string("name")},
+	}).First()
 	if vdc == nil {
 		return fmt.Errorf("vdc %q was not found", d.string("name"))
 	}

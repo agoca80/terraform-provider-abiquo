@@ -20,12 +20,12 @@ resource "abiquo_external" "test" {
 
 data "abiquo_enterprise" "test" { name = "Abiquo" }
 data "abiquo_datacenter" "test" {
-  name = "datacenter 1"
+  name = "${var.datacenter}"
 }
 
 data "abiquo_nst" "test" {
   datacenter = "${data.abiquo_datacenter.test.id}"
-  name       = "Service Network"
+  name       = "${var.nst}"
 }
 
 data "abiquo_network" "test" {

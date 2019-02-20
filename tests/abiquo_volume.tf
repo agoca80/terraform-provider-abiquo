@@ -7,7 +7,7 @@ resource "abiquo_volume" "test" {
   size = 32
 }
 
-data "abiquo_virtualdatacenter"  "test" { name = "tests" }
+data "abiquo_virtualdatacenter"  "test" { name = "${var.virtualdatacenter}" }
 data "abiquo_tier" "test" {
   location = "${data.abiquo_virtualdatacenter.test.tiers}"
   name     = "Default Tier 1"

@@ -4,4 +4,4 @@ resource "abiquo_machineloadrule" "test" {
   target     = "${data.abiquo_datacenter.test.id}"
 }
 
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
+data "abiquo_datacenter" "test" { name = "${var.datacenter}" }

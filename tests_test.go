@@ -40,10 +40,14 @@ func checkExists(d *description) resource.TestCheckFunc {
 }
 
 func basicTest(t *testing.T, d *description) {
+	variables, err := ioutil.ReadFile("tests/variables.tf")
+	if err != nil {
+		t.Error("basicTest: tests/variables.tf file could not be read:", err)
+	}
 	file := "tests/" + d.Name() + ".tf"
 	config, err := ioutil.ReadFile(file)
 	if err != nil {
-		t.Error("updateCase:", file, "could not be read:", err)
+		t.Error("basicTest:", file, "could not be read:", err)
 	}
 	resource.Test(t, resource.TestCase{
 		PreCheck:     func() { testAccPreCheck(t) },
@@ -51,7 +55,7 @@ func basicTest(t *testing.T, d *description) {
 		CheckDestroy: checkDestroy(d),
 		Steps: []resource.TestStep{
 			resource.TestStep{
-				Config: string(config),
+				Config: string(variables) + string(config),
 				Check: resource.ComposeTestCheckFunc(
 					checkExists(d),
 				),

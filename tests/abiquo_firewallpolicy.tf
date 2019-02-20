@@ -11,6 +11,6 @@ resource "abiquo_firewallpolicy" "test" {
   ]
 }
 
-data "abiquo_location"   "test" { name = "datacenter 1" }
+data "abiquo_location"   "test" { name = "${var.datacenter}" }
 data "abiquo_enterprise" "test" { name = "Abiquo" }
-data "abiquo_virtualdatacenter"        "test" { name = "tests" }
+data "abiquo_virtualdatacenter"        "test" { name = "${var.virtualdatacenter}" }

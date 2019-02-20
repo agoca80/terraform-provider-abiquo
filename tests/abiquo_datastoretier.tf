@@ -6,4 +6,4 @@ resource "abiquo_datastoretier" "test" {
   policy      = "PERFORMANCE"
 }
 
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
+data "abiquo_datacenter" "test" { name = "${var.datacenter}" }

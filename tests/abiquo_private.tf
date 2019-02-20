@@ -11,4 +11,4 @@ resource "abiquo_private" "test" {
   lifecycle = { ignore_changes = [ "dns1", "dns2" ] }
 }
 
-data "abiquo_virtualdatacenter" "test" { name = "tests" }
+data "abiquo_virtualdatacenter" "test" { name = "${var.virtualdatacenter}" }

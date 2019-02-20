@@ -8,4 +8,4 @@ resource "abiquo_backuppolicy" "test" {
   ]
 }
 
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
+data "abiquo_datacenter" "test" { name = "${var.datacenter}" }

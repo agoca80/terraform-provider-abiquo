@@ -12,10 +12,10 @@ resource "abiquo_alert" "test" {
   ]
 }
 
-data "abiquo_virtualdatacenter"        "test"   { name = "tests" }
+data "abiquo_virtualdatacenter"        "test"   { name = "${var.virtualdatacenter}" }
 data "abiquo_template"   "test"   {
   templates = "${data.abiquo_virtualdatacenter.test.templates}"
-  name      = "tests"
+  name = "${var.template}"
 }
 
 resource "abiquo_virtualappliance" "test" {
@@ -35,7 +35,7 @@ resource "abiquo_virtualmachine" "test" {
 resource "abiquo_alarm" "test" {
   target      = "${abiquo_virtualmachine.test.id}"
   name        = "test alert"
-  metric      = "cpu_time"
+  metric      = "${var.metric}"
   timerange   = 3
   statistic   = "average"
   formula     = "lessthan"

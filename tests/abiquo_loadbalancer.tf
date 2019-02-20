@@ -1,17 +1,17 @@
 resource "abiquo_loadbalancer" "test" {
   device         = "${data.abiquo_virtualdatacenter.test.device}"
   privatenetwork = "${abiquo_private.test.id}"
-  name           = "test lb"
-  internal       = false
+  name           = "test-lb"
+  internal       = true
   algorithm      = "ROUND_ROBIN"
   routingrules   = [
     { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
   ]
 }
 
-data "abiquo_location"   "test" { name = "datacenter 1" }
+data "abiquo_location"   "test" { name = "${var.datacenter}" }
 data "abiquo_enterprise" "test" { name = "Abiquo" }
-data "abiquo_virtualdatacenter"        "test"   { name = "tests" }
+data "abiquo_virtualdatacenter"        "test"   { name = "${var.virtualdatacenter}" }
 
 resource "abiquo_private" "test" {
   virtualdatacenter = "${data.abiquo_virtualdatacenter.test.id}"

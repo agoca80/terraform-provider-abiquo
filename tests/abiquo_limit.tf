@@ -6,9 +6,9 @@ resource "abiquo_limit" "test" {
   hwprofiles = [ "${abiquo_hardwareprofile.test.id}" ]
 }
 
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
+data "abiquo_datacenter" "test" { name = "${var.datacenter}" }
 data "abiquo_datastoretier"     "test" {
-  name       = "Default Tier"
+  name       = "${var.datastoretier}"
   datacenter = "${data.abiquo_datacenter.test.id}"
 }
 

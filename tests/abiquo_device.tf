@@ -9,4 +9,4 @@ resource "abiquo_device"     "test" {
 }
 
 data     "abiquo_devicetype" "test" { name = "LOGICAL" }
-data     "abiquo_datacenter" "test" { name = "datacenter 1" }
+data     "abiquo_datacenter" "test" { name = "${var.datacenter}" }

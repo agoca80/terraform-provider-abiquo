@@ -56,11 +56,23 @@ available resources.
 You will need to export the following environment variables to run the
 acceptance tests first:
 
-- ABQ_ENDPOINT: i.e https://testing.test.com/api
+- ABQ_ENDPOINT
 - ABQ_USERNAME
 - ABQ_PASSWORD
+- TF_VAR_datacenter
+- TF_VAR_datastoretier
+- TF_VAR_enterprise
+- TF_VAR_metric
+- TF_VAR_nst
+- TF_VAR_ova
+- TF_VAR_template
+- TF_VAR_virtualdatacenter
+
+The first three variables define the client connection details.
+The next ones define the Abiquo resource names for the tests data sources.
+
 
 ```
-cd $GOPATH/github.com/hashicorp/terraform
+cd $GOPATH/src/github.com/hashicorp/terraform
 make testacc TEST=../../abiquo/terraform-provider-abiquo
 ```

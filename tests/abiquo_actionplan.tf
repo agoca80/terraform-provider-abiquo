@@ -13,10 +13,10 @@ resource "abiquo_actionplan" "test" {
 	]
 }
 
-data "abiquo_virtualdatacenter"        "test"       { name = "tests" }
+data "abiquo_virtualdatacenter"        "test"       { name = "${var.virtualdatacenter}" }
 data "abiquo_template"   "test"       {
   templates = "${data.abiquo_virtualdatacenter.test.templates}"
-  name      = "tests"
+  name = "${var.template}"
 }
 
 resource "abiquo_virtualappliance" "test" {

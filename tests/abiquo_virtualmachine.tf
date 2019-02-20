@@ -5,9 +5,9 @@ resource "abiquo_virtualmachine" "test" {
   deploy  = false
   cpu     = 1
   ram     = 64
-  # label   = "test vm"
+  label   = "test vm"
   backups = [ "${data.abiquo_backup.test.id}" ]
-  # lbs     = [ "${abiquo_loadbalancer.test.id}" ]
+  lbs     = [ "${abiquo_loadbalancer.test.id}" ]
   fws     = [ "${abiquo_firewallpolicy.test.id}" ]
 
   variables = {
@@ -27,18 +27,18 @@ exit 0
 EOF
 }
 
-data "abiquo_enterprise" "test" { name = "Abiquo" }
-data "abiquo_location"   "test" { name = "datacenter 1" }
-data "abiquo_datacenter" "test" { name = "datacenter 1" }
+data "abiquo_enterprise" "test" { name = "${var.enterprise}" }
+data "abiquo_location"   "test" { name = "${var.datacenter}" }
+data "abiquo_datacenter" "test" { name = "${var.datacenter}" }
 
 data "abiquo_nst"        "test"        {
   datacenter = "${data.abiquo_datacenter.test.id}"
-  name       = "Service Network"
+  name       = "${var.nst}"
 }
 
 data "abiquo_template" "test" {
   templates = "${abiquo_virtualdatacenter.test.templates}"
-  name = "tests"
+  name = "${var.template}"
 }
 
 resource "abiquo_backuppolicy" "test" {
@@ -100,7 +100,7 @@ resource "abiquo_firewallpolicy" "test" {
   device            = "${abiquo_virtualdatacenter.test.device}"
   virtualdatacenter = "${abiquo_virtualdatacenter.test.id}"
   description       = "test vm"
-  name              = "test vm"
+  name              = "test-vm"
   # XXX workaround ABICLOUDPREMIUM-9668
   rules = [
     { protocol = "TCP", fromport = 22, toport = 22, sources = ["0.0.0.0/0"] }
@@ -120,16 +120,16 @@ resource "abiquo_ip" "private" {
   ip      = "172.16.37.30"
 }
 
-# resource "abiquo_loadbalancer" "test" {
-#   device            = "${abiquo_virtualdatacenter.test.device}"
-#   privatenetwork    = "${abiquo_private.test.id}"
-#   name              = "test vm"
-#   internal          = true
-#   algorithm         = "ROUND_ROBIN"
-#   routingrules      = [
-#     { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
-#   ]
-# }
+resource "abiquo_loadbalancer" "test" {
+  device            = "${abiquo_virtualdatacenter.test.device}"
+  privatenetwork    = "${abiquo_private.test.id}"
+  name              = "test-vm"
+  internal          = true
+  algorithm         = "ROUND_ROBIN"
+  routingrules      = [
+    { protocolin = "HTTP" , protocolout = "HTTP" , portin = 80 , portout = 80 }
+  ]
+}
 
 resource "abiquo_virtualappliance" "test" {
   virtualdatacenter = "${abiquo_virtualdatacenter.test.id}"

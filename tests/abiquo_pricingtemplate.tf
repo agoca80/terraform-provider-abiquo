@@ -22,12 +22,12 @@ resource "abiquo_pricingtemplate" "test" {
 }
 
 data "abiquo_datacenter" "test" {
-  name = "datacenter 1"
+  name = "${var.datacenter}"
 }
 
 data "abiquo_datastoretier" "test" {
   datacenter = "${data.abiquo_datacenter.test.id}"
-  name       = "Default Tier"
+  name       = "${var.datastoretier}"
 }
 
 data "abiquo_tier" "test" {
