@@ -10,7 +10,7 @@ var firewallSchema = map[string]*schema.Schema{
 	"device":            endpoint("device"),
 	"virtualdatacenter": attribute(required, link("virtualdatacenter"), forceNew),
 	"name":              attribute(required, text),
-	"description":       attribute(required, text),
+	// "description":       attribute(required, text),
 	"rules": attribute(required, min(1), list(&schema.Resource{
 		Schema: map[string]*schema.Schema{
 			"protocol": attribute(required, label([]string{"TCP", "HTTP", "HTTPS"})),
@@ -24,8 +24,8 @@ var firewallSchema = map[string]*schema.Schema{
 
 func firewallpolicyNew(d *resourceData) core.Resource {
 	return &abiquo.Firewall{
-		Name:        d.string("name"),
-		Description: d.string("description"),
+		Name: d.string("name"),
+		// Description: d.string("description"),
 		DTO: core.NewDTO(
 			d.link("virtualdatacenter"),
 		),
@@ -55,7 +55,7 @@ func firewallpolicyRead(d *resourceData, resource core.Resource) (err error) {
 	// Read the firewall
 	firewallpolicy := resource.(*abiquo.Firewall)
 	d.Set("name", firewallpolicy.Name)
-	d.Set("description", firewallpolicy.Description)
+	// d.Set("description", firewallpolicy.Description)
 
 	// Read the firewall rules
 	rules := new(abiquo.FirewallRules)

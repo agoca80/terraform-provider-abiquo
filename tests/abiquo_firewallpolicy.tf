@@ -1,7 +1,8 @@
 resource "abiquo_firewallpolicy" "test" {
   device            = "${data.abiquo_virtualdatacenter.test.device}"
   virtualdatacenter = "${data.abiquo_virtualdatacenter.test.id}"
-  description       = "test fw"
+  # XXX workaround ABICLOUDPREMIUM-11853
+  # description       = "description"
   name              = "test fw"
   # XXX workaround ABICLOUDPREMIUM-9668
   rules = [

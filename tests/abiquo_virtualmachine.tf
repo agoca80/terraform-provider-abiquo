@@ -99,8 +99,9 @@ resource "abiquo_virtualdatacenter" "test" {
 resource "abiquo_firewallpolicy" "test" {
   device            = "${abiquo_virtualdatacenter.test.device}"
   virtualdatacenter = "${abiquo_virtualdatacenter.test.id}"
-  description       = "test vm"
-  name              = "test-vm"
+  # XXX workaround ABICLOUDPREMIUM-11853
+  # description       = "test vm"
+  name              = "test vm"
   # XXX workaround ABICLOUDPREMIUM-9668
   rules = [
     { protocol = "TCP", fromport = 22, toport = 22, sources = ["0.0.0.0/0"] }
