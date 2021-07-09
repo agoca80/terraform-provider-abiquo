@@ -1,4 +1,4 @@
-#!/bin/sh -x
+#!/bin/sh -eux
 
 TS=$(date +%s)
 cd ../../hashicorp/terraform
